@@ -5,7 +5,7 @@ class OAuth2::Provider::AccessToken < ActiveRecord::Base
   belongs_to :client, :class_name => OAuth2::Provider.client_class_name
   belongs_to :account
 
-  validates_presence_of :access_token, :expires_at
+  validates_presence_of :client, :access_token, :expires_at
 
   def initialize(*args, &block)
     super

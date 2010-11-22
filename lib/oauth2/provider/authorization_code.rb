@@ -4,7 +4,7 @@ class OAuth2::Provider::AuthorizationCode < ActiveRecord::Base
   belongs_to :client, :class_name => OAuth2::Provider.client_class_name
   belongs_to :account
 
-  validates_presence_of :code, :expires_at, :redirect_uri
+  validates_presence_of :client, :code, :expires_at, :redirect_uri
 
   def self.claim(code, redirect_uri)
     if authorization_code = find_by_code_and_redirect_uri(code, redirect_uri)

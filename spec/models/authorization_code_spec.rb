@@ -9,7 +9,7 @@ describe OAuth2::Provider::AuthorizationCode do
       )
     end
 
-    it "is valid with an expiry time, redirect uri and code" do
+    it "is valid with a client, expiry time, redirect uri and code" do
       subject.should be_valid
     end
 
@@ -20,6 +20,11 @@ describe OAuth2::Provider::AuthorizationCode do
 
     it "is invalid without a code" do
       subject.code = nil
+      subject.should_not be_valid
+    end
+
+    it "is invalid without a client" do
+      subject.client = nil
       subject.should_not be_valid
     end
 

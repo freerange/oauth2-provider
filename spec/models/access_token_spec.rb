@@ -6,7 +6,7 @@ describe OAuth2::Provider::AccessToken do
       OAuth2::Provider::AccessToken.new :client => OAuth2::Provider::Client.new
     end
 
-    it "is valid with an expiry time and access token" do
+    it "is valid with a client, expiry time and access token" do
       subject.expires_at.should_not be_nil
       subject.access_token.should_not be_nil
 
@@ -15,6 +15,11 @@ describe OAuth2::Provider::AccessToken do
 
     it "is invalid without an access token" do
       subject.access_token = nil
+      subject.should_not be_valid
+    end
+
+    it "is invalid without a client" do
+      subject.client = nil
       subject.should_not be_valid
     end
 
