@@ -6,13 +6,13 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Ward"]
-  s.date = %q{2010-11-21}
+  s.date = %q{2010-11-22}
   s.email = %q{tom@popdog.net}
   s.extra_rdoc_files = [
     "README"
   ]
   s.files = [
-    ".bundle/config",
+    ".gitignore",
      "Gemfile",
      "Gemfile.lock",
      "Rakefile",
@@ -21,13 +21,14 @@ Gem::Specification.new do |s|
      "lib/oauth2/provider/access_token.rb",
      "lib/oauth2/provider/access_tokens_controller.rb",
      "lib/oauth2/provider/authorization_code.rb",
+     "lib/oauth2/provider/authorization_codes_support.rb",
      "lib/oauth2/provider/client.rb",
      "lib/oauth2/provider/controller_authentication.rb",
      "lib/oauth2/provider/railtie.rb",
      "lib/oauth2/provider/random.rb",
-     "log/test.log",
      "oauth2-provider.gemspec",
      "spec/controllers/access_tokens_controller_spec.rb",
+     "spec/controllers/authorization_codes_support_spec.rb",
      "spec/controllers/controller_authentication_spec.rb",
      "spec/database.yml",
      "spec/models/access_token_spec.rb",
