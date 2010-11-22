@@ -1,4 +1,6 @@
 class OAuth2::Provider::AccessToken < ActiveRecord::Base
+  include OAuth2::Provider::TokenRoles
+
   belongs_to :client, :class_name => OAuth2::Provider.client_class_name
   belongs_to :account
 
@@ -24,9 +26,5 @@ class OAuth2::Provider::AccessToken < ActiveRecord::Base
 
   def as_json(options = {})
     {"access_token" => access_token, "expires_in" => expires_in}
-  end
-
-  def roles
-    super ? super.split(" ") : []
   end
 end

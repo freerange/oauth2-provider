@@ -7,6 +7,7 @@ module OAuth2
     autoload :Client, 'oauth2/provider/client'
     autoload :ControllerAuthentication, 'oauth2/provider/controller_authentication'
     autoload :Random, 'oauth2/provider/random'
+    autoload :TokenRoles, 'oauth2/provider/token_roles'
 
     mattr_accessor :client_table_name
     self.client_table_name = 'oauth_clients'
