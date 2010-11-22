@@ -3,6 +3,12 @@ require 'spec_helper'
 class CustomClient < OAuth2::Provider::Client
 end
 
+class NotAllowedGrantTypeClient < OAuth2::Provider::Client
+  def allow_grant_type?(grant_type)
+    false
+  end
+end
+
 describe OAuth2::Provider::AccessTokensController do
   before :each do
     @client = OAuth2::Provider::Client.create!
@@ -65,8 +71,24 @@ describe OAuth2::Provider::AccessTokensController do
   end
 
   describe "Any request where the client isn't allowed to use the requested grant type" do
-    pending do
-      responds_with_json_error 'unauthorized_client', :status => 400
+    before :each do
+      OAuth2::Provider.client_class_name = NotAllowedGrantTypeClient.name
+      @client = NotAllowedGrantTypeClient.create!
+      @code = OAuth2::Provider::AuthorizationCode.create! :client => @client, :redirect_uri => "https://client.example.com/callback"
+      @valid_params = {
+        :grant_type => 'authorization_code',
+        :client_id => @client.to_param,
+        :client_secret => @client.oauth_secret,
+        :code => @code.code,
+        :redirect_uri => @code.redirect_uri
+      }
+      post :create, @valid_params
+    end
+
+    responds_with_json_error 'unauthorized_client', :status => 400
+
+    after :each do
+      OAuth2::Provider.client_class_name = OAuth2::Provider::Client.name
     end
   end
 

@@ -47,8 +47,11 @@ class OAuth2::Provider::AccessTokensController < ApplicationController
 
   def block_invalid_clients
     with_required_params :client_id, :client_secret do |client_id, client_secret|
-      unless @oauth_client = OAuth2::Provider.client_class.find_by_oauth_identifier_and_oauth_secret(client_id, client_secret)
+      @oauth_client = OAuth2::Provider.client_class.find_by_oauth_identifier_and_oauth_secret(client_id, client_secret)
+      if @oauth_client.nil?
         render_json_error 'invalid_client'
+      elsif !@oauth_client.allow_grant_type?(params[:grant_type])
+        render_json_error 'unauthorized_client'
       end
     end
   end

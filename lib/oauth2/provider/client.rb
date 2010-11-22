@@ -18,4 +18,8 @@ class OAuth2::Provider::Client < ActiveRecord::Base
   def to_param
     new_record? ? nil : oauth_identifier
   end
+
+  def allow_grant_type?(grant_type)
+    true
+  end
 end
