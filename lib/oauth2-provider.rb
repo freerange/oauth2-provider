@@ -1,0 +1,1 @@
+require 'oauth2/provider/railtie'
