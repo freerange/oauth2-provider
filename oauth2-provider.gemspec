@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
     ".gitignore",
      "Gemfile",
      "Gemfile.lock",
+     "README",
      "Rakefile",
      "lib/oauth2-provider.rb",
      "lib/oauth2/provider.rb",
@@ -35,8 +36,7 @@ Gem::Specification.new do |s|
      "spec/models/authorization_code_spec.rb",
      "spec/models/client_spec.rb",
      "spec/schema.rb",
-     "spec/spec_helper.rb",
-     "README"
+     "spec/spec_helper.rb"
   ]
   s.homepage = %q{http://tomafro.net}
   s.rdoc_options = ["--main", "README"]
@@ -55,7 +55,6 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<rake>, ["~> 0.8.7"])
       s.add_development_dependency(%q<sqlite3-ruby>, ["~> 1.3.1"])
       s.add_development_dependency(%q<timecop>, ["~> 0.3.4"])
-      s.add_development_dependency(%q<warden>, ["~> 1.0.2"])
       s.add_development_dependency(%q<yajl-ruby>, ["~> 0.7.5"])
     else
       s.add_dependency(%q<rails>, ["~> 3.0.1"])
@@ -64,7 +63,6 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rake>, ["~> 0.8.7"])
       s.add_dependency(%q<sqlite3-ruby>, ["~> 1.3.1"])
       s.add_dependency(%q<timecop>, ["~> 0.3.4"])
-      s.add_dependency(%q<warden>, ["~> 1.0.2"])
       s.add_dependency(%q<yajl-ruby>, ["~> 0.7.5"])
     end
   else
@@ -74,7 +72,6 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rake>, ["~> 0.8.7"])
     s.add_dependency(%q<sqlite3-ruby>, ["~> 1.3.1"])
     s.add_dependency(%q<timecop>, ["~> 0.3.4"])
-    s.add_dependency(%q<warden>, ["~> 1.0.2"])
     s.add_dependency(%q<yajl-ruby>, ["~> 0.7.5"])
   end
 end

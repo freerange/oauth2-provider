@@ -3,7 +3,6 @@ require 'rails/all'
 require 'rspec/rails'
 
 require 'oauth2-provider'
-require 'warden'
 
 Rails.env = "test"
 

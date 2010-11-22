@@ -52,7 +52,6 @@ spec = Dir.chdir(path) do
     s.add_development_dependency 'rake', '~>0.8.7'
     s.add_development_dependency 'sqlite3-ruby', '~>1.3.1'
     s.add_development_dependency 'timecop', '~>0.3.4'
-    s.add_development_dependency 'warden', '~>1.0.2'
     s.add_development_dependency 'yajl-ruby', '~>0.7.5'
   end
 end
