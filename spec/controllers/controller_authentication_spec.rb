@@ -42,6 +42,14 @@ describe "A request for a protected resource" do
     end
   end
 
+  describe "any failing request" do
+    it "neuters warden if warden is present" do
+      request.env['warden'] = stub(:warden)
+      request.env['warden'].should_receive(:custom_failure!)
+      get :new
+    end
+  end
+
   describe "with an invalid token" do
     before :each do
       get :new, :oauth_token => 'invalid-token'
