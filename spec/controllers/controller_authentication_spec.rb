@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "A request for a protected resource" do
   controller(ActionController::Base) do
-    before_filter :authenticate_with_oauth
+    authenticate_with_oauth
 
     def new
       render :text => "Current oauth scope: #{oauth_access_token.scope}"
@@ -39,6 +39,21 @@ describe "A request for a protected resource" do
 
     it "makes the access token available to the requested action" do
       response.body.should == "Current oauth scope: read write"
+    end
+  end
+
+  describe "with tokens passed in both the Authorization header and oauth_token parameter" do
+    before :each do
+      request.env['HTTP_AUTHORIZATION'] = "OAuth #{@token.access_token}"
+      get :new, :oauth_token => @token.access_token
+    end
+
+    it "responds with status 400" do
+      response.status.should == 400
+    end
+
+    it "includes a 'bad_request' OAuth challenge in the response" do
+      response.headers['WWW-Authenticate'].should == "OAuth realm='Application', error='invalid_request'"
     end
   end
 
