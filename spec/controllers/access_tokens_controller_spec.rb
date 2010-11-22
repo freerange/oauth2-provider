@@ -92,16 +92,17 @@ describe OAuth2::Provider::AccessTokensController do
     end
   end
 
-  describe "A request using authorization_code grant type" do
+  describe "A request using the authorization_code grant type" do
     describe "with valid client, code and redirect_uri" do
       before :each do
         post :create, @valid_params
       end
 
-      it "responds with claimed access token and expiry time in JSON" do
+      it "responds with claimed access token, refresh token and expiry time in JSON" do
         token = OAuth2::Provider::AccessToken.find_by_access_token(json_from_response["access_token"])
         token.should_not be_nil
         json_from_response["expires_in"].should == token.expires_in
+        json_from_response["refresh_token"].should == token.refresh_token
       end
 
       it "sets cache-control header to no-store, as response is sensitive" do
@@ -160,7 +161,7 @@ describe OAuth2::Provider::AccessTokensController do
     end
   end
 
-  describe "A request using password grant type" do
+  describe "A request using the password grant type" do
     before :each do
       @account = Account.create!(:username => 'name', :password => 'password')
       @valid_params = {
@@ -177,10 +178,11 @@ describe OAuth2::Provider::AccessTokensController do
         post :create, @valid_params
       end
 
-      it "responds with access token and expiry time in JSON" do
+      it "responds with access token, refresh token and expiry time in JSON" do
         token = OAuth2::Provider::AccessToken.find_by_access_token(json_from_response["access_token"])
         token.should_not be_nil
         json_from_response["expires_in"].should == token.expires_in
+        json_from_response["refresh_token"].should == token.refresh_token
       end
 
       it "sets cache-control header to no-store, as response is sensitive" do
@@ -229,6 +231,57 @@ describe OAuth2::Provider::AccessTokensController do
     describe "without a password parameter" do
       before :each do
         post :create, @valid_params.except(:password)
+      end
+
+      responds_with_json_error 'invalid_request', :status => 400
+    end
+  end
+
+  describe "A request using the refresh token grant type" do
+    before :each do
+      @token = OAuth2::Provider::AccessToken.create! :client => @client, :expires_at => 1.week.ago
+      @valid_params = {
+        :grant_type => 'refresh_token',
+        :refresh_token => @token.refresh_token,
+        :client_id => @client.to_param,
+        :client_secret => @client.oauth_secret
+      }
+    end
+
+    describe "with a valid refresh token" do
+      before :each do
+        post :create, @valid_params
+      end
+
+      it "responds with refreshed access token, refresh token and expiry time in JSON" do
+        token = OAuth2::Provider::AccessToken.find_by_access_token(json_from_response["access_token"])
+        token.should_not be_nil
+        token.should_not == @token
+        json_from_response["expires_in"].should == token.expires_in
+        json_from_response["refresh_token"].should == token.refresh_token
+      end
+    end
+
+    describe "when the token belongs to a different client" do
+      before :each do
+        @other_client = OAuth2::Provider::Client.create!
+        post :create, @valid_params.merge(:client_id => @other_client.oauth_identifier, :client_secret => @other_client.oauth_secret)
+      end
+
+      responds_with_json_error 'invalid_grant', :status => 400
+    end
+
+    describe "when the token is incorrect" do
+      before :each do
+        post :create, @valid_params.merge(:refresh_token => 'incorrect')
+      end
+
+      responds_with_json_error 'invalid_grant', :status => 400
+    end
+
+    describe "without a refresh_token parameter" do
+      before :each do
+        post :create, @valid_params.except(:refresh_token)
       end
 
       responds_with_json_error 'invalid_request', :status => 400

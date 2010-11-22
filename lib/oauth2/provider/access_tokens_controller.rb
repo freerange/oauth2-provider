@@ -28,6 +28,16 @@ class OAuth2::Provider::AccessTokensController < ApplicationController
     end
   end
 
+  def handle_refresh_token_grant_type
+    with_required_params :refresh_token do |refresh_token|
+      if token = @oauth_client.access_tokens.refresh_with(refresh_token)
+        render_token token
+      else
+        render_json_error 'invalid_grant'
+      end
+    end
+  end
+
   def with_required_params(*names, &block)
     values = params.values_at(*names)
     if values.include?(nil)

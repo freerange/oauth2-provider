@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(:version => 20110323171649) do
     t.integer  'client_id', :null => false
     t.integer  'account_id'
     t.string   'access_token', :null => false
+    t.string   'refresh_token'
     t.datetime 'expires_at'
     t.datetime 'created_at'
     t.datetime 'updated_at'

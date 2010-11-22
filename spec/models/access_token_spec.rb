@@ -38,7 +38,12 @@ describe OAuth2::Provider::AccessToken do
       subject.expires_in.should == 0
     end
 
-    it "include expires_in and access token as JSON format" do
+    it "include expires_in, refresh_token and access token as JSON format" do
+      subject.as_json.should == {"expires_in" => subject.expires_in, "access_token" => subject.access_token, "refresh_token" => subject.refresh_token}
+    end
+
+    it "include only expires_in and access token as JSON format if no refresh token set" do
+      subject.refresh_token = nil
       subject.as_json.should == {"expires_in" => subject.expires_in, "access_token" => subject.access_token}
     end
 
@@ -53,6 +58,16 @@ describe OAuth2::Provider::AccessToken do
       subject.scope = "first second third"
       subject.should_not have_scope("fourth")
     end
+
+    it "is refreshable, if it has a refresh token" do
+      subject.refresh_token = 'abcd1234'
+      subject.should be_refreshable
+    end
+
+    it "is not refreshable if it has no refresh token" do
+      subject.refresh_token = nil
+      subject.should_not be_refreshable
+    end
   end
 
   describe "a new instance" do
@@ -66,8 +81,39 @@ describe OAuth2::Provider::AccessToken do
       subject.access_token.should_not == OAuth2::Provider::AccessToken.new.access_token
     end
 
+    it "is assigned a randomly generated refresh token" do
+      subject.refresh_token.should_not be_nil
+      OAuth2::Provider::AccessToken.new.refresh_token.should_not be_nil
+      subject.access_token.should_not == OAuth2::Provider::AccessToken.new.refresh_token
+    end
+
     it "expires in 1 month by default" do
       subject.expires_at.should == 1.month.from_now
+    end
+  end
+
+  describe "refreshing an existing token" do
+    subject do
+      @client = OAuth2::Provider::Client.create!
+      OAuth2::Provider::AccessToken.create! :client => @client, :expires_at => 23.days.ago
+    end
+
+    it "returns a new access token with the same client, account and scope, but a new expiry time" do
+      result = OAuth2::Provider::AccessToken.refresh_with(subject.refresh_token)
+      result.should_not be_nil
+      result.expires_at.should == 1.month.from_now
+      result.client.should == subject.client
+      result.scope.should == subject.scope
+      result.account.should == subject.account
+    end
+
+    it "returns nil if the provided token doesn't match" do
+      OAuth2::Provider::AccessToken.refresh_with('wrong').should be_nil
+    end
+
+    it "returns nil if the existing refresh token is nil, whatever value is provided" do
+      subject.update_attribute(:refresh_token, nil)
+      OAuth2::Provider::AccessToken.refresh_with(nil).should be_nil
     end
   end
 end

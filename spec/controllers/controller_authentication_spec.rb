@@ -93,9 +93,24 @@ describe "A request for a protected resource" do
     end
   end
 
+  describe "with an expired token that can be refreshed" do
+    before :each do
+      @token.update_attributes(:expires_at => 1.day.ago)
+      get :new, :oauth_token => @token.access_token
+    end
+
+    it "responds with status 401" do
+      response.status.should == 401
+    end
+
+    it "includes an 'invalid_token' OAuth challenge in the response" do
+      response.headers['WWW-Authenticate'].should == "OAuth realm='Application', error='expired_token'"
+    end
+  end
+
   describe "with an expired token that can't be refreshed" do
     before :each do
-      @token.update_attribute(:expires_at, 1.day.ago)
+      @token.update_attributes(:expires_at => 1.day.ago, :refresh_token => nil)
       get :new, :oauth_token => @token.access_token
     end
 

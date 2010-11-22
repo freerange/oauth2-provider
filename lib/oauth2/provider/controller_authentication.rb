@@ -8,7 +8,11 @@ module OAuth2::Provider::ControllerAuthentication
   def authenticate_oauth_token
     if @oauth_access_token = OAuth2::Provider::AccessToken.find_by_access_token(oauth_token_from_parameter || oauth_token_from_header)
       if @oauth_access_token.expired?
-        request_oauth_authentication 'invalid_token'
+        if @oauth_access_token.refreshable?
+          request_oauth_authentication 'expired_token'
+        else
+          request_oauth_authentication 'invalid_token'
+        end
       end
     else
       request_oauth_authentication 'invalid_token'
