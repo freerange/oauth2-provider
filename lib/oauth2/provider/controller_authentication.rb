@@ -18,6 +18,8 @@ module OAuth2::Provider::ControllerAuthentication
   def block_bad_oauth_requests
     if oauth_token_from_parameter && oauth_token_from_header
       request_oauth_authentication('invalid_request', 400)
+    elsif !oauth_token_from_parameter && !oauth_token_from_header
+      request_oauth_authentication
     end
   end
 
@@ -35,9 +37,10 @@ module OAuth2::Provider::ControllerAuthentication
     end
   end
 
-  def request_oauth_authentication(error, status = 401)
+  def request_oauth_authentication(error = nil, status = 401)
     request.env['warden'] && request.env['warden'].custom_failure!
-    response.headers["WWW-Authenticate"] = "OAuth realm='Application', error='#{error}'"
+    response.headers["WWW-Authenticate"] = "OAuth realm='Application'"
+    response.headers["WWW-Authenticate"] << ", error='#{error}'" if error
     head :status => status
   end
 

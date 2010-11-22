@@ -13,6 +13,20 @@ describe "A request for a protected resource" do
     @token = OAuth2::Provider::AccessToken.create! :scope => "read write", :client => OAuth2::Provider::Client.create!
   end
 
+  describe "with no token passed" do
+    before :each do
+      get :new
+    end
+
+    it "responds with status 401" do
+      response.status.should == 401
+    end
+
+    it "includes an OAuth challenge in the response" do
+      response.headers['WWW-Authenticate'].should == "OAuth realm='Application'"
+    end
+  end
+
   describe "with a token passed as an oauth_token parameter" do
     before :each do
       get :new, :oauth_token => @token.access_token
