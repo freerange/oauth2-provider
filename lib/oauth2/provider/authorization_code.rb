@@ -1,4 +1,6 @@
 class OAuth2::Provider::AuthorizationCode < ActiveRecord::Base
+  include OAuth2::Provider::TokenExpiry
+
   belongs_to :client, :class_name => OAuth2::Provider.client_class_name
   belongs_to :account
 
@@ -21,9 +23,5 @@ class OAuth2::Provider::AuthorizationCode < ActiveRecord::Base
     super
     self.code ||= OAuth2::Provider::Random.base62(32)
     self.expires_at ||= 10.minutes.from_now
-  end
-
-  def expired?
-    expires_at < Time.zone.now
   end
 end
