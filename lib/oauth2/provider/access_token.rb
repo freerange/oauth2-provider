@@ -1,6 +1,6 @@
 class OAuth2::Provider::AccessToken < ActiveRecord::Base
   include OAuth2::Provider::TokenExpiry
-  include OAuth2::Provider::TokenRoles
+  include OAuth2::Provider::TokenScope
 
   belongs_to :client, :class_name => OAuth2::Provider.client_class_name
   belongs_to :account

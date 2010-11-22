@@ -41,6 +41,18 @@ describe OAuth2::Provider::AccessToken do
     it "include expires_in and access token as JSON format" do
       subject.as_json.should == {"expires_in" => subject.expires_in, "access_token" => subject.access_token}
     end
+
+    it "has a given scope, if scope string includes scope" do
+      subject.scope = "first second third"
+      subject.should have_scope("first")
+      subject.should have_scope("second")
+      subject.should have_scope("third")
+    end
+
+    it "doesn't have a given scope, if scope string doesn't scope" do
+      subject.scope = "first second third"
+      subject.should_not have_scope("fourth")
+    end
   end
 
   describe "a new instance" do
