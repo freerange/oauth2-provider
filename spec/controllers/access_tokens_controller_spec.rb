@@ -1,5 +1,8 @@
 require 'spec_helper'
 
+class CustomClient < OAuth2::Provider::Client
+end
+
 describe OAuth2::Provider::AccessTokensController do
   before :each do
     @client = OAuth2::Provider::Client.create!
@@ -208,5 +211,52 @@ describe OAuth2::Provider::AccessTokensController do
 
       responds_with_json_error 'invalid_request', :status => 400
     end
+  end
+
+  describe "When using a custom client class" do
+    before :each do
+      OAuth2::Provider.client_class_name = "CustomClient"
+      @client = CustomClient.create!
+      @client_params = {
+        :client_id => @client.to_param,
+        :client_secret => @client.oauth_secret,
+      }
+    end
+
+    describe "requests using authorization code grant type" do
+      before :each do
+        @code = OAuth2::Provider::AuthorizationCode.create! :client => @client, :redirect_uri => "https://client.example.com/callback"
+        @valid_params = @client_params.merge(
+          :grant_type => 'authorization_code',
+          :code => @code.code,
+          :redirect_uri => @code.redirect_uri
+        )
+        post :create, @valid_params
+      end
+
+      it "are still successful" do
+        response.should be_successful
+      end
+    end
+
+    describe "requests using password grant type" do
+       before :each do
+         @account = Account.create!(:username => 'name', :password => 'password')
+         @valid_params = @client_params.merge(
+           :grant_type => 'password',
+           :username => @account.username,
+           :password => @account.password
+         )
+         post :create, @valid_params
+       end
+
+       it "are still successful" do
+         response.should be_successful
+       end
+     end
+  end
+
+  after :each do
+    OAuth2::Provider.client_class_name = OAuth2::Provider::Client.name
   end
 end

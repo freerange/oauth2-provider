@@ -10,7 +10,7 @@ class OAuth2::Provider::AccessTokensController < ApplicationController
 
   def handle_authorization_code_grant_type
     with_required_params :code, :redirect_uri do |code, redirect_uri|
-      if token = @client.authorization_codes.claim(code, redirect_uri)
+      if token = oauth_client.authorization_codes.claim(code, redirect_uri)
         render_token token
       else
         render_json_error 'invalid_grant'
@@ -21,7 +21,7 @@ class OAuth2::Provider::AccessTokensController < ApplicationController
   def handle_password_grant_type
     with_required_params :username, :password do |username, password|
       if account = OAuth2::Provider.end_user_class.authenticate_with_username_and_password(username, password)
-        render_token OAuth2::Provider::AccessToken.create! :account => account, :client => @client
+        render_token OAuth2::Provider::AccessToken.create! :account => account, :client => oauth_client
       else
         render_json_error 'invalid_grant'
       end
@@ -47,10 +47,14 @@ class OAuth2::Provider::AccessTokensController < ApplicationController
 
   def block_invalid_clients
     with_required_params :client_id, :client_secret do |client_id, client_secret|
-      unless @client = OAuth2::Provider::Client.find_by_oauth_identifier_and_oauth_secret(client_id, client_secret)
+      unless @oauth_client = OAuth2::Provider.client_class.find_by_oauth_identifier_and_oauth_secret(client_id, client_secret)
         render_json_error 'invalid_client'
       end
     end
+  end
+
+  def oauth_client
+    @oauth_client
   end
 
   def render_token(token)
