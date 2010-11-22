@@ -135,7 +135,7 @@ describe OAuth2::Provider::AccessTokensController do
     end
   end
 
-  describe "A request using authorization_code grant type" do
+  describe "A request using password grant type" do
     before :each do
       @account = Account.create!(:username => 'name', :password => 'password')
       @valid_params = {
