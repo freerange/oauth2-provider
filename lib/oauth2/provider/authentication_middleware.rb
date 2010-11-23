@@ -45,7 +45,7 @@ class OAuth2::Provider::AuthenticationMiddleware < Rack::Auth::AbstractHandler
   end
 
   def oauth2
-    @env['oauth2'] ||= OAuth2::Provider::Core.new
+    @env['oauth2'] ||= OAuth2::Provider::Mediator.new
   end
 
   def request
