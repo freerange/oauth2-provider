@@ -123,3 +123,42 @@ describe "A request for a protected resource" do
     end
   end
 end
+
+describe "A request for a protected resource requiring a specific scope" do
+  controller(ActionController::Base) do
+    authenticate_with_oauth :scope => 'editor'
+
+    def new
+      render :text => "Current oauth scope: #{oauth_access_token.scope}"
+    end
+  end
+
+  before :each do
+    @token = create_access_token(:access_grant => build_access_grant(:scope => "reader editor admin"))
+    @insufficient_token = create_access_token(:access_grant => build_access_grant(:scope => "reader admin"))
+  end
+
+  describe "made with a token with sufficient scope" do
+    before :each do
+      get :new, :oauth_token => @token.access_token
+    end
+
+    it "is successful" do
+      response.should be_successful
+    end
+  end
+
+  describe "made with a token with insufficient scope" do
+    before :each do
+      get :new, :oauth_token => @insufficient_token.access_token
+    end
+
+    it "responds with status 403" do
+      response.status.should == 403
+    end
+
+    it "includes an 'invalid_token' OAuth challenge in the response" do
+      response.headers['WWW-Authenticate'].should == "OAuth realm='Application', error='insufficient_scope'"
+    end
+  end
+end

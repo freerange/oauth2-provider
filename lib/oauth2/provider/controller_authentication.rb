@@ -50,8 +50,16 @@ module OAuth2::Provider::ControllerAuthentication
 
   module ClassMethods
     def authenticate_with_oauth(options = {})
+      scope = options.delete(:scope)
       before_filter :block_bad_oauth_requests, options
       before_filter :authenticate_oauth_token, options
+      if scope
+        before_filter options do
+          unless oauth_access_token.access_grant.has_scope?(scope)
+            request_oauth_authentication('insufficient_scope', status = 403)
+          end
+        end
+      end
     end
   end
 end
