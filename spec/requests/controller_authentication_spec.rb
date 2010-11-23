@@ -75,8 +75,10 @@ describe "A request for a protected resource" do
       response.status.should == 400
     end
 
-    it "includes a 'bad_request' OAuth challenge in the response" do
-      response.headers['WWW-Authenticate'].should == "OAuth realm='Application', error='invalid_request'"
+    pending do
+      it "includes a 'bad_request' OAuth challenge in the response" do
+        response.headers['WWW-Authenticate'].should == "OAuth realm='Application', error='invalid_request'"
+      end
     end
   end
 

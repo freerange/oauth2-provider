@@ -9,14 +9,6 @@ module OAuth2::Provider::ControllerAuthentication
     request.env['oauth2']
   end
 
-  def authenticate_oauth_token
-
-  end
-
-  def block_bad_oauth_requests
-
-  end
-
   def oauth_token_from_parameter
     params[:oauth_token]
   end
@@ -39,9 +31,7 @@ module OAuth2::Provider::ControllerAuthentication
       scope = options.delete(:scope)
 
       before_filter options do
-        if oauth_token_from_parameter && oauth_token_from_header
-          request_oauth_authentication('invalid_request', 400)
-        elsif !oauth_token_from_parameter && !oauth_token_from_header
+        if !oauth_token_from_parameter && !oauth_token_from_header
           request_oauth_authentication
         end
       end
