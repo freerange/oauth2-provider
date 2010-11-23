@@ -5,7 +5,7 @@ describe "A request for a protected resource" do
     authenticate_with_oauth
 
     def new
-      render :text => "Current oauth scope: #{oauth_access_token.scope}"
+      render :text => "Current oauth scope: #{oauth2.access_token.scope}"
     end
   end
 
@@ -129,7 +129,7 @@ describe "A request for a protected resource requiring a specific scope" do
     authenticate_with_oauth :scope => 'editor'
 
     def new
-      render :text => "Current oauth scope: #{oauth_access_token.scope}"
+      render :text => "Current oauth scope: #{oauth2.access_token.scope}"
     end
   end
 

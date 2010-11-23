@@ -5,10 +5,14 @@ module OAuth2::Provider::ControllerAuthentication
 
   private
 
+  def oauth2
+    @oauth2 ||= OAuth2::Provider::Core.new
+  end
+
   def authenticate_oauth_token
-    if @oauth_access_token = OAuth2::Provider::AccessToken.find_by_access_token(oauth_token_from_parameter || oauth_token_from_header)
-      if @oauth_access_token.expired?
-        if @oauth_access_token.refreshable?
+    if oauth2.access_token = OAuth2::Provider::AccessToken.find_by_access_token(oauth_token_from_parameter || oauth_token_from_header)
+      if oauth2.access_token.expired?
+        if oauth2.access_token.refreshable?
           request_oauth_authentication 'expired_token'
         else
           request_oauth_authentication 'invalid_token'
@@ -25,10 +29,6 @@ module OAuth2::Provider::ControllerAuthentication
     elsif !oauth_token_from_parameter && !oauth_token_from_header
       request_oauth_authentication
     end
-  end
-
-  def oauth_access_token
-    @oauth_access_token
   end
 
   def oauth_token_from_parameter
@@ -55,7 +55,7 @@ module OAuth2::Provider::ControllerAuthentication
       before_filter :authenticate_oauth_token, options
       if scope
         before_filter options do
-          unless oauth_access_token.access_grant.has_scope?(scope)
+          unless oauth2.access_token.has_scope?(scope)
             request_oauth_authentication('insufficient_scope', status = 403)
           end
         end

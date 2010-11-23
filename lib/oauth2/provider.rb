@@ -6,6 +6,7 @@ module OAuth2
     autoload :AccessGrant, 'oauth2/provider/access_grant'
     autoload :AccessTokensController, 'oauth2/provider/access_tokens_controller'
     autoload :Client, 'oauth2/provider/client'
+    autoload :Core, 'oauth2/provider/core'
     autoload :ControllerAuthentication, 'oauth2/provider/controller_authentication'
     autoload :Random, 'oauth2/provider/random'
     autoload :TokenExpiry, 'oauth2/provider/token_expiry'
