@@ -111,3 +111,21 @@ RSpec::Core::RakeTask.new(:spec) do |t|
   t.rspec_opts = "-f n -c"
   t.pattern = "spec/**/*_spec.rb"
 end
+
+desc 'Tag the repository in git with gem version number'
+task :tag do
+  if `git diff --cached`.empty? && `git diff`.empty?
+    Rake::Task["package"].invoke
+
+    if `git tag`.split("\n").include?("v#{spec.version}")
+      raise "Version #{spec.version} has already been released"
+    end
+    `git add #{File.expand_path("../#{spec.name}.gemspec", __FILE__)}`
+    `git commit -m "Released version #{spec.version}"`
+    `git tag v#{spec.version}`
+    `git push --tags`
+    `git push`
+  else
+    raise "Repository contains uncommitted changes; either commit or stash."
+  end
+end
