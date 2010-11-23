@@ -9,16 +9,6 @@ module OAuth2::Provider::ControllerAuthentication
     request.env['oauth2']
   end
 
-  def oauth_token_from_parameter
-    params[:oauth_token]
-  end
-
-  def oauth_token_from_header
-    if request.headers["HTTP_AUTHORIZATION"] =~ /OAuth (.*)/
-      $1
-    end
-  end
-
   def request_oauth_authentication(error = nil, status = 401)
     request.env['warden'] && request.env['warden'].custom_failure!
     response.headers["WWW-Authenticate"] = "OAuth realm='Application'"
@@ -30,17 +20,28 @@ module OAuth2::Provider::ControllerAuthentication
     def authenticate_with_oauth(options = {})
       scope = options.delete(:scope)
 
-      before_filter options do
-        if !oauth_token_from_parameter && !oauth_token_from_header
-          request_oauth_authentication
-        end
-      end
+      around_filter AuthenticationFilter.new(scope), options
 
       if scope
         before_filter options do
           unless oauth2.access_token.has_scope?(scope)
             request_oauth_authentication('insufficient_scope', status = 403)
           end
+        end
+      end
+    end
+
+    class AuthenticationFilter
+      def initialize(scope = nil)
+        @scope = scope
+      end
+
+      def filter(controller, &block)
+        oauth2 = controller.request.env['oauth2']
+        if oauth2.authenticated?
+          yield
+        else
+          oauth2.authentication_required!
         end
       end
     end

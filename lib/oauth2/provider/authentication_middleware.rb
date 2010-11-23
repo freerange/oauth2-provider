@@ -10,7 +10,12 @@ class OAuth2::Provider::AuthenticationMiddleware < Rack::Auth::AbstractHandler
     @env = env
     if request.token_from_header.nil? && request.token_from_param.nil?
       oauth2
-      @app.call(env)
+      result = @app.call(env)
+      if oauth2.authentication_required?
+        request_oauth_authentication
+      else
+        result
+      end
     elsif request.token_from_header && request.token_from_param
       bad_request
     elsif oauth2.access_token = OAuth2::Provider::AccessToken.find_by_access_token(request.token_from_header || request.token_from_param)
@@ -21,7 +26,7 @@ class OAuth2::Provider::AuthenticationMiddleware < Rack::Auth::AbstractHandler
           request_oauth_authentication 'invalid_token'
         end
       else
-        @app.call(env)
+        result = @app.call(env)
       end
     else
       request_oauth_authentication 'invalid_token'
