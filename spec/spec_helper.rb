@@ -11,6 +11,7 @@ module OAuth2
     config.root = File.dirname(__FILE__)
     paths.config.database = "database.yml"
     paths.log = File.expand_path("../../log/test.log", __FILE__)
+    config.secret_token = "something secret and very very long are you happy now are you?"
   end
 end
 

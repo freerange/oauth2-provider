@@ -6,29 +6,15 @@ module OAuth2::Provider::ControllerAuthentication
   private
 
   def oauth2
-    @oauth2 ||= OAuth2::Provider::Core.new
+    request.env['oauth2']
   end
 
   def authenticate_oauth_token
-    if oauth2.access_token = OAuth2::Provider::AccessToken.find_by_access_token(oauth_token_from_parameter || oauth_token_from_header)
-      if oauth2.access_token.expired?
-        if oauth2.access_token.refreshable?
-          request_oauth_authentication 'expired_token'
-        else
-          request_oauth_authentication 'invalid_token'
-        end
-      end
-    else
-      request_oauth_authentication 'invalid_token'
-    end
+
   end
 
   def block_bad_oauth_requests
-    if oauth_token_from_parameter && oauth_token_from_header
-      request_oauth_authentication('invalid_request', 400)
-    elsif !oauth_token_from_parameter && !oauth_token_from_header
-      request_oauth_authentication
-    end
+
   end
 
   def oauth_token_from_parameter
@@ -51,8 +37,29 @@ module OAuth2::Provider::ControllerAuthentication
   module ClassMethods
     def authenticate_with_oauth(options = {})
       scope = options.delete(:scope)
-      before_filter :block_bad_oauth_requests, options
-      before_filter :authenticate_oauth_token, options
+
+      before_filter options do
+        if oauth_token_from_parameter && oauth_token_from_header
+          request_oauth_authentication('invalid_request', 400)
+        elsif !oauth_token_from_parameter && !oauth_token_from_header
+          request_oauth_authentication
+        end
+      end
+
+      before_filter options do
+        if oauth2.access_token = OAuth2::Provider::AccessToken.find_by_access_token(oauth_token_from_parameter || oauth_token_from_header)
+          if oauth2.access_token.expired?
+            if oauth2.access_token.refreshable?
+              request_oauth_authentication 'expired_token'
+            else
+              request_oauth_authentication 'invalid_token'
+            end
+          end
+        else
+          request_oauth_authentication 'invalid_token'
+        end
+      end
+
       if scope
         before_filter options do
           unless oauth2.access_token.has_scope?(scope)

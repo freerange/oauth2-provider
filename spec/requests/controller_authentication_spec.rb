@@ -1,11 +1,22 @@
 require 'spec_helper'
 
-describe "A request for a protected resource" do
-  controller(ActionController::Base) do
-    authenticate_with_oauth
+class ExampleController < ActionController::Base
+  authenticate_with_oauth :only => :read
+  authenticate_with_oauth :scope => 'editor', :only => :edit
 
-    def new
-      render :text => "Current oauth scope: #{oauth2.access_token.scope}"
+  def read
+    render :text => "Success"
+  end
+
+  def edit
+    render :text => "Success"
+  end
+end
+
+describe "A request for a protected resource" do
+  before :all do
+    OAuth2::Application.routes.draw do
+      match "/read", :to => "example#read"
     end
   end
 
@@ -15,7 +26,7 @@ describe "A request for a protected resource" do
 
   describe "with no token passed" do
     before :each do
-      get :new
+      get "/read"
     end
 
     it "responds with status 401" do
@@ -29,7 +40,7 @@ describe "A request for a protected resource" do
 
   describe "with a token passed as an oauth_token parameter" do
     before :each do
-      get :new, :oauth_token => @token.access_token
+      get "/read", :oauth_token => @token.access_token
     end
 
     it "is successful" do
@@ -37,14 +48,13 @@ describe "A request for a protected resource" do
     end
 
     it "makes the access token available to the requested action" do
-      response.body.should == "Current oauth scope: read write"
+      response.body.should == "Success"
     end
   end
 
   describe "with a token passed in an Authorization header" do
     before :each do
-      request.env['HTTP_AUTHORIZATION'] = "OAuth #{@token.access_token}"
-      get :new
+      get "/read", {}, {"HTTP_AUTHORIZATION" => "OAuth #{@token.access_token}"}
     end
 
     it "is successful" do
@@ -52,14 +62,13 @@ describe "A request for a protected resource" do
     end
 
     it "makes the access token available to the requested action" do
-      response.body.should == "Current oauth scope: read write"
+      response.body.should == "Success"
     end
   end
 
   describe "with tokens passed in both the Authorization header and oauth_token parameter" do
     before :each do
-      request.env['HTTP_AUTHORIZATION'] = "OAuth #{@token.access_token}"
-      get :new, :oauth_token => @token.access_token
+      get "/read", {:oauth_token => @token.access_token}, {"HTTP_AUTHORIZATION" => "OAuth #{@token.access_token}"}
     end
 
     it "responds with status 400" do
@@ -72,16 +81,18 @@ describe "A request for a protected resource" do
   end
 
   describe "any failing request" do
-    it "neuters warden if warden is present" do
-      request.env['warden'] = stub(:warden)
-      request.env['warden'].should_receive(:custom_failure!)
-      get :new
+    pending do
+      it "neuters warden if warden is present" do
+        request.env['warden'] = stub(:warden)
+        request.env['warden'].should_receive(:custom_failure!)
+        get "/read"
+      end
     end
   end
 
   describe "with an invalid token" do
     before :each do
-      get :new, :oauth_token => 'invalid-token'
+      get "/read", :oauth_token => 'invalid-token'
     end
 
     it "responds with status 401" do
@@ -96,7 +107,7 @@ describe "A request for a protected resource" do
   describe "with an expired token that can be refreshed" do
     before :each do
       @token.update_attributes(:expires_at => 1.day.ago)
-      get :new, :oauth_token => @token.access_token
+      get "/read", :oauth_token => @token.access_token
     end
 
     it "responds with status 401" do
@@ -111,7 +122,7 @@ describe "A request for a protected resource" do
   describe "with an expired token that can't be refreshed" do
     before :each do
       @token.update_attributes(:expires_at => 1.day.ago, :refresh_token => nil)
-      get :new, :oauth_token => @token.access_token
+      get "/read", :oauth_token => @token.access_token
     end
 
     it "responds with status 401" do
@@ -125,11 +136,9 @@ describe "A request for a protected resource" do
 end
 
 describe "A request for a protected resource requiring a specific scope" do
-  controller(ActionController::Base) do
-    authenticate_with_oauth :scope => 'editor'
-
-    def new
-      render :text => "Current oauth scope: #{oauth2.access_token.scope}"
+  before :all do
+    OAuth2::Application.routes.draw do
+      match "/edit", :to => "example#edit"
     end
   end
 
@@ -140,7 +149,7 @@ describe "A request for a protected resource requiring a specific scope" do
 
   describe "made with a token with sufficient scope" do
     before :each do
-      get :new, :oauth_token => @token.access_token
+      get '/edit', :oauth_token => @token.access_token
     end
 
     it "is successful" do
@@ -150,7 +159,7 @@ describe "A request for a protected resource requiring a specific scope" do
 
   describe "made with a token with insufficient scope" do
     before :each do
-      get :new, :oauth_token => @insufficient_token.access_token
+      get '/edit', :oauth_token => @insufficient_token.access_token
     end
 
     it "responds with status 403" do
