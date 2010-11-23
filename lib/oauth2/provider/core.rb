@@ -12,4 +12,12 @@ class OAuth2::Provider::Core
   def authentication_required?
     @authentication_required
   end
+
+  def insufficient_scope!
+    @insufficient_scope = true
+  end
+
+  def insufficient_scope?
+    @insufficient_scope
+  end
 end

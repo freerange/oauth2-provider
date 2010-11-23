@@ -27,6 +27,11 @@ class OAuth2::Provider::AuthenticationMiddleware < Rack::Auth::AbstractHandler
         end
       else
         result = @app.call(env)
+        if oauth2.insufficient_scope?
+          forbidden
+        else
+          result
+        end
       end
     else
       request_oauth_authentication 'invalid_token'
@@ -45,6 +50,10 @@ class OAuth2::Provider::AuthenticationMiddleware < Rack::Auth::AbstractHandler
 
   def request
     request = Request.new(@env)
+  end
+
+  def forbidden
+    [403, {'Content-Type' => 'text/plain', 'Content-Length' => '0'}, []]
   end
 
   class Request < Rack::Request
