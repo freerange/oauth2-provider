@@ -36,20 +36,6 @@ module OAuth2::Provider::ControllerAuthentication
         end
       end
 
-      before_filter options do
-        if oauth2.access_token = OAuth2::Provider::AccessToken.find_by_access_token(oauth_token_from_parameter || oauth_token_from_header)
-          if oauth2.access_token.expired?
-            if oauth2.access_token.refreshable?
-              request_oauth_authentication 'expired_token'
-            else
-              request_oauth_authentication 'invalid_token'
-            end
-          end
-        else
-          request_oauth_authentication 'invalid_token'
-        end
-      end
-
       if scope
         before_filter options do
           unless oauth2.access_token.has_scope?(scope)
