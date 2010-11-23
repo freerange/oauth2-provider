@@ -14,8 +14,10 @@ module OAuth2::Provider::AuthorizationCodesSupport
   end
 
   def grant_authorization_code(account = nil)
-    authorization_code = @client.authorization_codes.create!(
-      :account => account,
+    access_grant = @client.access_grants.create!(
+      :account => account
+    )
+    authorization_code = access_grant.authorization_codes.create!(
       :redirect_uri => params[:redirect_uri]
     )
     redirect_to append_to_uri(params[:redirect_uri], :code => authorization_code.code)

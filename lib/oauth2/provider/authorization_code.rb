@@ -1,20 +1,15 @@
 class OAuth2::Provider::AuthorizationCode < ActiveRecord::Base
   include OAuth2::Provider::TokenExpiry
-  include OAuth2::Provider::TokenScope
 
-  belongs_to :client, :class_name => OAuth2::Provider.client_class_name
-  belongs_to :account
-
-  validates_presence_of :client, :code, :expires_at, :redirect_uri
+  belongs_to :access_grant, :class_name => "OAuth2::Provider::AccessGrant"
+  validates_presence_of :access_grant, :code, :expires_at, :redirect_uri
 
   def self.claim(code, redirect_uri)
     if authorization_code = find_by_code_and_redirect_uri(code, redirect_uri)
       unless authorization_code.expired?
         authorization_code.destroy
         OAuth2::Provider::AccessToken.create!(
-          :scope => authorization_code.scope,
-          :client => authorization_code.client,
-          :account => authorization_code.account
+          :access_grant => authorization_code.access_grant
         )
       end
     end

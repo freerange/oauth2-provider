@@ -55,6 +55,43 @@ module OAuth2::Provider::RSpecMacros
   end
 end
 
+module OAuth2::Provider::ModelFactories
+  def build_client(attributes = {})
+    OAuth2::Provider::Client.new(attributes)
+  end
+
+  def build_access_grant(attributes = {})
+    OAuth2::Provider::AccessGrant.new({
+      :client => build_client
+    }.merge(attributes))
+  end
+
+  def build_authorization_code(attributes = {})
+    OAuth2::Provider::AuthorizationCode.new({
+      :redirect_uri => "https://client.example.com/callback",
+      :access_grant => build_access_grant
+    }.merge(attributes))
+  end
+
+  def create_authorization_code(attributes = {})
+    build_authorization_code(attributes).tap do |ac|
+      ac.save!
+    end
+  end
+
+  def build_access_token(attributes = {})
+    OAuth2::Provider::AccessToken.new({
+      :access_grant => build_access_grant
+    }.merge(attributes))
+  end
+
+  def create_access_token(attributes = {})
+    build_access_token(attributes).tap do |ac|
+      ac.save!
+    end
+  end
+end
+
 RSpec.configure do |config|
   config.before :each do
     Timecop.freeze
@@ -65,4 +102,5 @@ RSpec.configure do |config|
   end
 
   config.include OAuth2::Provider::RSpecMacros
+  config.include OAuth2::Provider::ModelFactories
 end

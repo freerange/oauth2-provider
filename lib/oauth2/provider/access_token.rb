@@ -1,11 +1,10 @@
 class OAuth2::Provider::AccessToken < ActiveRecord::Base
   include OAuth2::Provider::TokenExpiry
-  include OAuth2::Provider::TokenScope
 
-  belongs_to :client, :class_name => OAuth2::Provider.client_class_name
-  belongs_to :account
+  belongs_to :access_grant, :class_name => "OAuth2::Provider::AccessGrant"
+  validates_presence_of :access_grant, :access_token, :expires_at
 
-  validates_presence_of :client, :access_token, :expires_at
+  delegate :scope, :has_scope?, :to => :access_grant
 
   def initialize(*args, &block)
     super
@@ -23,11 +22,7 @@ class OAuth2::Provider::AccessToken < ActiveRecord::Base
   def self.refresh_with(refresh_token)
     if token = find_by_refresh_token(refresh_token)
       if token.refreshable?
-        create!(
-          :client => token.client,
-          :account => token.account,
-          :scope => token.scope
-        )
+        create!(:access_grant => token.access_grant)
       end
     end
   end

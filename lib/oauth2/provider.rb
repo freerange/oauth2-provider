@@ -3,12 +3,12 @@ module OAuth2
     autoload :AuthorizationCode, 'oauth2/provider/authorization_code'
     autoload :AuthorizationCodesSupport, 'oauth2/provider/authorization_codes_support'
     autoload :AccessToken, 'oauth2/provider/access_token'
+    autoload :AccessGrant, 'oauth2/provider/access_grant'
     autoload :AccessTokensController, 'oauth2/provider/access_tokens_controller'
     autoload :Client, 'oauth2/provider/client'
     autoload :ControllerAuthentication, 'oauth2/provider/controller_authentication'
     autoload :Random, 'oauth2/provider/random'
     autoload :TokenExpiry, 'oauth2/provider/token_expiry'
-    autoload :TokenScope, 'oauth2/provider/token_scope'
 
     mattr_accessor :client_table_name
     self.client_table_name = 'oauth_clients'
@@ -18,6 +18,9 @@ module OAuth2
 
     mattr_accessor :authorization_code_table_name
     self.authorization_code_table_name = 'oauth_authorization_codes'
+
+    mattr_accessor :access_grant_table_name
+    self.access_grant_table_name = 'oauth_access_grants'
 
     mattr_accessor :client_class_name
     self.client_class_name = "OAuth2::Provider::Client"

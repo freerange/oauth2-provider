@@ -21,24 +21,26 @@ ActiveRecord::Schema.define(:version => 20110323171649) do
   end
 
   create_table 'oauth_authorization_codes', :force => true do |t|
-    t.integer  'client_id', :null => false
-    t.integer  'account_id'
+    t.integer  'access_grant_id', :null => false
     t.string   'code',      :null => false
     t.datetime 'expires_at'
     t.datetime 'created_at'
     t.datetime 'updated_at'
-    t.string   'scope'
     t.string   'redirect_uri'
   end
 
-  create_table 'oauth_access_tokens', :force => true do |t|
+  create_table 'oauth_access_grants', :force => true do |t|
     t.integer  'client_id', :null => false
     t.integer  'account_id'
+    t.string   'scope'
+  end
+
+  create_table 'oauth_access_tokens', :force => true do |t|
+    t.integer  'access_grant_id', :null => false
     t.string   'access_token', :null => false
     t.string   'refresh_token'
     t.datetime 'expires_at'
     t.datetime 'created_at'
     t.datetime 'updated_at'
-    t.string   'scope'
   end
 end

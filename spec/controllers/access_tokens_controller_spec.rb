@@ -11,12 +11,12 @@ end
 
 describe OAuth2::Provider::AccessTokensController do
   before :each do
-    @client = OAuth2::Provider::Client.create!
-    @code = OAuth2::Provider::AuthorizationCode.create! :client => @client, :redirect_uri => "https://client.example.com/callback"
+    @code = create_authorization_code
+    @client = @code.access_grant.client
     @valid_params = {
       :grant_type => 'authorization_code',
-      :client_id => @client.to_param,
-      :client_secret => @client.oauth_secret,
+      :client_id => @code.access_grant.client.oauth_identifier,
+      :client_secret => @code.access_grant.client.oauth_secret,
       :code => @code.code,
       :redirect_uri => @code.redirect_uri
     }
@@ -74,11 +74,11 @@ describe OAuth2::Provider::AccessTokensController do
     before :each do
       OAuth2::Provider.client_class_name = NotAllowedGrantTypeClient.name
       @client = NotAllowedGrantTypeClient.create!
-      @code = OAuth2::Provider::AuthorizationCode.create! :client => @client, :redirect_uri => "https://client.example.com/callback"
+      @code = create_authorization_code(:access_grant => build_access_grant(:client => @client))
       @valid_params = {
         :grant_type => 'authorization_code',
-        :client_id => @client.to_param,
-        :client_secret => @client.oauth_secret,
+        :client_id => @code.access_grant.client.oauth_identifier,
+        :client_secret => @code.access_grant.client.oauth_secret,
         :code => @code.code,
         :redirect_uri => @code.redirect_uri
       }
@@ -239,7 +239,8 @@ describe OAuth2::Provider::AccessTokensController do
 
   describe "A request using the refresh token grant type" do
     before :each do
-      @token = OAuth2::Provider::AccessToken.create! :client => @client, :expires_at => 1.week.ago
+      @token = create_access_token
+      @client = @token.access_grant.client
       @valid_params = {
         :grant_type => 'refresh_token',
         :refresh_token => @token.refresh_token,
@@ -300,7 +301,7 @@ describe OAuth2::Provider::AccessTokensController do
 
     describe "requests using authorization code grant type" do
       before :each do
-        @code = OAuth2::Provider::AuthorizationCode.create! :client => @client, :redirect_uri => "https://client.example.com/callback"
+        @code = create_authorization_code(:access_grant => build_access_grant(:client => @client))
         @valid_params = @client_params.merge(
           :grant_type => 'authorization_code',
           :code => @code.code,

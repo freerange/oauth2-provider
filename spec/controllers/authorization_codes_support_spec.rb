@@ -82,7 +82,7 @@ describe OAuth2::Provider::AuthorizationCodesSupport do
       code.should_not be_nil
       found = OAuth2::Provider::AuthorizationCode.find_by_code(code)
       found.should_not be_nil
-      found.client.should == @client
+      found.access_grant.client.should == @client
       found.should_not be_expired
     end
   end

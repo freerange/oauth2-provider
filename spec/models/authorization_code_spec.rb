@@ -4,12 +4,12 @@ describe OAuth2::Provider::AuthorizationCode do
   describe "any instance" do
     subject do
       OAuth2::Provider::AuthorizationCode.new(
-        :client => OAuth2::Provider::Client.new,
+        :access_grant => build_access_grant,
         :redirect_uri => "http://redirect.example.com/callback"
       )
     end
 
-    it "is valid with a client, expiry time, redirect uri and code" do
+    it "is valid with an access grant, expiry time, redirect uri and code" do
       subject.should be_valid
     end
 
@@ -23,8 +23,8 @@ describe OAuth2::Provider::AuthorizationCode do
       subject.should_not be_valid
     end
 
-    it "is invalid without a client" do
-      subject.client = nil
+    it "is invalid without an access grant" do
+      subject.access_grant = nil
       subject.should_not be_valid
     end
 
@@ -42,23 +42,10 @@ describe OAuth2::Provider::AuthorizationCode do
       subject.expires_at = Time.zone.now
       subject.should_not be_expired
     end
-
-    it "has a given scope, if scope string includes scope" do
-      subject.scope = "first second third"
-      subject.should have_scope("first")
-      subject.should have_scope("second")
-      subject.should have_scope("third")
-    end
-
-    it "doesn't have a given scope, if scope string doesn't scope" do
-      subject.scope = "first second third"
-      subject.should_not have_scope("fourth")
-    end
   end
 
   describe "a new instance" do
     subject do
-      Timecop.freeze
       OAuth2::Provider::AuthorizationCode.new
     end
 
@@ -76,7 +63,7 @@ describe OAuth2::Provider::AuthorizationCode do
   describe "a saved instance" do
     subject do
       OAuth2::Provider::AuthorizationCode.create!(
-        :client => OAuth2::Provider::Client.create!,
+        :access_grant => build_access_grant,
         :redirect_uri => "https://client.example.com/callback/here"
       )
     end
@@ -111,10 +98,8 @@ describe OAuth2::Provider::AuthorizationCode do
   describe "the access token returned when a code is claimed" do
     subject do
       @code = OAuth2::Provider::AuthorizationCode.create!(
-        :redirect_uri => "https://client.example.com/callback/here",
-        :client => OAuth2::Provider::Client.create!,
-        :account => Account.create!,
-        :scope => 'eat drink'
+        :access_grant => build_access_grant,
+        :redirect_uri => "https://client.example.com/callback/here"
       )
       OAuth2::Provider::AuthorizationCode.claim(@code.code, @code.redirect_uri)
     end
@@ -123,16 +108,8 @@ describe OAuth2::Provider::AuthorizationCode do
       subject.should_not be_new_record
     end
 
-    it "has same scope as claimed code" do
-      subject.scope.should == @code.scope
-    end
-
-    it "has same client as claimed code" do
-      subject.client.should == @code.client
-    end
-
-    it "has same resource owner as claimed code" do
-      subject.account.should == @code.account
+    it "has same access grant as claimed code" do
+      subject.access_grant.should == @code.access_grant
     end
   end
 end

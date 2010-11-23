@@ -10,7 +10,7 @@ describe "A request for a protected resource" do
   end
 
   before :each do
-    @token = OAuth2::Provider::AccessToken.create! :scope => "read write", :client => OAuth2::Provider::Client.create!
+    @token = create_access_token(:access_grant => build_access_grant(:scope => "read write"))
   end
 
   describe "with no token passed" do

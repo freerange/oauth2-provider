@@ -2,8 +2,9 @@ class OAuth2::Provider::Client < ActiveRecord::Base
   validates_presence_of :oauth_identifier, :oauth_secret
   validates_uniqueness_of :oauth_identifier
 
-  has_many :authorization_codes
-  has_many :access_tokens
+  has_many :access_grants
+  has_many :authorization_codes, :through => :access_grants
+  has_many :access_tokens, :through => :access_grants
 
   def self.from_param(identifier)
     self.find_by_oauth_identifier(identifier)

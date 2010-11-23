@@ -19,5 +19,6 @@ class OAuth2::Provider::Railtie < Rails::Railtie
     OAuth2::Provider::Client.set_table_name OAuth2::Provider.client_table_name
     OAuth2::Provider::AccessToken.set_table_name OAuth2::Provider.access_token_table_name
     OAuth2::Provider::AuthorizationCode.set_table_name OAuth2::Provider.authorization_code_table_name
+    OAuth2::Provider::AccessGrant.set_table_name OAuth2::Provider.access_grant_table_name
   end
 end
