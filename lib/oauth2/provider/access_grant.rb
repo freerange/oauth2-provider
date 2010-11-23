@@ -12,4 +12,10 @@ class OAuth2::Provider::AccessGrant < ActiveRecord::Base
   def has_scope?(s)
     scope && scope.split(" ").include?(s)
   end
+
+  def revoke
+    authorization_codes.destroy_all
+    access_tokens.destroy_all
+    destroy
+  end
 end

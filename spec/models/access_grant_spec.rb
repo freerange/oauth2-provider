@@ -44,4 +44,27 @@ describe OAuth2::Provider::AccessGrant do
       subject.should_not be_expired
     end
   end
+
+  describe "being revoked" do
+    subject do
+      OAuth2::Provider::AccessGrant.create! :client => build_client
+    end
+
+    it "destroys itself" do
+      subject.revoke
+      subject.should be_destroyed
+    end
+
+    it "destroys any related authorization codes" do
+      subject.authorization_codes.create! :redirect_uri => 'https://example.com'
+      subject.revoke
+      subject.authorization_codes.reload.should be_empty
+    end
+
+    it "destroys any related access tokens" do
+      subject.access_tokens.create!
+      subject.revoke
+      subject.access_tokens.reload.should be_empty
+    end
+  end
 end
