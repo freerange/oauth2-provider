@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(:version => 20110323171649) do
     t.integer  'client_id', :null => false
     t.integer  'account_id'
     t.string   'scope'
+    t.datetime 'expires_at'
   end
 
   create_table 'oauth_access_tokens', :force => true do |t|

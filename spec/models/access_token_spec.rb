@@ -29,6 +29,12 @@ describe OAuth2::Provider::AccessToken do
       subject.should_not be_valid
     end
 
+    it "is invalid if expires_at is later than the access_grant's value" do
+      subject.access_grant.expires_at = 1.minute.from_now
+      subject.expires_at = 10.minutes.from_now
+      subject.should_not be_valid
+    end
+
     it "returns time in seconds until expiry when expires_in called" do
       subject.expires_at = 60.minutes.from_now
       subject.expires_in.should == (60 * 60)
@@ -91,6 +97,12 @@ describe OAuth2::Provider::AccessToken do
       result.should_not be_nil
       result.expires_at.should == 1.month.from_now
       result.access_grant.should == subject.access_grant
+    end
+
+    it "returns token with expires_at set to access_grant.expires_at if validation would fail otherwise" do
+      subject.access_grant.update_attribute(:expires_at, 5.minutes.from_now)
+      result = OAuth2::Provider::AccessToken.refresh_with(subject.refresh_token)
+      result.expires_at.should == 5.minutes.from_now
     end
 
     it "returns nil if the provided token doesn't match" do

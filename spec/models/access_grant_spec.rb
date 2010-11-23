@@ -28,4 +28,20 @@ describe OAuth2::Provider::AccessGrant do
       subject.should_not have_scope("fourth")
     end
   end
+
+  describe "a new instance" do
+    subject do
+      OAuth2::Provider::AccessGrant.new
+    end
+
+    it "has no expiry time by default" do
+      subject.expires_at.should be_nil
+    end
+
+    it "is never expired" do
+      subject.should_not be_expired
+      Timecop.travel(100.years.from_now)
+      subject.should_not be_expired
+    end
+  end
 end
