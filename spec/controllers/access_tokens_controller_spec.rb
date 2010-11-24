@@ -48,7 +48,7 @@ describe OAuth2::Provider::AccessTokensController do
 
   describe "Any request with an unsupported grant_type" do
     before :each do
-      post :create, @valid_params.merge('grant_type' => 'unsupported')
+      post :create, @valid_params.merge(:grant_type => 'unsupported')
     end
 
     responds_with_json_error 'unsupported_grant_type', :status => 400
