@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe OAuth2::Provider::AuthorizationCode do
+describe OAuth2::Provider::Models::ActiveRecord::AuthorizationCode do
   describe "any instance" do
     subject do
-      OAuth2::Provider::AuthorizationCode.new(
+      OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.new(
         :access_grant => build_access_grant,
         :redirect_uri => "http://redirect.example.com/callback"
       )
@@ -46,13 +46,13 @@ describe OAuth2::Provider::AuthorizationCode do
 
   describe "a new instance" do
     subject do
-      OAuth2::Provider::AuthorizationCode.new
+      OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.new
     end
 
     it "is assigned a randomly generated code" do
       subject.code.should_not be_nil
-      OAuth2::Provider::AuthorizationCode.new.code.should_not be_nil
-      subject.code.should_not == OAuth2::Provider::AuthorizationCode.new.code
+      OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.new.code.should_not be_nil
+      subject.code.should_not == OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.new.code
     end
 
     it "expires in 10 minutes by default" do
@@ -62,46 +62,46 @@ describe OAuth2::Provider::AuthorizationCode do
 
   describe "a saved instance" do
     subject do
-      OAuth2::Provider::AuthorizationCode.create!(
+      OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.create!(
         :access_grant => build_access_grant,
         :redirect_uri => "https://client.example.com/callback/here"
       )
     end
 
     it "can be claimed with the correct code and redirect_uri" do
-      OAuth2::Provider::AuthorizationCode.claim(subject.code, subject.redirect_uri).should_not be_nil
+      OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.claim(subject.code, subject.redirect_uri).should_not be_nil
     end
 
     it "returns an access token when claimed" do
-      OAuth2::Provider::AuthorizationCode.claim(subject.code, subject.redirect_uri).should be_instance_of(OAuth2::Provider::AccessToken)
+      OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.claim(subject.code, subject.redirect_uri).should be_instance_of(OAuth2::Provider::Models::ActiveRecord::AccessToken)
     end
 
     it "can't be claimed twice" do
-      OAuth2::Provider::AuthorizationCode.claim(subject.code, subject.redirect_uri)
-      OAuth2::Provider::AuthorizationCode.claim(subject.code, subject.redirect_uri).should be_nil
+      OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.claim(subject.code, subject.redirect_uri)
+      OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.claim(subject.code, subject.redirect_uri).should be_nil
     end
 
     it "can't be claimed without a matching code" do
-      OAuth2::Provider::AuthorizationCode.claim("incorrectCode", subject.redirect_uri).should be_nil
+      OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.claim("incorrectCode", subject.redirect_uri).should be_nil
     end
 
     it "can't be claimed without a matching redirect_uri" do
-      OAuth2::Provider::AuthorizationCode.claim(subject.code, "https://wrong.example.com").should be_nil
+      OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.claim(subject.code, "https://wrong.example.com").should be_nil
     end
 
     it "can't be claimed once expired" do
       Timecop.travel subject.expires_at + 1.minute
-      OAuth2::Provider::AuthorizationCode.claim(subject.code, subject.redirect_uri).should be_nil
+      OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.claim(subject.code, subject.redirect_uri).should be_nil
     end
   end
 
   describe "the access token returned when a code is claimed" do
     subject do
-      @code = OAuth2::Provider::AuthorizationCode.create!(
+      @code = OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.create!(
         :access_grant => build_access_grant,
         :redirect_uri => "https://client.example.com/callback/here"
       )
-      OAuth2::Provider::AuthorizationCode.claim(@code.code, @code.redirect_uri)
+      OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.claim(@code.code, @code.redirect_uri)
     end
 
     it "is saved to the database" do

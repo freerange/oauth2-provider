@@ -1,4 +1,4 @@
-class OAuth2::Provider::AccessGrant < ActiveRecord::Base
+class OAuth2::Provider::Models::ActiveRecord::AccessGrant < ActiveRecord::Base
   include OAuth2::Provider::TokenExpiry
 
   validates_presence_of :client

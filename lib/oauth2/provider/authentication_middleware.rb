@@ -47,7 +47,7 @@ class OAuth2::Provider::AuthenticationMiddleware < Rack::Auth::AbstractHandler
     end
 
     def block_invalid_tokens
-      self.access_token = OAuth2::Provider::AccessToken.find_by_access_token(request.token)
+      self.access_token = OAuth2::Provider::Models::ActiveRecord::AccessToken.find_by_access_token(request.token)
       invalid_token(access_token) if access_token.nil? || access_token.expired?
     end
 

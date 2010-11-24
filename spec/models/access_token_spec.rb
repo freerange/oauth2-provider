@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe OAuth2::Provider::AccessToken do
+describe OAuth2::Provider::Models::ActiveRecord::AccessToken do
   describe "any instance" do
     subject do
-      OAuth2::Provider::AccessToken.new :access_grant => build_access_grant
+      OAuth2::Provider::Models::ActiveRecord::AccessToken.new :access_grant => build_access_grant
     end
 
     it "is valid with an access grant, expiry time and access token" do
@@ -67,19 +67,19 @@ describe OAuth2::Provider::AccessToken do
 
   describe "a new instance" do
     subject do
-      OAuth2::Provider::AccessToken.new
+      OAuth2::Provider::Models::ActiveRecord::AccessToken.new
     end
 
     it "is assigned a randomly generated access token" do
       subject.access_token.should_not be_nil
-      OAuth2::Provider::AccessToken.new.access_token.should_not be_nil
-      subject.access_token.should_not == OAuth2::Provider::AccessToken.new.access_token
+      OAuth2::Provider::Models::ActiveRecord::AccessToken.new.access_token.should_not be_nil
+      subject.access_token.should_not == OAuth2::Provider::Models::ActiveRecord::AccessToken.new.access_token
     end
 
     it "is assigned a randomly generated refresh token" do
       subject.refresh_token.should_not be_nil
-      OAuth2::Provider::AccessToken.new.refresh_token.should_not be_nil
-      subject.access_token.should_not == OAuth2::Provider::AccessToken.new.refresh_token
+      OAuth2::Provider::Models::ActiveRecord::AccessToken.new.refresh_token.should_not be_nil
+      subject.access_token.should_not == OAuth2::Provider::Models::ActiveRecord::AccessToken.new.refresh_token
     end
 
     it "expires in 1 month by default" do
@@ -89,11 +89,11 @@ describe OAuth2::Provider::AccessToken do
 
   describe "refreshing an existing token" do
     subject do
-      OAuth2::Provider::AccessToken.create! :access_grant => build_access_grant, :expires_at => 23.days.ago
+      OAuth2::Provider::Models::ActiveRecord::AccessToken.create! :access_grant => build_access_grant, :expires_at => 23.days.ago
     end
 
     it "returns a new access token with the same client, account and scope, but a new expiry time" do
-      result = OAuth2::Provider::AccessToken.refresh_with(subject.refresh_token)
+      result = OAuth2::Provider::Models::ActiveRecord::AccessToken.refresh_with(subject.refresh_token)
       result.should_not be_nil
       result.expires_at.should == 1.month.from_now
       result.access_grant.should == subject.access_grant
@@ -101,17 +101,17 @@ describe OAuth2::Provider::AccessToken do
 
     it "returns token with expires_at set to access_grant.expires_at if validation would fail otherwise" do
       subject.access_grant.update_attribute(:expires_at, 5.minutes.from_now)
-      result = OAuth2::Provider::AccessToken.refresh_with(subject.refresh_token)
+      result = OAuth2::Provider::Models::ActiveRecord::AccessToken.refresh_with(subject.refresh_token)
       result.expires_at.should == 5.minutes.from_now
     end
 
     it "returns nil if the provided token doesn't match" do
-      OAuth2::Provider::AccessToken.refresh_with('wrong').should be_nil
+      OAuth2::Provider::Models::ActiveRecord::AccessToken.refresh_with('wrong').should be_nil
     end
 
     it "returns nil if the existing refresh token is nil, whatever value is provided" do
       subject.update_attribute(:refresh_token, nil)
-      OAuth2::Provider::AccessToken.refresh_with(nil).should be_nil
+      OAuth2::Provider::Models::ActiveRecord::AccessToken.refresh_with(nil).should be_nil
     end
   end
 end

@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe OAuth2::Provider::Client do
+describe OAuth2::Provider::Models::ActiveRecord::Client do
   describe "any instance" do
     subject do
-      OAuth2::Provider::Client.new
+      OAuth2::Provider::Models::ActiveRecord::Client.new
     end
 
     it "is invalid without an oauth identifier" do
@@ -17,7 +17,7 @@ describe OAuth2::Provider::Client do
     end
 
     it "is invalid if oauth_identifier not unique" do
-      duplicate = OAuth2::Provider::Client.create!
+      duplicate = OAuth2::Provider::Models::ActiveRecord::Client.create!
       subject.oauth_identifier = duplicate.oauth_identifier
       subject.should_not be_valid
     end
@@ -30,19 +30,19 @@ describe OAuth2::Provider::Client do
 
   describe "a new instance" do
     subject do
-      OAuth2::Provider::Client.new
+      OAuth2::Provider::Models::ActiveRecord::Client.new
     end
 
     it "is assigned a randomly generated oauth identifier" do
       subject.oauth_identifier.should_not be_nil
-      OAuth2::Provider::Client.new.oauth_identifier.should_not be_nil
-      subject.oauth_identifier.should_not == OAuth2::Provider::Client.new.oauth_identifier
+      OAuth2::Provider::Models::ActiveRecord::Client.new.oauth_identifier.should_not be_nil
+      subject.oauth_identifier.should_not == OAuth2::Provider::Models::ActiveRecord::Client.new.oauth_identifier
     end
 
     it "is assigned a randomly generated oauth secret" do
       subject.oauth_secret.should_not be_nil
-      OAuth2::Provider::Client.new.oauth_secret.should_not be_nil
-      subject.oauth_secret.should_not == OAuth2::Provider::Client.new.oauth_secret
+      OAuth2::Provider::Models::ActiveRecord::Client.new.oauth_secret.should_not be_nil
+      subject.oauth_secret.should_not == OAuth2::Provider::Models::ActiveRecord::Client.new.oauth_secret
     end
 
     it "returns nil when to_param called" do
@@ -52,7 +52,7 @@ describe OAuth2::Provider::Client do
 
   describe "a saved instance" do
     subject do
-      OAuth2::Provider::Client.create!
+      OAuth2::Provider::Models::ActiveRecord::Client.create!
     end
 
     it "returns oauth_identifer when to_param called" do
@@ -60,7 +60,7 @@ describe OAuth2::Provider::Client do
     end
 
     it "is findable by calling from_param with its oauth_identifier" do
-      subject.should == OAuth2::Provider::Client.from_param(subject.oauth_identifier)
+      subject.should == OAuth2::Provider::Models::ActiveRecord::Client.from_param(subject.oauth_identifier)
     end
   end
 end

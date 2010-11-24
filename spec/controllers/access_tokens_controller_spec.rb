@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-class CustomClient < OAuth2::Provider::Client
+class CustomClient < OAuth2::Provider::Models::ActiveRecord::Client
 end
 
-class NotAllowedGrantTypeClient < OAuth2::Provider::Client
+class NotAllowedGrantTypeClient < OAuth2::Provider::Models::ActiveRecord::Client
   def allow_grant_type?(grant_type)
     false
   end
@@ -88,7 +88,7 @@ describe OAuth2::Provider::AccessTokensController do
     responds_with_json_error 'unauthorized_client', :status => 400
 
     after :each do
-      OAuth2::Provider.client_class_name = OAuth2::Provider::Client.name
+      OAuth2::Provider.client_class_name = OAuth2::Provider::Models::ActiveRecord::Client.name
     end
   end
 
@@ -99,7 +99,7 @@ describe OAuth2::Provider::AccessTokensController do
       end
 
       it "responds with claimed access token, refresh token and expiry time in JSON" do
-        token = OAuth2::Provider::AccessToken.find_by_access_token(json_from_response["access_token"])
+        token = OAuth2::Provider::Models::ActiveRecord::AccessToken.find_by_access_token(json_from_response["access_token"])
         token.should_not be_nil
         json_from_response["expires_in"].should == token.expires_in
         json_from_response["refresh_token"].should == token.refresh_token
@@ -110,7 +110,7 @@ describe OAuth2::Provider::AccessTokensController do
       end
 
       it "destroys the claimed code, so it can't be used a second time" do
-        OAuth2::Provider::AuthorizationCode.find_by_id(@code.id).should be_nil
+        OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.find_by_id(@code.id).should be_nil
       end
 
       it "doesn't include a state in the JSON response" do
@@ -179,7 +179,7 @@ describe OAuth2::Provider::AccessTokensController do
       end
 
       it "responds with access token, refresh token and expiry time in JSON" do
-        token = OAuth2::Provider::AccessToken.find_by_access_token(json_from_response["access_token"])
+        token = OAuth2::Provider::Models::ActiveRecord::AccessToken.find_by_access_token(json_from_response["access_token"])
         token.should_not be_nil
         json_from_response["expires_in"].should == token.expires_in
         json_from_response["refresh_token"].should == token.refresh_token
@@ -255,7 +255,7 @@ describe OAuth2::Provider::AccessTokensController do
       end
 
       it "responds with refreshed access token, refresh token and expiry time in JSON" do
-        token = OAuth2::Provider::AccessToken.find_by_access_token(json_from_response["access_token"])
+        token = OAuth2::Provider::Models::ActiveRecord::AccessToken.find_by_access_token(json_from_response["access_token"])
         token.should_not be_nil
         token.should_not == @token
         json_from_response["expires_in"].should == token.expires_in
@@ -265,7 +265,7 @@ describe OAuth2::Provider::AccessTokensController do
 
     describe "when the token belongs to a different client" do
       before :each do
-        @other_client = OAuth2::Provider::Client.create!
+        @other_client = OAuth2::Provider::Models::ActiveRecord::Client.create!
         post :create, @valid_params.merge(:client_id => @other_client.oauth_identifier, :client_secret => @other_client.oauth_secret)
       end
 
@@ -333,6 +333,6 @@ describe OAuth2::Provider::AccessTokensController do
   end
 
   after :each do
-    OAuth2::Provider.client_class_name = OAuth2::Provider::Client.name
+    OAuth2::Provider.client_class_name = OAuth2::Provider::Models::ActiveRecord::Client.name
   end
 end

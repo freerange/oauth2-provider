@@ -16,10 +16,10 @@ class OAuth2::Provider::Railtie < Rails::Railtie
   end
 
   initializer "oauth2_provider models" do |app|
-    OAuth2::Provider::Client.set_table_name OAuth2::Provider.client_table_name
-    OAuth2::Provider::AccessToken.set_table_name OAuth2::Provider.access_token_table_name
-    OAuth2::Provider::AuthorizationCode.set_table_name OAuth2::Provider.authorization_code_table_name
-    OAuth2::Provider::AccessGrant.set_table_name OAuth2::Provider.access_grant_table_name
+    OAuth2::Provider::Models::ActiveRecord::Client.set_table_name OAuth2::Provider.client_table_name
+    OAuth2::Provider::Models::ActiveRecord::AccessToken.set_table_name OAuth2::Provider.access_token_table_name
+    OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.set_table_name OAuth2::Provider.authorization_code_table_name
+    OAuth2::Provider::Models::ActiveRecord::AccessGrant.set_table_name OAuth2::Provider.access_grant_table_name
   end
 
   initializer "middleware ho!" do |app|

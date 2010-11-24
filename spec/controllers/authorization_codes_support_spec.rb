@@ -22,7 +22,7 @@ describe OAuth2::Provider::AuthorizationCodesSupport do
   end
 
   before :each do
-    @client = OAuth2::Provider::Client.create!
+    @client = OAuth2::Provider::Models::ActiveRecord::Client.create!
     @valid_params = {
       :client_id => @client.oauth_identifier,
       :redirect_uri => "https://redirect.example.com/callback"
@@ -80,7 +80,7 @@ describe OAuth2::Provider::AuthorizationCodesSupport do
       response.status.should == 302
       code = Addressable::URI.parse(response.location).query_values["code"]
       code.should_not be_nil
-      found = OAuth2::Provider::AuthorizationCode.find_by_code(code)
+      found = OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.find_by_code(code)
       found.should_not be_nil
       found.access_grant.client.should == @client
       found.should_not be_expired

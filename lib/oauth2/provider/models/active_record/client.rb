@@ -1,4 +1,4 @@
-class OAuth2::Provider::Client < ActiveRecord::Base
+class OAuth2::Provider::Models::ActiveRecord::Client < ActiveRecord::Base
   validates_presence_of :oauth_identifier, :oauth_secret
   validates_uniqueness_of :oauth_identifier
 

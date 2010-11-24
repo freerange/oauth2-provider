@@ -58,17 +58,17 @@ end
 
 module OAuth2::Provider::ModelFactories
   def build_client(attributes = {})
-    OAuth2::Provider::Client.new(attributes)
+    OAuth2::Provider::Models::ActiveRecord::Client.new(attributes)
   end
 
   def build_access_grant(attributes = {})
-    OAuth2::Provider::AccessGrant.new({
+    OAuth2::Provider::Models::ActiveRecord::AccessGrant.new({
       :client => build_client
     }.merge(attributes))
   end
 
   def build_authorization_code(attributes = {})
-    OAuth2::Provider::AuthorizationCode.new({
+    OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.new({
       :redirect_uri => "https://client.example.com/callback",
       :access_grant => build_access_grant
     }.merge(attributes))
@@ -81,7 +81,7 @@ module OAuth2::Provider::ModelFactories
   end
 
   def build_access_token(attributes = {})
-    OAuth2::Provider::AccessToken.new({
+    OAuth2::Provider::Models::ActiveRecord::AccessToken.new({
       :access_grant => build_access_grant
     }.merge(attributes))
   end

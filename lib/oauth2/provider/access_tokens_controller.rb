@@ -21,8 +21,8 @@ class OAuth2::Provider::AccessTokensController < ApplicationController
   def handle_password_grant_type
     with_required_params :username, :password do |username, password|
       if account = OAuth2::Provider.end_user_class.authenticate_with_username_and_password(username, password)
-        render_token OAuth2::Provider::AccessToken.create!(
-          :access_grant => OAuth2::Provider::AccessGrant.new(:account => account, :client => oauth_client)
+        render_token OAuth2::Provider::Models::ActiveRecord::AccessToken.create!(
+          :access_grant => OAuth2::Provider::Models::ActiveRecord::AccessGrant.new(:account => account, :client => oauth_client)
         )
       else
         render_json_error 'invalid_grant'

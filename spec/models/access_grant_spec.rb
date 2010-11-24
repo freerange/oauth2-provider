@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe OAuth2::Provider::AccessGrant do
+describe OAuth2::Provider::Models::ActiveRecord::AccessGrant do
   describe "any instance" do
     subject do
-      OAuth2::Provider::AccessGrant.new :client => build_client
+      OAuth2::Provider::Models::ActiveRecord::AccessGrant.new :client => build_client
     end
 
     it "is valid with a client" do
@@ -31,7 +31,7 @@ describe OAuth2::Provider::AccessGrant do
 
   describe "a new instance" do
     subject do
-      OAuth2::Provider::AccessGrant.new
+      OAuth2::Provider::Models::ActiveRecord::AccessGrant.new
     end
 
     it "has no expiry time by default" do
@@ -47,7 +47,7 @@ describe OAuth2::Provider::AccessGrant do
 
   describe "being revoked" do
     subject do
-      OAuth2::Provider::AccessGrant.create! :client => build_client
+      OAuth2::Provider::Models::ActiveRecord::AccessGrant.create! :client => build_client
     end
 
     it "destroys itself" do

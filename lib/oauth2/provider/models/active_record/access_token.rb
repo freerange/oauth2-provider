@@ -1,7 +1,7 @@
-class OAuth2::Provider::AccessToken < ActiveRecord::Base
+class OAuth2::Provider::Models::ActiveRecord::AccessToken < ActiveRecord::Base
   include OAuth2::Provider::TokenExpiry
 
-  belongs_to :access_grant, :class_name => "OAuth2::Provider::AccessGrant"
+  belongs_to :access_grant, :class_name => "OAuth2::Provider::Models::ActiveRecord::AccessGrant"
   validates_presence_of :access_grant, :access_token, :expires_at
   validate :expires_at_isnt_greater_than_access_grant
 
