@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe OAuth2::Provider::Models::ActiveRecord::AccessGrant do
+describe OAuth2::Provider.access_grant_class do
   describe "any instance" do
     subject do
-      OAuth2::Provider::Models::ActiveRecord::AccessGrant.new :client => build_client
+      result = OAuth2::Provider.access_grant_class.new :client => create_client
     end
 
     it "is valid with a client" do
@@ -31,7 +31,7 @@ describe OAuth2::Provider::Models::ActiveRecord::AccessGrant do
 
   describe "a new instance" do
     subject do
-      OAuth2::Provider::Models::ActiveRecord::AccessGrant.new
+      OAuth2::Provider.access_grant_class.new
     end
 
     it "has no expiry time by default" do
@@ -47,7 +47,7 @@ describe OAuth2::Provider::Models::ActiveRecord::AccessGrant do
 
   describe "being revoked" do
     subject do
-      OAuth2::Provider::Models::ActiveRecord::AccessGrant.create! :client => build_client
+      OAuth2::Provider.access_grant_class.create! :client => create_client
     end
 
     it "destroys itself" do
@@ -58,13 +58,13 @@ describe OAuth2::Provider::Models::ActiveRecord::AccessGrant do
     it "destroys any related authorization codes" do
       subject.authorization_codes.create! :redirect_uri => 'https://example.com'
       subject.revoke
-      subject.authorization_codes.reload.should be_empty
+      subject.authorization_codes.should be_empty
     end
 
     it "destroys any related access tokens" do
       subject.access_tokens.create!
       subject.revoke
-      subject.access_tokens.reload.should be_empty
+      subject.access_tokens.should be_empty
     end
   end
 end

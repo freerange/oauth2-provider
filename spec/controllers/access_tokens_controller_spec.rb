@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-class CustomClient < OAuth2::Provider::Models::ActiveRecord::Client
+class CustomClient < OAuth2::Provider.client_class
 end
 
-class NotAllowedGrantTypeClient < OAuth2::Provider::Models::ActiveRecord::Client
+class NotAllowedGrantTypeClient < OAuth2::Provider.client_class
   def allow_grant_type?(grant_type)
     false
   end
@@ -72,9 +72,10 @@ describe OAuth2::Provider::AccessTokensController do
 
   describe "Any request where the client isn't allowed to use the requested grant type" do
     before :each do
+      @original_client_class_name = OAuth2::Provider.client_class_name
       OAuth2::Provider.client_class_name = NotAllowedGrantTypeClient.name
       @client = NotAllowedGrantTypeClient.create!
-      @code = create_authorization_code(:access_grant => build_access_grant(:client => @client))
+      @code = create_authorization_code(:access_grant => create_access_grant(:client => @client))
       @valid_params = {
         :grant_type => 'authorization_code',
         :client_id => @code.access_grant.client.oauth_identifier,
@@ -85,11 +86,11 @@ describe OAuth2::Provider::AccessTokensController do
       post :create, @valid_params
     end
 
-    responds_with_json_error 'unauthorized_client', :status => 400
-
     after :each do
-      OAuth2::Provider.client_class_name = OAuth2::Provider::Models::ActiveRecord::Client.name
+      OAuth2::Provider.client_class_name = @original_client_class_name
     end
+
+    responds_with_json_error 'unauthorized_client', :status => 400
   end
 
   describe "A request using the authorization_code grant type" do
@@ -99,7 +100,7 @@ describe OAuth2::Provider::AccessTokensController do
       end
 
       it "responds with claimed access token, refresh token and expiry time in JSON" do
-        token = OAuth2::Provider::Models::ActiveRecord::AccessToken.find_by_access_token(json_from_response["access_token"])
+        token = OAuth2::Provider.access_token_class.find_by_access_token(json_from_response["access_token"])
         token.should_not be_nil
         json_from_response["expires_in"].should == token.expires_in
         json_from_response["refresh_token"].should == token.refresh_token
@@ -110,7 +111,7 @@ describe OAuth2::Provider::AccessTokensController do
       end
 
       it "destroys the claimed code, so it can't be used a second time" do
-        OAuth2::Provider::Models::ActiveRecord::AuthorizationCode.find_by_id(@code.id).should be_nil
+        OAuth2::Provider.authorization_code_class.find_by_id(@code.id).should be_nil
       end
 
       it "doesn't include a state in the JSON response" do
@@ -179,7 +180,7 @@ describe OAuth2::Provider::AccessTokensController do
       end
 
       it "responds with access token, refresh token and expiry time in JSON" do
-        token = OAuth2::Provider::Models::ActiveRecord::AccessToken.find_by_access_token(json_from_response["access_token"])
+        token = OAuth2::Provider.access_token_class.find_by_access_token(json_from_response["access_token"])
         token.should_not be_nil
         json_from_response["expires_in"].should == token.expires_in
         json_from_response["refresh_token"].should == token.refresh_token
@@ -240,11 +241,12 @@ describe OAuth2::Provider::AccessTokensController do
   describe "A request using the refresh token grant type" do
     before :each do
       @token = create_access_token
+
       @client = @token.access_grant.client
       @valid_params = {
         :grant_type => 'refresh_token',
         :refresh_token => @token.refresh_token,
-        :client_id => @client.to_param,
+        :client_id => @client.oauth_identifier,
         :client_secret => @client.oauth_secret
       }
     end
@@ -255,7 +257,7 @@ describe OAuth2::Provider::AccessTokensController do
       end
 
       it "responds with refreshed access token, refresh token and expiry time in JSON" do
-        token = OAuth2::Provider::Models::ActiveRecord::AccessToken.find_by_access_token(json_from_response["access_token"])
+        token = OAuth2::Provider.access_token_class.find_by_access_token(json_from_response["access_token"])
         token.should_not be_nil
         token.should_not == @token
         json_from_response["expires_in"].should == token.expires_in
@@ -265,7 +267,7 @@ describe OAuth2::Provider::AccessTokensController do
 
     describe "when the token belongs to a different client" do
       before :each do
-        @other_client = OAuth2::Provider::Models::ActiveRecord::Client.create!
+        @other_client = OAuth2::Provider.client_class.create!
         post :create, @valid_params.merge(:client_id => @other_client.oauth_identifier, :client_secret => @other_client.oauth_secret)
       end
 
@@ -291,6 +293,7 @@ describe OAuth2::Provider::AccessTokensController do
 
   describe "When using a custom client class" do
     before :each do
+      @original_client_class_name = OAuth2::Provider.client_class_name
       OAuth2::Provider.client_class_name = "CustomClient"
       @client = CustomClient.create!
       @client_params = {
@@ -299,9 +302,13 @@ describe OAuth2::Provider::AccessTokensController do
       }
     end
 
+    after :each do
+      OAuth2::Provider.client_class_name = @original_client_class_name
+    end
+
     describe "requests using authorization code grant type" do
       before :each do
-        @code = create_authorization_code(:access_grant => build_access_grant(:client => @client))
+        @code = create_authorization_code(:access_grant => create_access_grant(:client => @client))
         @valid_params = @client_params.merge(
           :grant_type => 'authorization_code',
           :code => @code.code,
@@ -316,23 +323,19 @@ describe OAuth2::Provider::AccessTokensController do
     end
 
     describe "requests using password grant type" do
-       before :each do
-         @account = Account.create!(:username => 'name', :password => 'password')
-         @valid_params = @client_params.merge(
-           :grant_type => 'password',
-           :username => @account.username,
-           :password => @account.password
-         )
-         post :create, @valid_params
-       end
+      before :each do
+        @account = Account.create!(:username => 'name', :password => 'password')
+        @valid_params = @client_params.merge(
+          :grant_type => 'password',
+          :username => @account.username,
+          :password => @account.password
+        )
+        post :create, @valid_params
+      end
 
-       it "are still successful" do
-         response.should be_successful
-       end
-     end
-  end
-
-  after :each do
-    OAuth2::Provider.client_class_name = OAuth2::Provider::Models::ActiveRecord::Client.name
+      it "are still successful" do
+        response.should be_successful
+      end
+    end
   end
 end

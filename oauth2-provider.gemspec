@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Ward"]
-  s.date = %q{2010-11-23}
+  s.date = %q{2010-11-24}
   s.email = %q{tom@popdog.net}
   s.extra_rdoc_files = [
     "README"
@@ -19,24 +19,34 @@ Gem::Specification.new do |s|
      "Rakefile",
      "lib/oauth2-provider.rb",
      "lib/oauth2/provider.rb",
-     "lib/oauth2/provider/access_token.rb",
      "lib/oauth2/provider/access_tokens_controller.rb",
-     "lib/oauth2/provider/authorization_code.rb",
+     "lib/oauth2/provider/authentication_middleware.rb",
      "lib/oauth2/provider/authorization_codes_support.rb",
-     "lib/oauth2/provider/client.rb",
      "lib/oauth2/provider/controller_authentication.rb",
+     "lib/oauth2/provider/mediator.rb",
+     "lib/oauth2/provider/models.rb",
+     "lib/oauth2/provider/models/active_record.rb",
+     "lib/oauth2/provider/models/active_record/access_grant.rb",
+     "lib/oauth2/provider/models/active_record/access_token.rb",
+     "lib/oauth2/provider/models/active_record/authorization_code.rb",
+     "lib/oauth2/provider/models/active_record/client.rb",
+     "lib/oauth2/provider/models/shared.rb",
+     "lib/oauth2/provider/models/shared/access_grant.rb",
+     "lib/oauth2/provider/models/shared/access_token.rb",
+     "lib/oauth2/provider/models/shared/authorization_code.rb",
+     "lib/oauth2/provider/models/shared/client.rb",
      "lib/oauth2/provider/railtie.rb",
      "lib/oauth2/provider/random.rb",
      "lib/oauth2/provider/token_expiry.rb",
-     "lib/oauth2/provider/token_scope.rb",
      "oauth2-provider.gemspec",
      "spec/controllers/access_tokens_controller_spec.rb",
      "spec/controllers/authorization_codes_support_spec.rb",
-     "spec/controllers/controller_authentication_spec.rb",
      "spec/database.yml",
+     "spec/models/access_grant_spec.rb",
      "spec/models/access_token_spec.rb",
      "spec/models/authorization_code_spec.rb",
      "spec/models/client_spec.rb",
+     "spec/requests/controller_authentication_spec.rb",
      "spec/schema.rb",
      "spec/spec_helper.rb"
   ]
@@ -58,6 +68,8 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<sqlite3-ruby>, ["~> 1.3.1"])
       s.add_development_dependency(%q<timecop>, ["~> 0.3.4"])
       s.add_development_dependency(%q<yajl-ruby>, ["~> 0.7.5"])
+      s.add_development_dependency(%q<mongoid>, ["= 2.0.0.beta.20"])
+      s.add_development_dependency(%q<bson_ext>, [">= 0"])
     else
       s.add_dependency(%q<rails>, ["~> 3.0.1"])
       s.add_dependency(%q<addressable>, ["~> 2.2"])
@@ -66,6 +78,8 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<sqlite3-ruby>, ["~> 1.3.1"])
       s.add_dependency(%q<timecop>, ["~> 0.3.4"])
       s.add_dependency(%q<yajl-ruby>, ["~> 0.7.5"])
+      s.add_dependency(%q<mongoid>, ["= 2.0.0.beta.20"])
+      s.add_dependency(%q<bson_ext>, [">= 0"])
     end
   else
     s.add_dependency(%q<rails>, ["~> 3.0.1"])
@@ -75,5 +89,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<sqlite3-ruby>, ["~> 1.3.1"])
     s.add_dependency(%q<timecop>, ["~> 0.3.4"])
     s.add_dependency(%q<yajl-ruby>, ["~> 0.7.5"])
+    s.add_dependency(%q<mongoid>, ["= 2.0.0.beta.20"])
+    s.add_dependency(%q<bson_ext>, [">= 0"])
   end
 end

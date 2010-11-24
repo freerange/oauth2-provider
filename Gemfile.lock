@@ -37,6 +37,8 @@ GEM
     activesupport (3.0.3)
     addressable (2.2.2)
     arel (2.0.3)
+    bson (1.1.2)
+    bson_ext (1.1.2)
     builder (2.1.2)
     diff-lcs (1.1.2)
     erubis (2.6.6)
@@ -48,6 +50,13 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.16)
+    mongo (1.1.2)
+      bson (>= 1.1.1)
+    mongoid (2.0.0.beta.20)
+      activemodel (~> 3.0)
+      mongo (~> 1.1)
+      tzinfo (~> 0.3.22)
+      will_paginate (~> 3.0.pre)
     polyglot (0.3.1)
     rack (1.2.1)
     rack-mount (0.6.13)
@@ -84,6 +93,7 @@ GEM
     treetop (1.4.9)
       polyglot (>= 0.3.1)
     tzinfo (0.3.23)
+    will_paginate (3.0.pre2)
     yajl-ruby (0.7.8)
 
 PLATFORMS
@@ -91,6 +101,8 @@ PLATFORMS
 
 DEPENDENCIES
   addressable (~> 2.2)
+  bson_ext
+  mongoid (= 2.0.0.beta.20)
   oauth2-provider!
   rails (~> 3.0.1)
   rake (~> 0.8.7)

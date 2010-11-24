@@ -30,7 +30,7 @@ module OAuth2::Provider::Models::Shared::AccessToken
   private
 
   def expires_at_isnt_greater_than_access_grant
-    if access_grant && access_grant.expires_at
+    if !access_grant.nil? && access_grant.expires_at
       unless expires_at.nil? || expires_at <= access_grant.expires_at
         errors.add(:expires_at, :must_be_less_than_access_grant)
       end

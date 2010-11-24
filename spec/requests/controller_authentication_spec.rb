@@ -21,7 +21,7 @@ describe "A request for a protected resource" do
   end
 
   before :each do
-    @token = create_access_token(:access_grant => build_access_grant(:scope => "read write"))
+    @token = create_access_token(:access_grant => create_access_grant(:scope => "read write"))
   end
 
   describe "with no token passed" do
@@ -135,8 +135,8 @@ describe "A request for a protected resource requiring a specific scope" do
   end
 
   before :each do
-    @token = create_access_token(:access_grant => build_access_grant(:scope => "reader editor admin"))
-    @insufficient_token = create_access_token(:access_grant => build_access_grant(:scope => "reader admin"))
+    @token = create_access_token(:access_grant => create_access_grant(:scope => "reader editor admin"))
+    @insufficient_token = create_access_token(:access_grant => create_access_grant(:scope => "reader admin"))
   end
 
   describe "made with a token with sufficient scope" do

@@ -8,13 +8,14 @@ module OAuth2::Provider::AuthorizationCodesSupport
       render :text => 'Client Not Found', :status => :not_found and return
     end
 
-    unless @client = OAuth2::Provider::Models::ActiveRecord::Client.from_param(params[:client_id])
+    unless @client = OAuth2::Provider.client_class.from_param(params[:client_id])
       render :text => 'Client Not Found', :status => :not_found and return
     end
   end
 
   def grant_authorization_code(account = nil)
     access_grant = @client.access_grants.create!(
+      :client => @client,
       :account => account
     )
     authorization_code = access_grant.authorization_codes.create!(

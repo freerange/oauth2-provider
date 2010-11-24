@@ -9,6 +9,9 @@ module OAuth2
     autoload :Random, 'oauth2/provider/random'
     autoload :TokenExpiry, 'oauth2/provider/token_expiry'
 
+    mattr_accessor :backend
+    self.backend = :active_record
+
     mattr_accessor :client_table_name
     self.client_table_name = 'oauth_clients'
 
@@ -21,11 +24,24 @@ module OAuth2
     mattr_accessor :access_grant_table_name
     self.access_grant_table_name = 'oauth_access_grants'
 
+    mattr_accessor :access_grant_class_name
+    self.access_grant_class_name = 'OAuth2::Provider::Models::ActiveRecord::AccessGrant'
+
+    mattr_accessor :access_token_class_name
+    self.access_token_class_name = 'OAuth2::Provider::Models::ActiveRecord::AccessToken'
+
+    mattr_accessor :authorization_code_class_name
+    self.authorization_code_class_name = 'OAuth2::Provider::Models::ActiveRecord::AuthorizationCode'
+
     mattr_accessor :client_class_name
     self.client_class_name = 'OAuth2::Provider::Models::ActiveRecord::Client'
 
-    def self.client_class
-      client_class_name.constantize
+    [:client, :access_grant, :access_token, :authorization_code].each do |model|
+      instance_eval %{
+        def #{model}_class
+          #{model}_class_name.constantize
+        end
+      }
     end
 
     mattr_accessor :end_user_class_name
