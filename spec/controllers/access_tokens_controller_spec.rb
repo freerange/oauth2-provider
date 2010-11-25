@@ -10,6 +10,12 @@ class NotAllowedGrantTypeClient < OAuth2::Provider.client_class
 end
 
 describe OAuth2::Provider::AccessTokensController do
+  before :all do
+    OAuth2::Application.routes.draw do
+      match "/oauth/access_token", :to => 'o_auth2/provider/access_tokens#create'
+    end
+  end
+
   before :each do
     @code = create_authorization_code
     @client = @code.access_grant.client

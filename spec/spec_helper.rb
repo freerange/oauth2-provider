@@ -53,11 +53,6 @@ end
 class ApplicationController < ActionController::Base
 end
 
-OAuth2::Application.routes.draw do
-  match "/oauth/authorize", :to => 'client_app/authorization_codes#new'
-  match "/oauth/access_token", :to => 'o_auth2/provider/access_tokens#create'
-end
-
 @settings = YAML.load(ERB.new(File.new(File.expand_path("../mongoid.yml", __FILE__)).read).result)
 Mongoid.configure do |config|
   config.from_hash(@settings["test"])
