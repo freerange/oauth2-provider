@@ -1,6 +1,7 @@
 module OAuth2
   module Provider
     autoload :AuthenticationMiddleware, 'oauth2/provider/authentication_middleware'
+    autoload :AccessTokenMiddleware, 'oauth2/provider/access_token_middleware'
     autoload :AuthorizationCodesSupport, 'oauth2/provider/authorization_codes_support'
     autoload :AccessTokensController, 'oauth2/provider/access_tokens_controller'
     autoload :Mediator, 'oauth2/provider/mediator'
