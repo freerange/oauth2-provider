@@ -12,29 +12,10 @@ module OAuth2
     mattr_accessor :backend
     self.backend = :active_record
 
-    mattr_accessor :client_table_name
-    self.client_table_name = 'oauth_clients'
-
-    mattr_accessor :access_token_table_name
-    self.access_token_table_name = 'oauth_access_tokens'
-
-    mattr_accessor :authorization_code_table_name
-    self.authorization_code_table_name = 'oauth_authorization_codes'
-
-    mattr_accessor :access_grant_table_name
-    self.access_grant_table_name = 'oauth_access_grants'
-
     mattr_accessor :access_grant_class_name
-    self.access_grant_class_name = 'OAuth2::Provider::Models::ActiveRecord::AccessGrant'
-
     mattr_accessor :access_token_class_name
-    self.access_token_class_name = 'OAuth2::Provider::Models::ActiveRecord::AccessToken'
-
     mattr_accessor :authorization_code_class_name
-    self.authorization_code_class_name = 'OAuth2::Provider::Models::ActiveRecord::AuthorizationCode'
-
     mattr_accessor :client_class_name
-    self.client_class_name = 'OAuth2::Provider::Models::ActiveRecord::Client'
 
     [:client, :access_grant, :access_token, :authorization_code].each do |model|
       instance_eval %{
