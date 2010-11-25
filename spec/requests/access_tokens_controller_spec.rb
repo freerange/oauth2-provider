@@ -30,7 +30,7 @@ describe OAuth2::Provider::AccessTokensController do
 
   describe "Any request without a client_id parameter" do
     before :each do
-      post :create, @valid_params.except(:client_id)
+      post "/oauth/access_token", @valid_params.except(:client_id)
     end
 
     responds_with_json_error 'invalid_request', :status => 400
@@ -38,7 +38,7 @@ describe OAuth2::Provider::AccessTokensController do
 
   describe "Any request without a client_secret parameter" do
     before :each do
-      post :create, @valid_params.except(:client_secret)
+      post "/oauth/access_token", @valid_params.except(:client_secret)
     end
 
     responds_with_json_error 'invalid_request', :status => 400
@@ -46,7 +46,7 @@ describe OAuth2::Provider::AccessTokensController do
 
   describe "Any request without a grant_type parameter" do
     before :each do
-      post :create, @valid_params.except(:grant_type)
+      post "/oauth/access_token", @valid_params.except(:grant_type)
     end
 
     responds_with_json_error 'invalid_request', :status => 400
@@ -54,7 +54,7 @@ describe OAuth2::Provider::AccessTokensController do
 
   describe "Any request with an unsupported grant_type" do
     before :each do
-      post :create, @valid_params.merge(:grant_type => 'unsupported')
+      post "/oauth/access_token", @valid_params.merge(:grant_type => 'unsupported')
     end
 
     responds_with_json_error 'unsupported_grant_type', :status => 400
@@ -62,7 +62,7 @@ describe OAuth2::Provider::AccessTokensController do
 
   describe "Any request where the client_id is unknown" do
     before :each do
-      post :create, @valid_params.merge(:client_id => 'unknown')
+      post "/oauth/access_token", @valid_params.merge(:client_id => 'unknown')
     end
 
     responds_with_json_error 'invalid_client', :status => 400
@@ -70,7 +70,7 @@ describe OAuth2::Provider::AccessTokensController do
 
   describe "Any request where the client_secret is wrong" do
     before :each do
-      post :create, @valid_params.merge(:client_secret => 'wrongvalue')
+      post "/oauth/access_token", @valid_params.merge(:client_secret => 'wrongvalue')
     end
 
     responds_with_json_error 'invalid_client', :status => 400
@@ -89,7 +89,7 @@ describe OAuth2::Provider::AccessTokensController do
         :code => @code.code,
         :redirect_uri => @code.redirect_uri
       }
-      post :create, @valid_params
+      post "/oauth/access_token", @valid_params
     end
 
     after :each do
@@ -102,7 +102,7 @@ describe OAuth2::Provider::AccessTokensController do
   describe "A request using the authorization_code grant type" do
     describe "with valid client, code and redirect_uri" do
       before :each do
-        post :create, @valid_params
+        post "/oauth/access_token", @valid_params
       end
 
       it "responds with claimed access token, refresh token and expiry time in JSON" do
@@ -127,7 +127,7 @@ describe OAuth2::Provider::AccessTokensController do
 
     describe "with valid client, code and redirect_uri and an additional state parameter" do
       before :each do
-        post :create, @valid_params.merge(:state => 'some-state-goes-here')
+        post "/oauth/access_token", @valid_params.merge(:state => 'some-state-goes-here')
       end
 
       it "includes the state in the JSON response" do
@@ -137,7 +137,7 @@ describe OAuth2::Provider::AccessTokensController do
 
     describe "with an unknown code" do
       before :each do
-        post :create, @valid_params.merge(:code => 'unknown')
+        post "/oauth/access_token", @valid_params.merge(:code => 'unknown')
       end
 
       responds_with_json_error 'invalid_grant', :status => 400
@@ -145,7 +145,7 @@ describe OAuth2::Provider::AccessTokensController do
 
     describe "with an incorrect redirect uri" do
       before :each do
-        post :create, @valid_params.merge(:redirect_uri => 'https://wrong.example.com')
+        post "/oauth/access_token", @valid_params.merge(:redirect_uri => 'https://wrong.example.com')
       end
 
       responds_with_json_error 'invalid_grant', :status => 400
@@ -153,7 +153,7 @@ describe OAuth2::Provider::AccessTokensController do
 
     describe "without a code parameter" do
       before :each do
-        post :create, @valid_params.except(:code)
+        post "/oauth/access_token", @valid_params.except(:code)
       end
 
       responds_with_json_error 'invalid_request', :status => 400
@@ -161,7 +161,7 @@ describe OAuth2::Provider::AccessTokensController do
 
     describe "without a redirect_uri parameter" do
       before :each do
-        post :create, @valid_params.except(:redirect_uri)
+        post "/oauth/access_token", @valid_params.except(:redirect_uri)
       end
 
       responds_with_json_error 'invalid_request', :status => 400
@@ -182,7 +182,7 @@ describe OAuth2::Provider::AccessTokensController do
 
     describe "with valid username and password" do
       before :each do
-        post :create, @valid_params
+        post "/oauth/access_token", @valid_params
       end
 
       it "responds with access token, refresh token and expiry time in JSON" do
@@ -203,7 +203,7 @@ describe OAuth2::Provider::AccessTokensController do
 
     describe "with valid username and password and an additional state parameter" do
       before :each do
-        post :create, @valid_params.merge(:state => 'some-state-goes-here')
+        post "/oauth/access_token", @valid_params.merge(:state => 'some-state-goes-here')
       end
 
       it "includes the state in the JSON response" do
@@ -213,7 +213,7 @@ describe OAuth2::Provider::AccessTokensController do
 
     describe "with an incorrect username" do
       before :each do
-        post :create, @valid_params.merge(:username => 'wrong')
+        post "/oauth/access_token", @valid_params.merge(:username => 'wrong')
       end
 
       responds_with_json_error 'invalid_grant', :status => 400
@@ -221,7 +221,7 @@ describe OAuth2::Provider::AccessTokensController do
 
     describe "with an incorrect password" do
       before :each do
-        post :create, @valid_params.merge(:password => 'wrong')
+        post "/oauth/access_token", @valid_params.merge(:password => 'wrong')
       end
 
       responds_with_json_error 'invalid_grant', :status => 400
@@ -229,7 +229,7 @@ describe OAuth2::Provider::AccessTokensController do
 
     describe "without a username parameter" do
       before :each do
-        post :create, @valid_params.except(:username)
+        post "/oauth/access_token", @valid_params.except(:username)
       end
 
       responds_with_json_error 'invalid_request', :status => 400
@@ -237,7 +237,7 @@ describe OAuth2::Provider::AccessTokensController do
 
     describe "without a password parameter" do
       before :each do
-        post :create, @valid_params.except(:password)
+        post "/oauth/access_token", @valid_params.except(:password)
       end
 
       responds_with_json_error 'invalid_request', :status => 400
@@ -259,7 +259,7 @@ describe OAuth2::Provider::AccessTokensController do
 
     describe "with a valid refresh token" do
       before :each do
-        post :create, @valid_params
+        post "/oauth/access_token", @valid_params
       end
 
       it "responds with refreshed access token, refresh token and expiry time in JSON" do
@@ -274,7 +274,7 @@ describe OAuth2::Provider::AccessTokensController do
     describe "when the token belongs to a different client" do
       before :each do
         @other_client = OAuth2::Provider.client_class.create!
-        post :create, @valid_params.merge(:client_id => @other_client.oauth_identifier, :client_secret => @other_client.oauth_secret)
+        post "/oauth/access_token", @valid_params.merge(:client_id => @other_client.oauth_identifier, :client_secret => @other_client.oauth_secret)
       end
 
       responds_with_json_error 'invalid_grant', :status => 400
@@ -282,7 +282,7 @@ describe OAuth2::Provider::AccessTokensController do
 
     describe "when the token is incorrect" do
       before :each do
-        post :create, @valid_params.merge(:refresh_token => 'incorrect')
+        post "/oauth/access_token", @valid_params.merge(:refresh_token => 'incorrect')
       end
 
       responds_with_json_error 'invalid_grant', :status => 400
@@ -290,7 +290,7 @@ describe OAuth2::Provider::AccessTokensController do
 
     describe "without a refresh_token parameter" do
       before :each do
-        post :create, @valid_params.except(:refresh_token)
+        post "/oauth/access_token", @valid_params.except(:refresh_token)
       end
 
       responds_with_json_error 'invalid_request', :status => 400
@@ -320,7 +320,7 @@ describe OAuth2::Provider::AccessTokensController do
           :code => @code.code,
           :redirect_uri => @code.redirect_uri
         )
-        post :create, @valid_params
+        post "/oauth/access_token", @valid_params
       end
 
       it "are still successful" do
@@ -336,7 +336,7 @@ describe OAuth2::Provider::AccessTokensController do
           :username => @account.username,
           :password => @account.password
         )
-        post :create, @valid_params
+        post "/oauth/access_token", @valid_params
       end
 
       it "are still successful" do
