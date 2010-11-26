@@ -1,4 +1,4 @@
-class OAuth2::Provider::Mediator
+class OAuth2::Provider::Rack::Mediator
   attr_accessor :access_token
 
   def authenticated?

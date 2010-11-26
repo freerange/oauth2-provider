@@ -21,7 +21,7 @@ class OAuth2::Provider::Railtie < Rails::Railtie
   end
 
   initializer "middleware ho!" do |app|
-    app.middleware.use ::OAuth2::Provider::AccessTokenMiddleware
-    app.middleware.use ::OAuth2::Provider::AuthenticationMiddleware
+    app.middleware.use ::OAuth2::Provider::Rack::AccessTokenMiddleware
+    app.middleware.use ::OAuth2::Provider::Rack::AuthenticationMiddleware
   end
 end

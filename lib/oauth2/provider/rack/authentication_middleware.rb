@@ -1,7 +1,7 @@
 require 'rack/auth/abstract/handler'
 require 'rack/auth/abstract/request'
 
-class OAuth2::Provider::AuthenticationMiddleware < Rack::Auth::AbstractHandler
+class OAuth2::Provider::Rack::AuthenticationMiddleware < Rack::Auth::AbstractHandler
   def initialize(app, config = nil)
     @app = app
   end
@@ -19,7 +19,7 @@ class OAuth2::Provider::AuthenticationMiddleware < Rack::Auth::AbstractHandler
       @app = app
       @env = env
       @request = Request.new(env)
-      @env['oauth2'] = OAuth2::Provider::Mediator.new
+      @env['oauth2'] = OAuth2::Provider::Rack::Mediator.new
     end
 
     def mediator

@@ -1,7 +1,7 @@
 require 'rack/auth/abstract/handler'
 require 'rack/auth/abstract/request'
 
-class OAuth2::Provider::AccessTokenMiddleware < Rack::Auth::AbstractHandler
+class OAuth2::Provider::Rack::AccessTokenMiddleware < Rack::Auth::AbstractHandler
   def initialize(app, config = nil)
     @app = app
   end
