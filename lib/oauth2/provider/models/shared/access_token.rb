@@ -2,7 +2,7 @@ module OAuth2::Provider::Models::Shared::AccessToken
   extend ActiveSupport::Concern
 
   included do
-    include OAuth2::Provider::TokenExpiry
+    include OAuth2::Provider::Models::Shared::TokenExpiry
 
     validates_presence_of :access_grant, :access_token, :expires_at
     validate :expires_at_isnt_greater_than_access_grant

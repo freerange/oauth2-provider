@@ -2,7 +2,7 @@ module OAuth2::Provider::Models::Shared::AuthorizationCode
   extend ActiveSupport::Concern
 
   included do
-    include OAuth2::Provider::TokenExpiry
+    include OAuth2::Provider::Models::Shared::TokenExpiry
     validates_presence_of :access_grant, :code, :expires_at, :redirect_uri
   end
 

@@ -1,4 +1,4 @@
-module OAuth2::Provider::TokenExpiry
+module OAuth2::Provider::Models::Shared::TokenExpiry
   def expired?
     self.expires_at && self.expires_at < Time.zone.now
   end
