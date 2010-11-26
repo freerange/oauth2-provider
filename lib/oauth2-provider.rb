@@ -1,1 +1,1 @@
-require 'oauth2/provider/railtie'
+require 'oauth2/provider/rails'

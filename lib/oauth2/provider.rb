@@ -1,8 +1,6 @@
 module OAuth2
   module Provider
-    autoload :AuthorizationCodesSupport, 'oauth2/provider/authorization_codes_support'
-    autoload :Mediator, 'oauth2/provider/mediator'
-    autoload :ControllerAuthentication, 'oauth2/provider/controller_authentication'
+    autoload :Rails, 'oauth2/provider/rails'
     autoload :Models, 'oauth2/provider/models'
     autoload :Random, 'oauth2/provider/random'
     autoload :Rack, 'oauth2/provider/rack'

@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe OAuth2::Provider::AuthorizationCodesSupport do
+describe OAuth2::Provider::Rails::AuthorizationCodesSupport do
   controller do
-    include OAuth2::Provider::AuthorizationCodesSupport
+    include OAuth2::Provider::Rails::AuthorizationCodesSupport
 
     before_filter :block_invalid_authorization_code_requests
 

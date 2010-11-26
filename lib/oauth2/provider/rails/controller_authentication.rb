@@ -1,6 +1,6 @@
 require 'oauth2/provider'
 
-module OAuth2::Provider::ControllerAuthentication
+module OAuth2::Provider::Rails::ControllerAuthentication
   extend ActiveSupport::Concern
 
   module ClassMethods
