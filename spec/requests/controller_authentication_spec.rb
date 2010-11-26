@@ -71,15 +71,7 @@ describe "A request for a protected resource" do
       get "/read", {:oauth_token => @token.access_token}, {"HTTP_AUTHORIZATION" => "OAuth #{@token.access_token}"}
     end
 
-    it "responds with status 400" do
-      response.status.should == 400
-    end
-
-    pending "(what should it return?)" do
-      it "includes a 'bad_request' OAuth challenge in the response" do
-        response.headers['WWW-Authenticate'].should == "OAuth realm='Application', error='invalid_request'"
-      end
-    end
+    responds_with_json_error 'invalid_request', :status => 400
   end
 
   describe "with an invalid token" do
@@ -154,14 +146,6 @@ describe "A request for a protected resource requiring a specific scope" do
       get '/edit', :oauth_token => @insufficient_token.access_token
     end
 
-    it "responds with status 403" do
-      response.status.should == 403
-    end
-
-    pending "(what should it return?)" do
-      it "includes an 'invalid_token' OAuth challenge in the response" do
-        response.headers['WWW-Authenticate'].should == "OAuth realm='Application', error='insufficient_scope'"
-      end
-    end
+    responds_with_json_error 'insufficient_scope', :status => 403
   end
 end

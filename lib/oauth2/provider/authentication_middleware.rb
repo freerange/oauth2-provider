@@ -42,7 +42,7 @@ class OAuth2::Provider::AuthenticationMiddleware < Rack::Auth::AbstractHandler
 
     def block_bad_request
       if request.token_from_param && request.token_from_header
-        bad_request
+        json_error_response('invalid_request')
       end
     end
 
@@ -56,7 +56,7 @@ class OAuth2::Provider::AuthenticationMiddleware < Rack::Auth::AbstractHandler
     end
 
     def force_insufficient_scope
-      forbidden if @env['oauth2'].insufficient_scope?
+      json_error_response('insufficient_scope', :status => 403) if @env['oauth2'].insufficient_scope?
     end
 
     def invalid_token(token)
@@ -67,8 +67,8 @@ class OAuth2::Provider::AuthenticationMiddleware < Rack::Auth::AbstractHandler
       end
     end
 
-    def forbidden
-      [403, {'Content-Type' => 'text/plain', 'Content-Length' => '0'}, []]
+    def json_error_response(error, options = {})
+      [(options[:status] || 400), {'Content-Type' => 'application/json'}, [%{{"error": "#{error}"}}]]
     end
 
     def bad_request
