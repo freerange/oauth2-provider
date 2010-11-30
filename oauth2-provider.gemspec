@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{oauth2-provider}
-  s.version = "0.0.1"
+  s.version = "0.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Ward"]
-  s.date = %q{2010-11-24}
+  s.date = %q{2010-11-30}
   s.email = %q{tom@popdog.net}
   s.extra_rdoc_files = [
     "README"
@@ -19,33 +19,40 @@ Gem::Specification.new do |s|
      "Rakefile",
      "lib/oauth2-provider.rb",
      "lib/oauth2/provider.rb",
-     "lib/oauth2/provider/access_tokens_controller.rb",
-     "lib/oauth2/provider/authentication_middleware.rb",
-     "lib/oauth2/provider/authorization_codes_support.rb",
-     "lib/oauth2/provider/controller_authentication.rb",
-     "lib/oauth2/provider/mediator.rb",
      "lib/oauth2/provider/models.rb",
      "lib/oauth2/provider/models/active_record.rb",
      "lib/oauth2/provider/models/active_record/access_grant.rb",
      "lib/oauth2/provider/models/active_record/access_token.rb",
      "lib/oauth2/provider/models/active_record/authorization_code.rb",
      "lib/oauth2/provider/models/active_record/client.rb",
+     "lib/oauth2/provider/models/mongoid.rb",
+     "lib/oauth2/provider/models/mongoid/access_grant.rb",
+     "lib/oauth2/provider/models/mongoid/access_token.rb",
+     "lib/oauth2/provider/models/mongoid/authorization_code.rb",
+     "lib/oauth2/provider/models/mongoid/client.rb",
      "lib/oauth2/provider/models/shared.rb",
      "lib/oauth2/provider/models/shared/access_grant.rb",
      "lib/oauth2/provider/models/shared/access_token.rb",
      "lib/oauth2/provider/models/shared/authorization_code.rb",
      "lib/oauth2/provider/models/shared/client.rb",
-     "lib/oauth2/provider/railtie.rb",
+     "lib/oauth2/provider/models/shared/token_expiry.rb",
+     "lib/oauth2/provider/rack.rb",
+     "lib/oauth2/provider/rack/access_token_middleware.rb",
+     "lib/oauth2/provider/rack/authentication_middleware.rb",
+     "lib/oauth2/provider/rack/mediator.rb",
+     "lib/oauth2/provider/rails.rb",
+     "lib/oauth2/provider/rails/authorization_codes_support.rb",
+     "lib/oauth2/provider/rails/controller_authentication.rb",
      "lib/oauth2/provider/random.rb",
-     "lib/oauth2/provider/token_expiry.rb",
      "oauth2-provider.gemspec",
-     "spec/controllers/access_tokens_controller_spec.rb",
      "spec/controllers/authorization_codes_support_spec.rb",
      "spec/database.yml",
      "spec/models/access_grant_spec.rb",
      "spec/models/access_token_spec.rb",
      "spec/models/authorization_code_spec.rb",
      "spec/models/client_spec.rb",
+     "spec/mongoid.yml",
+     "spec/requests/access_tokens_controller_spec.rb",
      "spec/requests/controller_authentication_spec.rb",
      "spec/schema.rb",
      "spec/spec_helper.rb"
