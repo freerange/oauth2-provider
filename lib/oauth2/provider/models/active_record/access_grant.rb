@@ -1,9 +1,17 @@
 class OAuth2::Provider::Models::ActiveRecord::AccessGrant < ActiveRecord::Base
-  include OAuth2::Provider::Models::Shared::AccessGrant
+  module Behaviour
+    extend ActiveSupport::Concern
 
-  belongs_to :client
-  belongs_to :account
+    included do
+      include OAuth2::Provider::Models::Shared::AccessGrant
 
-  has_many :access_tokens
-  has_many :authorization_codes
+      belongs_to :client
+      belongs_to :account
+
+      has_many :access_tokens
+      has_many :authorization_codes
+    end
+  end
+
+  include Behaviour
 end
