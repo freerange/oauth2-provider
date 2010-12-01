@@ -1,8 +1,8 @@
 require 'rack/auth/abstract/request'
 
 class OAuth2::Provider::Rack::Request < Rack::Request
-  def for_access_token?
-    post? && fullpath == "/oauth/access_token"
+  def access_token_path?
+    path == "/oauth/access_token"
   end
 
   def grant_type

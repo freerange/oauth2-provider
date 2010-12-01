@@ -8,8 +8,10 @@ class OAuth2::Provider::Rack::AccessTokenHandler
   end
 
   def response
-    if request.for_access_token?
+    if request.access_token_path? && request.post?
       block_unsupported_grant_types || block_invalid_clients || handle_grant_type
+    elsif request.access_token_path?
+      block_unsupported_methods
     else
       app.call(env)
     end
@@ -69,6 +71,10 @@ class OAuth2::Provider::Rack::AccessTokenHandler
       json[:state] = request.params['state'] if request.params['state']
     end
     [200, {'Content-Type' => 'application/json', 'Cache-Control' => 'no-cache, no-store, max-age=0, must-revalidate'}, [ActiveSupport::JSON.encode(json)]]
+  end
+
+  def block_unsupported_methods
+    [405, {'Allow' => 'POST'}, ["Only POST requests allowed"]]
   end
 
   def block_unsupported_grant_types

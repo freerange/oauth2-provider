@@ -70,6 +70,17 @@ describe "POSTs to /oauth/access_token" do
     responds_with_json_error 'invalid_client', :status => 400
   end
 
+  describe "Any request which doesn't use POST" do
+    before :each do
+      get "/oauth/access_token", @valid_params
+    end
+
+    it "responds with Method Not Allowed (405), and POST in the Allow header" do
+      response.status.should == 405
+      response.headers["Allow"].should == "POST"
+    end
+  end
+
   describe "Any request where the client isn't allowed to use the requested grant type" do
     before :each do
       @original_client_class_name = OAuth2::Provider.client_class_name
