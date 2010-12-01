@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    oauth2-provider (0.0.4)
+    oauth2-provider (0.0.5)
       addressable (~> 2.2)
       rails (~> 3.0.1)
 

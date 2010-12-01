@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{oauth2-provider}
-  s.version = "0.0.4"
+  s.version = "0.0.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Ward"]
@@ -37,9 +37,11 @@ Gem::Specification.new do |s|
      "lib/oauth2/provider/models/shared/client.rb",
      "lib/oauth2/provider/models/shared/token_expiry.rb",
      "lib/oauth2/provider/rack.rb",
-     "lib/oauth2/provider/rack/access_token_middleware.rb",
-     "lib/oauth2/provider/rack/authentication_middleware.rb",
+     "lib/oauth2/provider/rack/access_token_handler.rb",
+     "lib/oauth2/provider/rack/authentication_handler.rb",
      "lib/oauth2/provider/rack/mediator.rb",
+     "lib/oauth2/provider/rack/middleware.rb",
+     "lib/oauth2/provider/rack/request.rb",
      "lib/oauth2/provider/rails.rb",
      "lib/oauth2/provider/rails/authorization_codes_support.rb",
      "lib/oauth2/provider/rails/controller_authentication.rb",
