@@ -4,12 +4,16 @@ module OAuth2::Provider::Rails::AuthorizationCodesSupport
   protected
 
   def block_invalid_authorization_code_requests
-    unless params[:client_id] && params[:redirect_uri]
-      render :text => 'Client Not Found', :status => :not_found and return
+    unless params[:redirect_uri]
+      render :text => 'No redirect_uri provided', :status => :bad_request and return
+    end
+
+    unless params[:client_id]
+      redirect_with_error 'invalid_request' and return
     end
 
     unless @client = OAuth2::Provider.client_class.from_param(params[:client_id])
-      render :text => 'Client Not Found', :status => :not_found and return
+      redirect_with_error 'invalid_client' and return
     end
   end
 
@@ -25,12 +29,16 @@ module OAuth2::Provider::Rails::AuthorizationCodesSupport
   end
 
   def deny_authorization_code
-    redirect_to append_to_uri(params[:redirect_uri], :error => 'access_denied')
+    redirect_with_error 'access_denied'
   end
 
   def append_to_uri(uri, parameters = {})
     u = Addressable::URI.parse(uri)
     u.query_values = (u.query_values || {}).merge(parameters)
     u.to_s
+  end
+
+  def redirect_with_error(name)
+    redirect_to append_to_uri(params[:redirect_uri], :error => name)
   end
 end

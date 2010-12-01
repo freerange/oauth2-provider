@@ -75,6 +75,14 @@ module OAuth2::Provider::RSpecMacros
         json_from_response.should == {"error" => name}
       end
     end
+
+    def redirects_back_with_error(name)
+      it %{redirects back with error '#{name}'} do
+        response.status.should == 302
+        error = Addressable::URI.parse(response.location).query_values["error"]
+        error.should == name
+      end
+    end
   end
 end
 

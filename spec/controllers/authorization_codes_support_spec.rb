@@ -39,16 +39,12 @@ describe OAuth2::Provider::Rails::AuthorizationCodesSupport do
     end
   end
 
-  # TODO the responses here are rubbish; they really need improving
-
   describe "Any request without a client_id" do
     before :each do
       get :new, @valid_params.except(:client_id)
     end
 
-    it "returns 404" do
-      response.status.should == 404
-    end
+    redirects_back_with_error 'invalid_request'
   end
 
   describe "Any request without a redirect_uri" do
@@ -56,8 +52,8 @@ describe OAuth2::Provider::Rails::AuthorizationCodesSupport do
       get :new, @valid_params.except(:redirect_uri)
     end
 
-    it "returns 404" do
-      response.status.should == 404
+    it "returns 400" do
+      response.status.should == 400
     end
   end
 
@@ -66,9 +62,7 @@ describe OAuth2::Provider::Rails::AuthorizationCodesSupport do
       get :new, @valid_params.merge(:client_id => 'unknown')
     end
 
-    it "returns 404" do
-      response.status.should == 404
-    end
+    redirects_back_with_error 'invalid_client'
   end
 
   describe "Granting a code" do
@@ -92,10 +86,6 @@ describe OAuth2::Provider::Rails::AuthorizationCodesSupport do
       post :create, @valid_params.merge(:submit => 'No')
     end
 
-    it "redirects back to the redirect_uri without an authorization code" do
-      response.status.should == 302
-      code = Addressable::URI.parse(response.location).query_values["code"]
-      code.should be_nil
-    end
+    redirects_back_with_error 'access_denied'
   end
 end
