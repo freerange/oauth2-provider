@@ -14,7 +14,7 @@ module OAuth2::Provider::Rails::AuthorizationCodesSupport
   end
 
   def grant_authorization_code(account = nil)
-    access_grant = @client.access_grants.create!(
+    access_grant = OAuth2::Provider.access_grant_class.create!(
       :client => @client,
       :account => account
     )

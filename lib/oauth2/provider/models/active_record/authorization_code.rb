@@ -5,7 +5,7 @@ class OAuth2::Provider::Models::ActiveRecord::AuthorizationCode < ActiveRecord::
     included do
       include OAuth2::Provider::Models::Shared::AuthorizationCode
 
-      belongs_to :access_grant, :class_name => "OAuth2::Provider::Models::ActiveRecord::AccessGrant"
+      belongs_to :access_grant, :class_name => OAuth2::Provider.access_grant_class_name
     end
   end
 
