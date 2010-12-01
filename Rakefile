@@ -8,7 +8,7 @@ require "rake/gempackagetask"
 require "rake/rdoctask"
 require "rake/testtask"
 
-task :default => :spec
+task :default => 'spec:activerecord'
 
 # This builds the actual gem. For details of what all these options
 # mean, and other ones you can add, check the documentation here:
@@ -102,11 +102,22 @@ task :clean => [:clobber_rdoc, :clobber_package] do
   rm_f "#{spec.name}.gemspec"
 end
 
-desc "Run specs"
-RSpec::Core::RakeTask.new(:spec) do |t|
-  t.rspec_opts = "-f n -c"
-  t.pattern = "spec/**/*_spec.rb"
+namespace :spec do
+  desc "Run specs using the active_record backend"
+  RSpec::Core::RakeTask.new(:activerecord) do |t|
+    t.rspec_opts = "-f n -c"
+    t.pattern = "spec/**/*_spec.rb"
+  end
+
+  desc "Run specs using the mongoid backend"
+  RSpec::Core::RakeTask.new(:mongoid) do |t|
+    t.rspec_opts = "-f n -c"
+    t.pattern = "spec/**/*_spec.rb"
+    t.ruby_opts = "-Ispec -rmongoid_backend"
+  end
 end
+
+task :spec => ['spec:activerecord', 'spec:mongoid']
 
 desc 'Tag the repository in git with gem version number'
 task :tag do

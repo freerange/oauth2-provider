@@ -18,14 +18,12 @@ module OAuth2
 end
 
 OAuth2::Application.initialize!
-
-require File.expand_path("../schema.rb", __FILE__)
 require 'timecop'
 require 'yajl'
 
-# Used as a resource owner
-
 if OAuth2::Provider.backend == :active_record
+  require File.expand_path("../schema.rb", __FILE__)
+
   class Account < ActiveRecord::Base
     def self.authenticate_with_username_and_password(*args)
       find_by_username_and_password(*args)
