@@ -5,7 +5,7 @@ class OAuth2::Provider::Models::ActiveRecord::AccessToken < ActiveRecord::Base
     included do
       include OAuth2::Provider::Models::Shared::AccessToken
 
-      belongs_to :access_grant, :class_name => OAuth2::Provider.access_grant_class_name
+      belongs_to :access_grant, :class_name => OAuth2::Provider.access_grant_class_name, :foreign_key => 'access_grant_id'
     end
   end
 
