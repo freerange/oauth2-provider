@@ -66,12 +66,6 @@ def prettyify_array(gemspec_ruby, array_name)
   end
 end
 
-Rake::TestTask.new do |t|
-  t.libs << "test"
-  t.test_files = FileList["#{path}/test/**/*test.rb"]
-  t.verbose = true
-end
-
 # This task actually builds the gem. We also regenerate a static
 # .gemspec file, which is useful if something (i.e. GitHub) will
 # be automatically building a gem for this project. If you're not
