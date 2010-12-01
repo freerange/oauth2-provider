@@ -35,8 +35,8 @@ module OAuth2::Provider::Rails
     end
 
     initializer "middleware ho!" do |app|
-      app.middleware.use ::OAuth2::Provider::Rack::AccessTokenMiddleware
-      app.middleware.use ::OAuth2::Provider::Rack::AuthenticationMiddleware
+      app.middleware.use ::OAuth2::Provider::Rack::Middleware, ::OAuth2::Provider::Rack::AccessTokenHandler
+      app.middleware.use ::OAuth2::Provider::Rack::Middleware, ::OAuth2::Provider::Rack::AuthenticationHandler
     end
   end
 end
