@@ -7,6 +7,7 @@ require "rspec/core/rake_task"
 require "rake/gempackagetask"
 require "rake/rdoctask"
 require "rake/testtask"
+require "sdoc"
 
 task :default => 'spec:activerecord'
 
@@ -56,6 +57,7 @@ spec = Dir.chdir(path) do
     s.add_development_dependency 'yajl-ruby', '~>0.7.5'
     s.add_development_dependency 'mongoid', '2.0.0.beta.20'
     s.add_development_dependency 'bson_ext'
+    s.add_development_dependency 'sdoc', '~>0.2.20'
   end
 end
 
@@ -92,10 +94,11 @@ end
 task :package => :gemspec
 
 # Generate documentation
-Rake::RDocTask.new do |rd|
-  rd.main = "README"
-  rd.rdoc_files.include("README", "lib/**/*.rb")
-  rd.rdoc_dir = "rdoc"
+Rake::RDocTask.new do |rdoc|
+  rdoc.rdoc_files.include("README", "lib/**/*.rb")
+  rdoc.rdoc_dir = 'doc'
+  rdoc.options << '--fmt' << 'shtml' # explictly set shtml generator
+  rdoc.template = 'direct' # lighter template used on railsapi.com
 end
 
 desc 'Clear out RDoc and generated packages'
