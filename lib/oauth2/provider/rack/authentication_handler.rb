@@ -1,31 +1,39 @@
 class OAuth2::Provider::Rack::AuthenticationHandler
-  attr_reader :app, :env, :request
+  attr_reader :app, :env, :request, :mediator
 
-  delegate :access_token, :access_token=, :to => :mediator
+  delegate :access_token, :access_token=, :insufficient_scope?, :authentication_required?, :to => :mediator
 
   def initialize(app, env)
     @app = app
     @env = env
     @request = OAuth2::Provider::Rack::Request.new(env)
-    @env['oauth2'] = OAuth2::Provider::Rack::Mediator.new
-  end
-
-  def mediator
-    @env['oauth2']
+    @mediator = @env['oauth2'] = OAuth2::Provider::Rack::Mediator.new
   end
 
   def response
     if request.has_token?
-      block_bad_request || block_invalid_tokens || handle_request
+      block_bad_request || block_invalid_token || handle_authenticated_request
     else
-      result = app.call(env)
-      force_authentication || result
+      handle_unauthenticated_request
     end
   end
 
-  def handle_request
+  def handle_authenticated_request
     result = app.call(env)
-    force_insufficient_scope || result
+    if insufficient_scope?
+      json_error_response('insufficient_scope', :status => 403)
+    else
+      result
+    end
+  end
+
+  def handle_unauthenticated_request
+    result = app.call(env)
+    if authentication_required?
+      unauthorized
+    else
+      result
+    end
   end
 
   def block_bad_request
@@ -34,17 +42,9 @@ class OAuth2::Provider::Rack::AuthenticationHandler
     end
   end
 
-  def block_invalid_tokens
+  def block_invalid_token
     self.access_token = OAuth2::Provider.access_token_class.find_by_access_token(request.token)
     invalid_token(access_token) if access_token.nil? || access_token.expired?
-  end
-
-  def force_authentication
-    unauthorized if @env['oauth2'].authentication_required?
-  end
-
-  def force_insufficient_scope
-    json_error_response('insufficient_scope', :status => 403) if @env['oauth2'].insufficient_scope?
   end
 
   def invalid_token(token)
