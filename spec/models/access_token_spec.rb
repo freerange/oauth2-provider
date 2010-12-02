@@ -92,7 +92,7 @@ describe OAuth2::Provider.access_token_class do
       OAuth2::Provider.access_token_class.create! :access_grant => create_access_grant, :expires_at => 23.days.ago
     end
 
-    it "returns a new access token with the same client, account and scope, but a new expiry time" do
+    it "returns a new access token with the same client, resource_owner and scope, but a new expiry time" do
       result = OAuth2::Provider.access_token_class.refresh_with(subject.refresh_token)
       result.should_not be_nil
       result.expires_at.should == 1.month.from_now

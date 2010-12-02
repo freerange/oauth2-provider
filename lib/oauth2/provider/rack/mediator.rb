@@ -21,7 +21,7 @@ class OAuth2::Provider::Rack::Mediator
     @insufficient_scope
   end
 
-  def account
-    access_token && access_token.access_grant.account
+  def resource_owner
+    access_token && access_token.access_grant.resource_owner
   end
 end

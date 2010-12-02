@@ -17,10 +17,10 @@ module OAuth2::Provider::Rails::AuthorizationCodesSupport
     end
   end
 
-  def grant_authorization_code(account = nil)
+  def grant_authorization_code(resource_owner = nil)
     access_grant = OAuth2::Provider.access_grant_class.create!(
       :client => @client,
-      :account => account
+      :resource_owner => resource_owner
     )
     authorization_code = access_grant.authorization_codes.create!(
       :redirect_uri => params[:redirect_uri]

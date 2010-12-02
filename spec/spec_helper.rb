@@ -24,13 +24,13 @@ require 'yajl'
 if OAuth2::Provider.backend == :active_record
   require File.expand_path("../schema.rb", __FILE__)
 
-  class Account < ActiveRecord::Base
+  class ExampleResourceOwner < ActiveRecord::Base
     def self.authenticate_with_username_and_password(*args)
       find_by_username_and_password(*args)
     end
   end
 else
-  class Account
+  class ExampleResourceOwner
     include Mongoid::Document
 
     field :username
@@ -44,7 +44,7 @@ else
   end
 
   class OAuth2::Provider::Models::Mongoid::AccessGrant
-    referenced_in :account, :class_name => "OAuth2::Provider::Models::Mongoid::Client"
+    referenced_in :resource_owner, :class_name => "OAuth2::Provider::Models::Mongoid::Client"
   end
 end
 

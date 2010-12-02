@@ -13,7 +13,7 @@ module OAuth2
     mattr_accessor :authorization_code_class_name
     mattr_accessor :client_class_name
 
-    [:client, :access_grant, :access_token, :authorization_code].each do |model|
+    [:resource_owner, :client, :access_grant, :access_token, :authorization_code].each do |model|
       instance_eval %{
         def #{model}_class
           #{model}_class_name.constantize
@@ -21,11 +21,7 @@ module OAuth2
       }
     end
 
-    mattr_accessor :end_user_class_name
-    self.end_user_class_name = 'Account'
-
-    def self.end_user_class
-      end_user_class_name.constantize
-    end
+    mattr_accessor :resource_owner_class_name
+    self.resource_owner_class_name = 'ExampleResourceOwner'
   end
 end

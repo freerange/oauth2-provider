@@ -23,9 +23,9 @@ class OAuth2::Provider::Rack::AccessTokenHandler
 
   def handle_password_grant_type
     with_required_params 'username', 'password' do |username, password|
-      if account = OAuth2::Provider.end_user_class.authenticate_with_username_and_password(username, password)
+      if resource_owner = OAuth2::Provider.resource_owner_class.authenticate_with_username_and_password(username, password)
         token_response OAuth2::Provider.access_token_class.create!(
-          :access_grant => OAuth2::Provider.access_grant_class.create!(:account => account, :client => oauth_client)
+          :access_grant => OAuth2::Provider.access_grant_class.create!(:resource_owner => resource_owner, :client => oauth_client)
         )
       else
         json_error_response 'invalid_grant'

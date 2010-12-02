@@ -175,13 +175,13 @@ describe "POSTs to /oauth/access_token" do
 
   describe "A request using the password grant type" do
     before :each do
-      @account = Account.create!(:username => 'name', :password => 'password')
+      @resource_owner = ExampleResourceOwner.create!(:username => 'name', :password => 'password')
       @valid_params = {
         :grant_type => 'password',
         :client_id => @client.to_param,
         :client_secret => @client.oauth_secret,
-        :username => @account.username,
-        :password => @account.password
+        :username => @resource_owner.username,
+        :password => @resource_owner.password
       }
     end
 
@@ -335,11 +335,11 @@ describe "POSTs to /oauth/access_token" do
 
     describe "requests using password grant type" do
       before :each do
-        @account = Account.create!(:username => 'name', :password => 'password')
+        @resource_owner = ExampleResourceOwner.create!(:username => 'name', :password => 'password')
         @valid_params = @client_params.merge(
           :grant_type => 'password',
-          :username => @account.username,
-          :password => @account.password
+          :username => @resource_owner.username,
+          :password => @resource_owner.password
         )
         post "/oauth/access_token", @valid_params
       end

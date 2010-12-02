@@ -7,7 +7,7 @@ module OAuth2::Provider::Models::Shared::AccessToken
     validates_presence_of :access_grant, :access_token, :expires_at
     validate :expires_at_isnt_greater_than_access_grant
 
-    delegate :scope, :has_scope?, :client, :account, :to => :access_grant
+    delegate :scope, :has_scope?, :client, :resource_owner, :to => :access_grant
   end
 
   def initialize(*args, &block)
