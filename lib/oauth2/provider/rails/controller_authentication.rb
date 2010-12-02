@@ -17,7 +17,7 @@ module OAuth2::Provider::Rails::ControllerAuthentication
         oauth2 = controller.request.env['oauth2']
 
         if oauth2.authenticated?
-          if @scope.nil? || oauth2.access_token.has_scope?(@scope)
+          if @scope.nil? || oauth2.has_scope?(@scope)
             yield
           else
             oauth2.insufficient_scope!

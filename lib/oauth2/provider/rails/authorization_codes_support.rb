@@ -12,20 +12,18 @@ module OAuth2::Provider::Rails::AuthorizationCodesSupport
       redirect_with_error 'invalid_request' and return
     end
 
-    unless @client = OAuth2::Provider.client_class.from_param(params[:client_id])
+    unless @oauth2_client = OAuth2::Provider.client_class.from_param(params[:client_id])
       redirect_with_error 'invalid_client' and return
     end
   end
 
   def grant_authorization_code(resource_owner = nil)
-    access_grant = OAuth2::Provider.access_grant_class.create!(
-      :client => @client,
-      :resource_owner => resource_owner
+    grant = @oauth2_client.access_grants.create!(
+      :resource_owner => resource_owner,
+      :client => @oauth2_client
     )
-    authorization_code = access_grant.authorization_codes.create!(
-      :redirect_uri => params[:redirect_uri]
-    )
-    redirect_to append_to_uri(params[:redirect_uri], :code => authorization_code.code)
+    code = grant.authorization_codes.create! :redirect_uri => params[:redirect_uri]
+    redirect_to append_to_uri(params[:redirect_uri], :code => code.code)
   end
 
   def deny_authorization_code

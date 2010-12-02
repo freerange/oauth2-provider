@@ -1,7 +1,7 @@
 class OAuth2::Provider::Rack::AuthenticationHandler
   attr_reader :app, :env, :request, :mediator
 
-  delegate :access_token, :access_token=, :insufficient_scope?, :authentication_required?, :to => :mediator
+  delegate :insufficient_scope?, :authentication_required?, :to => :mediator
 
   def initialize(app, env)
     @app = app
@@ -43,7 +43,8 @@ class OAuth2::Provider::Rack::AuthenticationHandler
   end
 
   def block_invalid_token
-    self.access_token = OAuth2::Provider.access_token_class.find_by_access_token(request.token)
+    access_token = OAuth2::Provider.access_token_class.find_by_access_token(request.token)
+    mediator.access_grant = access_token.access_grant if access_token
     invalid_token(access_token) if access_token.nil? || access_token.expired?
   end
 
