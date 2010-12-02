@@ -3,7 +3,16 @@ require 'spec_helper'
 describe OAuth2::Provider.client_class do
   describe "any instance" do
     subject do
-      OAuth2::Provider.client_class.new
+      OAuth2::Provider.client_class.new :name => 'client'
+    end
+
+    it "is valid with a name, oauth identifier and oauth secret" do
+      subject.should be_valid
+    end
+
+    it "is invalid without a name" do
+      subject.name = nil
+      subject.should_not be_valid
     end
 
     it "is invalid without an oauth identifier" do
@@ -17,7 +26,7 @@ describe OAuth2::Provider.client_class do
     end
 
     it "is invalid if oauth_identifier not unique" do
-      duplicate = OAuth2::Provider.client_class.create!
+      duplicate = OAuth2::Provider.client_class.create! :name => 'client2'
       subject.oauth_identifier = duplicate.oauth_identifier
       subject.should_not be_valid
     end
@@ -30,7 +39,7 @@ describe OAuth2::Provider.client_class do
 
   describe "a new instance" do
     subject do
-      OAuth2::Provider.client_class.new
+      OAuth2::Provider.client_class.new :name => 'client'
     end
 
     it "is assigned a randomly generated oauth identifier" do
@@ -52,7 +61,7 @@ describe OAuth2::Provider.client_class do
 
   describe "a saved instance" do
     subject do
-      OAuth2::Provider.client_class.create!
+      OAuth2::Provider.client_class.create! :name => 'client'
     end
 
     it "returns oauth_identifer when to_param called" do

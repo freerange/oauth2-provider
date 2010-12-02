@@ -85,7 +85,7 @@ describe "POSTs to /oauth/access_token" do
     before :each do
       @original_client_class_name = OAuth2::Provider.client_class_name
       OAuth2::Provider.client_class_name = NotAllowedGrantTypeClient.name
-      @client = NotAllowedGrantTypeClient.create!
+      @client = NotAllowedGrantTypeClient.create! :name => 'client'
       @code = create_authorization_code(:access_grant => create_access_grant(:client => @client))
       @valid_params = {
         :grant_type => 'authorization_code',
@@ -278,7 +278,7 @@ describe "POSTs to /oauth/access_token" do
 
     describe "when the token belongs to a different client" do
       before :each do
-        @other_client = OAuth2::Provider.client_class.create!
+        @other_client = OAuth2::Provider.client_class.create! :name => 'client'
         post "/oauth/access_token", @valid_params.merge(:client_id => @other_client.oauth_identifier, :client_secret => @other_client.oauth_secret)
       end
 
@@ -306,7 +306,7 @@ describe "POSTs to /oauth/access_token" do
     before :each do
       @original_client_class_name = OAuth2::Provider.client_class_name
       OAuth2::Provider.client_class_name = "CustomClient"
-      @client = CustomClient.create!
+      @client = CustomClient.create! :name => 'client'
       @client_params = {
         :client_id => @client.to_param,
         :client_secret => @client.oauth_secret,

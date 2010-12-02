@@ -86,7 +86,7 @@ end
 
 module OAuth2::Provider::ModelFactories
   def build_client(attributes = {})
-    OAuth2::Provider.client_class.new(attributes)
+    OAuth2::Provider.client_class.new({:name => 'client'}.merge(attributes))
   end
 
   def create_client(attributes = {})

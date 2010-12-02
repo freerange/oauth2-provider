@@ -2,7 +2,7 @@ module OAuth2::Provider::Models::Shared::Client
   extend ActiveSupport::Concern
 
   included do
-    validates_presence_of :oauth_identifier, :oauth_secret
+    validates_presence_of :oauth_identifier, :oauth_secret, :name
     validates_uniqueness_of :oauth_identifier
   end
 

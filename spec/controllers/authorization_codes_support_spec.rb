@@ -22,7 +22,7 @@ describe OAuth2::Provider::Rails::AuthorizationCodesSupport do
   end
 
   before :each do
-    @client = OAuth2::Provider.client_class.create!
+    @client = OAuth2::Provider.client_class.create! :name => 'client'
     @valid_params = {
       :client_id => @client.oauth_identifier,
       :redirect_uri => "https://redirect.example.com/callback"
