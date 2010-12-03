@@ -23,5 +23,17 @@ module OAuth2
 
     mattr_accessor :resource_owner_class_name
     self.resource_owner_class_name = 'ExampleResourceOwner'
+
+    def self.configure
+      yield self
+    end
+
+    def self.backend=(backend)
+      @@backend = backend
+      case backend
+        when :mongoid then OAuth2::Provider::Models::Mongoid.activate
+        else OAuth2::Provider::Models::ActiveRecord.activate
+      end
+    end
   end
 end

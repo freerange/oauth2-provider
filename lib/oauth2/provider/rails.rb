@@ -21,11 +21,6 @@ module OAuth2::Provider::Rails
       app.config.oauth2_provider.mongoid.each do |k, v|
         OAuth2::Provider::Models::Mongoid.send "#{k}=", v
       end
-
-      case OAuth2::Provider.backend
-        when :mongoid then OAuth2::Provider::Models::Mongoid.activate
-        else OAuth2::Provider::Models::ActiveRecord.activate
-      end
     end
 
     initializer "oauth2_provider controller" do |app|
