@@ -39,7 +39,7 @@ describe OAuth2::Provider.authorization_code_class do
     end
 
     it "has not expired when expires_at is now or in the future" do
-      subject.expires_at = Time.zone.now
+      subject.expires_at = Time.now
       subject.should_not be_expired
     end
   end
