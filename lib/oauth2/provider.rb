@@ -6,7 +6,7 @@ module OAuth2
     autoload :Rack, 'oauth2/provider/rack'
 
     mattr_accessor :backend
-    self.backend = :active_record
+    self.backend = :activerecord
 
     mattr_accessor :access_grant_class_name
     mattr_accessor :access_token_class_name
@@ -22,14 +22,14 @@ module OAuth2
     end
 
     mattr_accessor :resource_owner_class_name
-    self.resource_owner_class_name = 'ExampleResourceOwner'
+    self.resource_owner_class_name = 'ResourceOwner'
 
     def self.configure
       yield self
+      activate
     end
 
-    def self.backend=(backend)
-      @@backend = backend
+    def self.activate
       case backend
         when :mongoid then OAuth2::Provider::Models::Mongoid.activate
         else OAuth2::Provider::Models::ActiveRecord.activate
