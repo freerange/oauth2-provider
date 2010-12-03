@@ -1,4 +1,5 @@
 class OAuth2::Provider::Rack::Mediator
+  attr_reader :response
   attr_accessor :access_grant
 
   delegate :has_scope?, :to => :access_grant
@@ -8,18 +9,11 @@ class OAuth2::Provider::Rack::Mediator
   end
 
   def authentication_required!
-    @authentication_required = true
-  end
-
-  def authentication_required?
-    @authentication_required
-  end
-
-  def insufficient_scope?
-    @insufficient_scope
+    challenge = "OAuth realm='Application'"
+    @response = [401, {'Content-Type' => 'text/plain', 'Content-Length' => '0', 'WWW-Authenticate' => challenge}, []]
   end
 
   def insufficient_scope!
-    @insufficient_scope = true
+    @response = [403, {'Content-Type' => 'application/json'}, [%{{"error": "insufficient_scope"}}]]
   end
 end

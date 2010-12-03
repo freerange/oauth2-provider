@@ -10,29 +10,11 @@ class OAuth2::Provider::Rack::AuthenticationHandler
     @mediator = @env['oauth2'] = OAuth2::Provider::Rack::Mediator.new
   end
 
-  def response
+  def process
     if request.has_token?
-      block_bad_request || block_invalid_token || handle_authenticated_request
+      block_bad_request || block_invalid_token || app.call(env)
     else
-      handle_unauthenticated_request
-    end
-  end
-
-  def handle_authenticated_request
-    result = app.call(env)
-    if insufficient_scope?
-      json_error_response('insufficient_scope', :status => 403)
-    else
-      result
-    end
-  end
-
-  def handle_unauthenticated_request
-    result = app.call(env)
-    if authentication_required?
-      unauthorized
-    else
-      result
+      app.call(env)
     end
   end
 

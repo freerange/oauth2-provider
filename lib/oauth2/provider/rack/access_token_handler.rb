@@ -7,13 +7,11 @@ class OAuth2::Provider::Rack::AccessTokenHandler
     @request = OAuth2::Provider::Rack::Request.new(env)
   end
 
-  def response
-    if request.access_token_path? && request.post?
+  def process
+    if request.post?
       block_unsupported_grant_types || block_invalid_clients || handle_grant_type
-    elsif request.access_token_path?
-      block_unsupported_methods
     else
-      app.call(env)
+      block_unsupported_methods
     end
   end
 
