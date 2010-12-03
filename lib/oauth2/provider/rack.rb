@@ -4,4 +4,5 @@ module OAuth2::Provider::Rack
   autoload :Mediator, 'oauth2/provider/rack/mediator'
   autoload :Middleware, 'oauth2/provider/rack/middleware'
   autoload :Request, 'oauth2/provider/rack/request'
+  autoload :Responses, 'oauth2/provider/rack/responses'
 end
