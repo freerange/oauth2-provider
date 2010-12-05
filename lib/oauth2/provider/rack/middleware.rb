@@ -5,13 +5,17 @@ module OAuth2::Provider::Rack
     end
 
     def call(env)
-      @request = Request.new(env)
-      response = handler_class.new(@app, env).process
+      response = catch :oauth2 do
+        handler(env).process
+      end
+
       (env['oauth2'] && env['oauth2'].response) || response
     end
 
-    def handler_class
-      @request.access_token_path? ? AccessTokenHandler : AuthenticationHandler
+    def handler(env)
+      request = Request.new(env)
+      handler_class = request.access_token_path? ? AccessTokenHandler : AuthenticationHandler
+      handler_class.new(@app, env)
     end
   end
 end

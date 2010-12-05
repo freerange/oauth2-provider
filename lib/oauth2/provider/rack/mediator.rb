@@ -10,15 +10,22 @@ module OAuth2::Provider::Rack
     end
 
     def authentication_required!
-      @response = Responses.unauthorized
+      throw_response Responses.unauthorized
     end
 
     def insufficient_scope!
-      @response = Responses.json_error 'insufficient_scope', :status => 403
+      throw_response Responses.json_error('insufficient_scope', :status => 403)
     end
 
     def resource_owner
       access_grant && access_grant.resource_owner
+    end
+
+    private
+
+    def throw_response(response)
+      @response = response
+      throw :oauth2
     end
   end
 end
