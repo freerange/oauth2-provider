@@ -1,4 +1,4 @@
-module OAuth2::Provider::Models::Shared::Client
+module OAuth2::Provider::Models::Client
   extend ActiveSupport::Concern
 
   included do

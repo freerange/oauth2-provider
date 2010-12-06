@@ -1,6 +1,6 @@
 class OAuth2::Provider::Models::Mongoid::AuthorizationCode
   include ::Mongoid::Document
-  include OAuth2::Provider::Models::Shared::AuthorizationCode
+  include OAuth2::Provider::Models::AuthorizationCode
 
   field :code
   field :expires_at, :type => Time

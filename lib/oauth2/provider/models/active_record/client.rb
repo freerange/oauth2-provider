@@ -3,7 +3,7 @@ class OAuth2::Provider::Models::ActiveRecord::Client < ActiveRecord::Base
     extend ActiveSupport::Concern
 
     included do
-      include OAuth2::Provider::Models::Shared::Client
+      include OAuth2::Provider::Models::Client
 
       has_many :access_grants, :class_name => OAuth2::Provider.access_grant_class_name, :foreign_key => 'client_id'
       has_many :authorization_codes, :through => :access_grants, :class_name => OAuth2::Provider.authorization_code_class_name

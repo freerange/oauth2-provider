@@ -1,6 +1,6 @@
 class OAuth2::Provider::Models::Mongoid::Client
   include ::Mongoid::Document
-  include OAuth2::Provider::Models::Shared::Client
+  include OAuth2::Provider::Models::Client
 
   field :oauth_secret
   field :oauth_identifier

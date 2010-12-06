@@ -3,7 +3,7 @@ class OAuth2::Provider::Models::ActiveRecord::AccessGrant < ActiveRecord::Base
     extend ActiveSupport::Concern
 
     included do
-      include OAuth2::Provider::Models::Shared::AccessGrant
+      include OAuth2::Provider::Models::AccessGrant
 
       belongs_to :client, :class_name => OAuth2::Provider.client_class_name, :foreign_key => 'client_id'
       belongs_to :resource_owner, :class_name => OAuth2::Provider.resource_owner_class_name

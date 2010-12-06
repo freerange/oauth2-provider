@@ -1,6 +1,6 @@
 class OAuth2::Provider::Models::Mongoid::AccessToken
   include ::Mongoid::Document
-  include OAuth2::Provider::Models::Shared::AccessToken
+  include OAuth2::Provider::Models::AccessToken
 
   field :access_token
   field :expires_at, :type => Time

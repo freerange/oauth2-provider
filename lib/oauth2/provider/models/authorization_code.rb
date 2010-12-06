@@ -1,10 +1,10 @@
-module OAuth2::Provider::Models::Shared::AuthorizationCode
+module OAuth2::Provider::Models::AuthorizationCode
   extend ActiveSupport::Concern
 
   included do
     delegate :client, :resource_owner, :to => :access_grant
 
-    include OAuth2::Provider::Models::Shared::TokenExpiry
+    include OAuth2::Provider::Models::TokenExpiry
     validates_presence_of :access_grant, :code, :expires_at, :redirect_uri
   end
 

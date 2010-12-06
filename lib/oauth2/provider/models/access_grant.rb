@@ -1,8 +1,8 @@
-module OAuth2::Provider::Models::Shared::AccessGrant
+module OAuth2::Provider::Models::AccessGrant
   extend ActiveSupport::Concern
 
   included do
-    include OAuth2::Provider::Models::Shared::TokenExpiry
+    include OAuth2::Provider::Models::TokenExpiry
     validates_presence_of :client
   end
 
