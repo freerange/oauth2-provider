@@ -17,6 +17,15 @@ module OAuth2::Provider::Rails::AuthorizationCodesSupport
     end
   end
 
+  def build_authorization_code(resource_owner = nil)
+    @oauth2_client.authorization_codes.build(
+      :access_grant => @oauth2_client.access_grants.build(
+        :resource_owner => resource_owner,
+        :client => @oauth2_client
+      )
+    )
+  end
+
   def grant_authorization_code(resource_owner = nil)
     grant = @oauth2_client.access_grants.create!(
       :resource_owner => resource_owner,
