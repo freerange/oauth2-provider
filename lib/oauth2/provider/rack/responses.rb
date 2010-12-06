@@ -1,3 +1,5 @@
+require 'addressable/uri'
+
 module OAuth2::Provider::Rack::Responses
   def self.unauthorized(error = nil)
     challenge = "OAuth realm='Application'"
@@ -11,5 +13,21 @@ module OAuth2::Provider::Rack::Responses
 
   def self.json_error(error, options = {})
     [options[:status] || 400, {'Content-Type' => 'application/json'}, [%{{"error": "#{error}"}}]]
+  end
+
+  def self.redirect_with_error(error, uri)
+    [302, {'Location' => append_to_uri(uri, :error => error)}, []]
+  end
+
+  def self.redirect_with_code(code, uri)
+    [302, {'Location' => append_to_uri(uri, :code => code)}, []]
+  end
+
+  private
+
+  def self.append_to_uri(uri, parameters = {})
+    u = Addressable::URI.parse(uri)
+    u.query_values = (u.query_values || {}).merge(parameters)
+    u.to_s
   end
 end

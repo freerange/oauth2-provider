@@ -3,17 +3,21 @@ require 'addressable/uri'
 module OAuth2::Provider::Rails::AuthorizationCodesSupport
   protected
 
+  def oauth2
+    request.env['oauth2']
+  end
+
   def block_invalid_authorization_code_requests
     unless params[:redirect_uri]
       render :text => 'No redirect_uri provided', :status => :bad_request and return
     end
 
     unless params[:client_id]
-      redirect_with_error 'invalid_request' and return
+      oauth2.invalid_authorization_code_request!(params[:redirect_uri])
     end
 
     unless @oauth2_client = OAuth2::Provider.client_class.from_param(params[:client_id])
-      redirect_with_error 'invalid_client' and return
+      oauth2.invalid_authorization_code_client!(params[:redirect_uri])
     end
   end
 
@@ -27,16 +31,11 @@ module OAuth2::Provider::Rails::AuthorizationCodesSupport
   end
 
   def grant_authorization_code(resource_owner = nil)
-    grant = @oauth2_client.access_grants.create!(
-      :resource_owner => resource_owner,
-      :client => @oauth2_client
-    )
-    code = grant.authorization_codes.create! :redirect_uri => params[:redirect_uri]
-    redirect_to append_to_uri(params[:redirect_uri], :code => code.code)
+    oauth2.grant_authorization_code!(params[:redirect_uri], @oauth2_client, resource_owner)
   end
 
   def deny_authorization_code
-    redirect_with_error 'access_denied'
+    oauth2.deny_authorization_code!(params[:redirect_uri])
   end
 
   def append_to_uri(uri, parameters = {})

@@ -1,23 +1,30 @@
 require 'spec_helper'
 
-describe OAuth2::Provider::Rails::AuthorizationCodesSupport do
-  controller do
-    include OAuth2::Provider::Rails::AuthorizationCodesSupport
+class AuthorizationController < ActionController::Base
+  include OAuth2::Provider::Rails::AuthorizationCodesSupport
 
-    before_filter :block_invalid_authorization_code_requests
+  before_filter :block_invalid_authorization_code_requests
 
-    def new
-      render :text => 'Success'
+  def new
+    render :text => 'Success'
+  end
+
+  def create
+    # It's up to individual apps to decide how codes are granted (including which action
+    # should be responsible for granting).  The solution here is deliberately naive.
+    if params["submit"] == "Yes"
+      grant_authorization_code
+    else
+      deny_authorization_code
     end
+  end
+end
 
-    def create
-      # It's up to individual apps to decide how codes are granted (including which action
-      # should be responsible for granting).  The solution here is deliberately naive.
-      if params["submit"] == "Yes"
-        grant_authorization_code
-      else
-        deny_authorization_code
-      end
+describe OAuth2::Provider::Rails::AuthorizationCodesSupport do
+  before :all do
+    OAuth2::Application.routes.draw do
+      match "/oauth/authorize", :via => :get, :to => "authorization#new"
+      match "/oauth/authorize", :via => :post, :to => "authorization#create"
     end
   end
 
@@ -31,7 +38,7 @@ describe OAuth2::Provider::Rails::AuthorizationCodesSupport do
 
   describe "Any request with a client_id and redirect_uri" do
     before :each do
-      get :new, @valid_params
+      get '/oauth/authorize', @valid_params
     end
 
     it "is successful" do
@@ -41,7 +48,7 @@ describe OAuth2::Provider::Rails::AuthorizationCodesSupport do
 
   describe "Any request without a client_id" do
     before :each do
-      get :new, @valid_params.except(:client_id)
+      get '/oauth/authorize', @valid_params.except(:client_id)
     end
 
     redirects_back_with_error 'invalid_request'
@@ -49,7 +56,7 @@ describe OAuth2::Provider::Rails::AuthorizationCodesSupport do
 
   describe "Any request without a redirect_uri" do
     before :each do
-      get :new, @valid_params.except(:redirect_uri)
+      get '/oauth/authorize', @valid_params.except(:redirect_uri)
     end
 
     it "returns 400" do
@@ -59,7 +66,7 @@ describe OAuth2::Provider::Rails::AuthorizationCodesSupport do
 
   describe "Any request without an unknown client id" do
     before :each do
-      get :new, @valid_params.merge(:client_id => 'unknown')
+      get '/oauth/authorize', @valid_params.merge(:client_id => 'unknown')
     end
 
     redirects_back_with_error 'invalid_client'
@@ -67,7 +74,7 @@ describe OAuth2::Provider::Rails::AuthorizationCodesSupport do
 
   describe "Granting a code" do
     before :each do
-      post :create, @valid_params.merge(:submit => 'Yes')
+      post '/oauth/authorize', @valid_params.merge(:submit => 'Yes')
     end
 
     it "redirects back to the redirect_uri with a valid authorization code for the client" do
@@ -83,7 +90,7 @@ describe OAuth2::Provider::Rails::AuthorizationCodesSupport do
 
   describe "Denying a code" do
     before :each do
-      post :create, @valid_params.merge(:submit => 'No')
+      post '/oauth/authorize', @valid_params.merge(:submit => 'No')
     end
 
     redirects_back_with_error 'access_denied'

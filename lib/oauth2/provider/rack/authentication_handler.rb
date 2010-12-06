@@ -8,7 +8,7 @@ module OAuth2::Provider::Rack
       @app = app
       @env = env
       @request = OAuth2::Provider::Rack::Request.new(env)
-      @mediator = @env['oauth2'] = OAuth2::Provider::Rack::Mediator.new
+      @mediator = @env['oauth2']
     end
 
     def process
