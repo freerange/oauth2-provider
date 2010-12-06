@@ -5,13 +5,13 @@ module OAuth2::Provider::Rack
     end
 
     def call(env)
-      env['oauth2'] = OAuth2::Provider::Rack::Mediator.new
+      env['oauth2'] = OAuth2::Provider::Rack::AuthenticationMediator.new(env)
 
       response = catch :oauth2 do
         handler(env).process
       end
 
-      (env['oauth2'] && env['oauth2'].response) || response
+      env['oauth2.response'] || response
     end
 
     def handler(env)
