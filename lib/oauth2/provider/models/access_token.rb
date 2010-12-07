@@ -24,7 +24,7 @@ module OAuth2::Provider::Models::AccessToken
   end
 
   def refreshable?
-    authorization.fresh? && refresh_token.present?
+    refresh_token.present? && authorization.fresh?
   end
 
   private
@@ -39,7 +39,7 @@ module OAuth2::Provider::Models::AccessToken
 
   module ClassMethods
     def refresh_with(refresh_token)
-      if token = find_by_refresh_token(refresh_token)
+      if refresh_token && token = find_by_refresh_token(refresh_token)
         if token.refreshable?
           new(:authorization => token.authorization).tap do |result|
             if result.authorization.expires_at && result.authorization.expires_at < result.expires_at
