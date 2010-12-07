@@ -11,7 +11,7 @@ ActiveRecord::Schema.define(:version => 20110323171649) do
   end
 
   create_table 'oauth_authorization_codes', :force => true do |t|
-    t.integer  'access_grant_id', :null => false
+    t.integer  'authorization_id', :null => false
     t.string   'code',      :null => false
     t.datetime 'expires_at'
     t.datetime 'created_at'
@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(:version => 20110323171649) do
     t.string   'redirect_uri'
   end
 
-  create_table 'oauth_access_grants', :force => true do |t|
+  create_table 'oauth_authorizations', :force => true do |t|
     t.integer  'client_id', :null => false
     t.integer  'resource_owner_id'
     t.string   'scope'
@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(:version => 20110323171649) do
   end
 
   create_table 'oauth_access_tokens', :force => true do |t|
-    t.integer  'access_grant_id', :null => false
+    t.integer  'authorization_id', :null => false
     t.string   'access_token', :null => false
     t.string   'refresh_token'
     t.datetime 'expires_at'

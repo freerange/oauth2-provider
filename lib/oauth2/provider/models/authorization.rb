@@ -1,4 +1,4 @@
-module OAuth2::Provider::Models::AccessGrant
+module OAuth2::Provider::Models::Authorization
   extend ActiveSupport::Concern
 
   included do

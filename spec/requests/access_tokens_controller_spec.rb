@@ -12,11 +12,11 @@ end
 describe "POSTs to /oauth/access_token" do
   before :each do
     @code = create_authorization_code
-    @client = @code.access_grant.client
+    @client = @code.authorization.client
     @valid_params = {
       :grant_type => 'authorization_code',
-      :client_id => @code.access_grant.client.oauth_identifier,
-      :client_secret => @code.access_grant.client.oauth_secret,
+      :client_id => @code.authorization.client.oauth_identifier,
+      :client_secret => @code.authorization.client.oauth_secret,
       :code => @code.code,
       :redirect_uri => @code.redirect_uri
     }
@@ -86,11 +86,11 @@ describe "POSTs to /oauth/access_token" do
       @original_client_class_name = OAuth2::Provider.client_class_name
       OAuth2::Provider.client_class_name = NotAllowedGrantTypeClient.name
       @client = NotAllowedGrantTypeClient.create! :name => 'client'
-      @code = create_authorization_code(:access_grant => create_access_grant(:client => @client))
+      @code = create_authorization_code(:authorization => create_authorization(:client => @client))
       @valid_params = {
         :grant_type => 'authorization_code',
-        :client_id => @code.access_grant.client.oauth_identifier,
-        :client_secret => @code.access_grant.client.oauth_secret,
+        :client_id => @code.authorization.client.oauth_identifier,
+        :client_secret => @code.authorization.client.oauth_secret,
         :code => @code.code,
         :redirect_uri => @code.redirect_uri
       }
@@ -253,7 +253,7 @@ describe "POSTs to /oauth/access_token" do
     before :each do
       @token = create_access_token
 
-      @client = @token.access_grant.client
+      @client = @token.authorization.client
       @valid_params = {
         :grant_type => 'refresh_token',
         :refresh_token => @token.refresh_token,
@@ -319,7 +319,7 @@ describe "POSTs to /oauth/access_token" do
 
     describe "requests using authorization code grant type" do
       before :each do
-        @code = create_authorization_code(:access_grant => create_access_grant(:client => @client))
+        @code = create_authorization_code(:authorization => create_authorization(:client => @client))
         @valid_params = @client_params.merge(
           :grant_type => 'authorization_code',
           :code => @code.code,

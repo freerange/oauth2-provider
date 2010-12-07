@@ -8,12 +8,12 @@ module OAuth2
     mattr_accessor :backend
     self.backend = :activerecord
 
-    mattr_accessor :access_grant_class_name
+    mattr_accessor :authorization_class_name
     mattr_accessor :access_token_class_name
     mattr_accessor :authorization_code_class_name
     mattr_accessor :client_class_name
 
-    [:resource_owner, :client, :access_grant, :access_token, :authorization_code].each do |model|
+    [:resource_owner, :client, :authorization, :access_token, :authorization_code].each do |model|
       instance_eval %{
         def #{model}_class
           #{model}_class_name.constantize

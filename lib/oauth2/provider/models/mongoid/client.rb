@@ -5,7 +5,7 @@ class OAuth2::Provider::Models::Mongoid::Client
   field :oauth_secret
   field :oauth_identifier
 
-  references_many :access_grants, :class_name => "OAuth2::Provider::Models::Mongoid::AccessGrant"
+  references_many :authorizations, :class_name => "OAuth2::Provider::Models::Mongoid::Authorization"
   references_many :access_tokens, :class_name => "OAuth2::Provider::Models::Mongoid::AccessToken"
   references_many :authorization_codes, :class_name => "OAuth2::Provider::Models::Mongoid::AuthorizationCode"
 

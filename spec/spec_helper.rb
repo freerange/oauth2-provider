@@ -38,14 +38,14 @@ else
     field :username
     field :password
 
-    references_many :access_grants, :class_name => "OAuth2::Provider::Models::Mongoid::AccessGrant"
+    references_many :authorizations, :class_name => "OAuth2::Provider::Models::Mongoid::Authorization"
 
     def self.authenticate_with_username_and_password(username, password)
       where(:username => username, :password => password).first
     end
   end
 
-  class OAuth2::Provider::Models::Mongoid::AccessGrant
+  class OAuth2::Provider::Models::Mongoid::Authorization
     referenced_in :resource_owner, :class_name => "OAuth2::Provider::Models::Mongoid::Client"
   end
 end
@@ -97,14 +97,14 @@ module OAuth2::Provider::ModelFactories
     end
   end
 
-  def build_access_grant(attributes = {})
-    OAuth2::Provider.access_grant_class.new({
+  def build_authorization(attributes = {})
+    OAuth2::Provider.authorization_class.new({
       :client => build_client
     }.merge(attributes))
   end
 
-  def create_access_grant(attributes = {})
-    build_access_grant({:client => create_client}.merge(attributes)).tap do |ag|
+  def create_authorization(attributes = {})
+    build_authorization({:client => create_client}.merge(attributes)).tap do |ag|
       ag.save!
     end
   end
@@ -112,24 +112,24 @@ module OAuth2::Provider::ModelFactories
   def build_authorization_code(attributes = {})
     OAuth2::Provider.authorization_code_class.new({
       :redirect_uri => "https://client.example.com/callback",
-      :access_grant => build_access_grant
+      :authorization => build_authorization
     }.merge(attributes))
   end
 
   def create_authorization_code(attributes = {})
-    build_authorization_code({:access_grant => create_access_grant}.merge(attributes)).tap do |ac|
+    build_authorization_code({:authorization => create_authorization}.merge(attributes)).tap do |ac|
       ac.save!
     end
   end
 
   def build_access_token(attributes = {})
     OAuth2::Provider.access_token_class.new({
-      :access_grant => build_access_grant
+      :authorization => build_authorization
     }.merge(attributes))
   end
 
   def create_access_token(attributes = {})
-    build_access_token({:access_grant => create_access_grant}.merge(attributes)).tap do |ac|
+    build_access_token({:authorization => create_authorization}.merge(attributes)).tap do |ac|
       ac.save!
     end
   end

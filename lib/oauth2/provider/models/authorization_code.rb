@@ -2,10 +2,10 @@ module OAuth2::Provider::Models::AuthorizationCode
   extend ActiveSupport::Concern
 
   included do
-    delegate :client, :resource_owner, :to => :access_grant
+    delegate :client, :resource_owner, :to => :authorization
 
     include OAuth2::Provider::Models::TokenExpiry
-    validates_presence_of :access_grant, :code, :expires_at, :redirect_uri
+    validates_presence_of :authorization, :code, :expires_at, :redirect_uri
   end
 
   def initialize(attributes = {})
@@ -19,7 +19,7 @@ module OAuth2::Provider::Models::AuthorizationCode
       if authorization_code = find_by_code_and_redirect_uri(code, redirect_uri)
         unless authorization_code.expired?
           authorization_code.destroy
-          authorization_code.access_grant.access_tokens.create!
+          authorization_code.authorization.access_tokens.create!
         end
       end
     end

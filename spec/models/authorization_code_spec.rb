@@ -4,7 +4,7 @@ describe OAuth2::Provider.authorization_code_class do
   describe "any instance" do
     subject do
       OAuth2::Provider.authorization_code_class.new(
-        :access_grant => create_access_grant,
+        :authorization => create_authorization,
         :redirect_uri => "http://redirect.example.com/callback"
       )
     end
@@ -24,7 +24,7 @@ describe OAuth2::Provider.authorization_code_class do
     end
 
     it "is invalid without an access grant" do
-      subject.access_grant = nil
+      subject.authorization = nil
       subject.should_not be_valid
     end
 
@@ -63,7 +63,7 @@ describe OAuth2::Provider.authorization_code_class do
   describe "a saved instance" do
     subject do
       OAuth2::Provider.authorization_code_class.create!(
-        :access_grant => create_access_grant,
+        :authorization => create_authorization,
         :redirect_uri => "https://client.example.com/callback/here"
       )
     end
@@ -98,7 +98,7 @@ describe OAuth2::Provider.authorization_code_class do
   describe "the access token returned when a code is claimed" do
     subject do
       @code = OAuth2::Provider.authorization_code_class.create!(
-        :access_grant => create_access_grant,
+        :authorization => create_authorization,
         :redirect_uri => "https://client.example.com/callback/here"
       )
       OAuth2::Provider.authorization_code_class.claim(@code.code, @code.redirect_uri)
@@ -109,7 +109,7 @@ describe OAuth2::Provider.authorization_code_class do
     end
 
     it "has same access grant as claimed code" do
-      subject.access_grant.should == @code.access_grant
+      subject.authorization.should == @code.authorization
     end
   end
 end

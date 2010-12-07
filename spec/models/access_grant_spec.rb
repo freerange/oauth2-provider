@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe OAuth2::Provider.access_grant_class do
+describe OAuth2::Provider.authorization_class do
   describe "any instance" do
     subject do
-      result = OAuth2::Provider.access_grant_class.new :client => create_client
+      result = OAuth2::Provider.authorization_class.new :client => create_client
     end
 
     it "is valid with a client" do
@@ -31,7 +31,7 @@ describe OAuth2::Provider.access_grant_class do
 
   describe "a new instance" do
     subject do
-      OAuth2::Provider.access_grant_class.new
+      OAuth2::Provider.authorization_class.new
     end
 
     it "has no expiry time by default" do
@@ -47,7 +47,7 @@ describe OAuth2::Provider.access_grant_class do
 
   describe "being revoked" do
     subject do
-      OAuth2::Provider.access_grant_class.create! :client => create_client
+      OAuth2::Provider.authorization_class.create! :client => create_client
     end
 
     it "destroys itself" do

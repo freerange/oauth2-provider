@@ -1,20 +1,20 @@
 module OAuth2::Provider::Rack
   class AuthenticationMediator
     attr_reader :response
-    attr_accessor :access_grant
+    attr_accessor :authorization
 
-    delegate :has_scope?, :to => :access_grant
+    delegate :has_scope?, :to => :authorization
 
     def initialize(env)
       @env = env
     end
 
     def authenticated?
-      access_grant.present?
+      authorization.present?
     end
 
     def resource_owner
-      access_grant && access_grant.resource_owner
+      authorization && authorization.resource_owner
     end
 
     def authentication_required!

@@ -3,13 +3,13 @@ require 'spec_helper'
 describe OAuth2::Provider.access_token_class do
   describe "any instance" do
     subject do
-      OAuth2::Provider.access_token_class.new :access_grant => build_access_grant
+      OAuth2::Provider.access_token_class.new :authorization => build_authorization
     end
 
     it "is valid with an access grant, expiry time and access token" do
       subject.expires_at.should_not be_nil
       subject.access_token.should_not be_nil
-      subject.access_grant.should_not be_nil
+      subject.authorization.should_not be_nil
 
       subject.should be_valid
     end
@@ -20,7 +20,7 @@ describe OAuth2::Provider.access_token_class do
     end
 
     it "is invalid without an access grant" do
-      subject.access_grant = nil
+      subject.authorization = nil
       subject.should_not be_valid
     end
 
@@ -29,8 +29,8 @@ describe OAuth2::Provider.access_token_class do
       subject.should_not be_valid
     end
 
-    it "is invalid if expires_at is later than the access_grant's value" do
-      subject.access_grant.expires_at = 1.minute.from_now
+    it "is invalid if expires_at is later than the authorization's value" do
+      subject.authorization.expires_at = 1.minute.from_now
       subject.expires_at = 10.minutes.from_now
       subject.should_not be_valid
     end
@@ -89,18 +89,18 @@ describe OAuth2::Provider.access_token_class do
 
   describe "refreshing an existing token" do
     subject do
-      OAuth2::Provider.access_token_class.create! :access_grant => create_access_grant, :expires_at => 23.days.ago
+      OAuth2::Provider.access_token_class.create! :authorization => create_authorization, :expires_at => 23.days.ago
     end
 
     it "returns a new access token with the same client, resource_owner and scope, but a new expiry time" do
       result = OAuth2::Provider.access_token_class.refresh_with(subject.refresh_token)
       result.should_not be_nil
       result.expires_at.should == 1.month.from_now
-      result.access_grant.should == subject.access_grant
+      result.authorization.should == subject.authorization
     end
 
-    it "returns token with expires_at set to access_grant.expires_at if validation would fail otherwise" do
-      subject.access_grant.update_attributes(:expires_at => 5.minutes.from_now)
+    it "returns token with expires_at set to authorization.expires_at if validation would fail otherwise" do
+      subject.authorization.update_attributes(:expires_at => 5.minutes.from_now)
       result = OAuth2::Provider.access_token_class.refresh_with(subject.refresh_token)
       result.expires_at.should == 5.minutes.from_now
     end

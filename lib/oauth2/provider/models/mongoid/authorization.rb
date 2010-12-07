@@ -1,6 +1,6 @@
-class OAuth2::Provider::Models::Mongoid::AccessGrant
+class OAuth2::Provider::Models::Mongoid::Authorization
   include ::Mongoid::Document
-  include OAuth2::Provider::Models::AccessGrant
+  include OAuth2::Provider::Models::Authorization
 
   field :scope
   field :expires_at, :type => Time

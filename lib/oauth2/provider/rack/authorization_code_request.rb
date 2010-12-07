@@ -20,7 +20,7 @@ module OAuth2::Provider::Rack
     end
 
     def grant!(resource_owner = nil)
-      grant = client.access_grants.create!(
+      grant = client.authorizations.create!(
         :resource_owner => resource_owner,
         :client => client
       )

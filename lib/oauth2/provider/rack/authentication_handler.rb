@@ -27,7 +27,7 @@ module OAuth2::Provider::Rack
 
     def block_invalid_token
       access_token = OAuth2::Provider.access_token_class.find_by_access_token(request.token)
-      mediator.access_grant = access_token.access_grant if access_token
+      mediator.authorization = access_token.authorization if access_token
       invalid_token(access_token) if access_token.nil? || access_token.expired?
     end
 

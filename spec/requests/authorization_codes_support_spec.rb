@@ -83,7 +83,7 @@ describe OAuth2::Provider::Rails::AuthorizationCodesSupport do
       code.should_not be_nil
       found = OAuth2::Provider.authorization_code_class.find_by_code(code)
       found.should_not be_nil
-      found.access_grant.client.should == @client
+      found.authorization.client.should == @client
       found.should_not be_expired
     end
   end

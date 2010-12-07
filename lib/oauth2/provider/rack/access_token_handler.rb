@@ -24,7 +24,7 @@ module OAuth2::Provider::Rack
       with_required_params 'username', 'password' do |username, password|
         if resource_owner = OAuth2::Provider.resource_owner_class.authenticate_with_username_and_password(username, password)
           token_response OAuth2::Provider.access_token_class.create!(
-            :access_grant => OAuth2::Provider.access_grant_class.create!(:resource_owner => resource_owner, :client => oauth_client)
+            :authorization => OAuth2::Provider.authorization_class.create!(:resource_owner => resource_owner, :client => oauth_client)
           )
         else
           Responses.json_error 'invalid_grant'
