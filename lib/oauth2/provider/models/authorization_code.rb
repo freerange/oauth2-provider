@@ -17,7 +17,7 @@ module OAuth2::Provider::Models::AuthorizationCode
   module ClassMethods
     def claim(code, redirect_uri)
       if authorization_code = find_by_code_and_redirect_uri(code, redirect_uri)
-        unless authorization_code.expired?
+        if authorization_code.fresh?
           authorization_code.destroy
           authorization_code.authorization.access_tokens.create!
         end

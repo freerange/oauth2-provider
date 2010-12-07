@@ -8,6 +8,10 @@ module OAuth2::Provider::Models
   autoload :Client, 'oauth2/provider/models/client'
 
   module TokenExpiry
+    def fresh?
+      !expired?
+    end
+
     def expired?
       self.expires_at && self.expires_at < Time.now
     end

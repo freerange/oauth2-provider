@@ -24,7 +24,7 @@ module OAuth2::Provider::Models::AccessToken
   end
 
   def refreshable?
-    refresh_token.present?
+    authorization.fresh? && refresh_token.present?
   end
 
   private

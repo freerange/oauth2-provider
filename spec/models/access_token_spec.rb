@@ -63,6 +63,12 @@ describe OAuth2::Provider.access_token_class do
       subject.refresh_token = nil
       subject.should_not be_refreshable
     end
+
+    it "is not refreshable if it has a refresh token, but its authorization has expired" do
+      subject.refresh_token = 'abcd1234'
+      subject.authorization.expires_at = 60.minutes.ago
+      subject.should_not be_refreshable
+    end
   end
 
   describe "a new instance" do
