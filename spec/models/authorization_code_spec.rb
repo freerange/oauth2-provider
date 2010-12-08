@@ -55,8 +55,8 @@ describe OAuth2::Provider.authorization_code_class do
       subject.code.should_not == OAuth2::Provider.authorization_code_class.new.code
     end
 
-    it "expires in 10 minutes by default" do
-      subject.expires_at.should == 10.minutes.from_now
+    it "expires in 1 minute by default" do
+      subject.expires_at.should == 1.minute.from_now
     end
   end
 
