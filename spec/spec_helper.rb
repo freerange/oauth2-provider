@@ -69,6 +69,18 @@ module OAuth2::Provider::RSpecMacros
   end
 
   module ClassMethods
+    def responds_with_header(name, value)
+      it %{responds with header #{name}: #{value}} do
+        response.headers[name].should == value
+      end
+    end
+
+    def responds_with_status(status)
+      it %{responds with status #{status}} do
+        response.status.should == status
+      end
+    end
+
     def responds_with_json_error(name, options = {})
       it %{responds with json: {"error": "#{name}"}, status: #{options[:status]}} do
         response.status.should == options[:status]

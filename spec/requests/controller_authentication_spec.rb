@@ -29,13 +29,8 @@ describe "A request for a protected resource" do
       get "/read"
     end
 
-    it "responds with status 401" do
-      response.status.should == 401
-    end
-
-    it "includes an OAuth challenge in the response" do
-      response.headers['WWW-Authenticate'].should == "OAuth2"
-    end
+    responds_with_status 401
+    responds_with_header 'WWW-Authenticate', 'OAuth2'
   end
 
   describe "with a token passed as an oauth_token parameter" do
@@ -79,13 +74,8 @@ describe "A request for a protected resource" do
       get "/read", :oauth_token => 'invalid-token'
     end
 
-    it "responds with status 401" do
-      response.status.should == 401
-    end
-
-    it "includes an 'invalid_token' OAuth challenge in the response" do
-      response.headers['WWW-Authenticate'].should == 'OAuth2 error="invalid_token"'
-    end
+    responds_with_status 401
+    responds_with_header 'WWW-Authenticate', 'OAuth2 error="invalid_token"'
   end
 
   describe "with an expired token that can be refreshed" do
@@ -94,13 +84,8 @@ describe "A request for a protected resource" do
       get "/read", :oauth_token => @token.access_token
     end
 
-    it "responds with status 401" do
-      response.status.should == 401
-    end
-
-    it "includes an 'invalid_token' OAuth challenge in the response" do
-      response.headers['WWW-Authenticate'].should == 'OAuth2 error="invalid_token"'
-    end
+    responds_with_status 401
+    responds_with_header 'WWW-Authenticate', 'OAuth2 error="invalid_token"'
   end
 
   describe "with an expired token that can't be refreshed" do
@@ -109,13 +94,8 @@ describe "A request for a protected resource" do
       get "/read", :oauth_token => @token.access_token
     end
 
-    it "responds with status 401" do
-      response.status.should == 401
-    end
-
-    it "includes an 'invalid_token' OAuth challenge in the response" do
-      response.headers['WWW-Authenticate'].should == 'OAuth2 error="invalid_token"'
-    end
+    responds_with_status 401
+    responds_with_header 'WWW-Authenticate', 'OAuth2 error="invalid_token"'
   end
 end
 
