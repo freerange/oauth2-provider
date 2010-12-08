@@ -2,8 +2,8 @@ require 'addressable/uri'
 
 module OAuth2::Provider::Rack::Responses
   def self.unauthorized(error = nil)
-    challenge = "OAuth realm='Application'"
-    challenge << ", error='#{error}'" if error
+    challenge = "OAuth2"
+    challenge << %{ error="#{error}"} if error
     [401, {'Content-Type' => 'text/plain', 'Content-Length' => '0', 'WWW-Authenticate' => challenge}, []]
   end
 

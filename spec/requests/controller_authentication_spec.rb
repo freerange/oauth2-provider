@@ -34,7 +34,7 @@ describe "A request for a protected resource" do
     end
 
     it "includes an OAuth challenge in the response" do
-      response.headers['WWW-Authenticate'].should == "OAuth realm='Application'"
+      response.headers['WWW-Authenticate'].should == "OAuth2"
     end
   end
 
@@ -84,7 +84,7 @@ describe "A request for a protected resource" do
     end
 
     it "includes an 'invalid_token' OAuth challenge in the response" do
-      response.headers['WWW-Authenticate'].should == "OAuth realm='Application', error='invalid_token'"
+      response.headers['WWW-Authenticate'].should == 'OAuth2 error="invalid_token"'
     end
   end
 
@@ -99,7 +99,7 @@ describe "A request for a protected resource" do
     end
 
     it "includes an 'invalid_token' OAuth challenge in the response" do
-      response.headers['WWW-Authenticate'].should == "OAuth realm='Application', error='expired_token'"
+      response.headers['WWW-Authenticate'].should == 'OAuth2 error="expired_token"'
     end
   end
 
@@ -114,7 +114,7 @@ describe "A request for a protected resource" do
     end
 
     it "includes an 'invalid_token' OAuth challenge in the response" do
-      response.headers['WWW-Authenticate'].should == "OAuth realm='Application', error='invalid_token'"
+      response.headers['WWW-Authenticate'].should == 'OAuth2 error="invalid_token"'
     end
   end
 end
