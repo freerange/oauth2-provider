@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 class ExampleController < ActionController::Base
-  authenticate_with_oauth :only => :read
-  authenticate_with_oauth :scope => 'editor', :only => :edit
+  authenticate_with_oauth :only => :protected
+  authenticate_with_oauth :scope => 'omnipotent', :only => :protected_by_scope
 
-  def read
+  def protected
     render :text => "Success"
   end
 
-  def edit
+  def protected_by_scope
     render :text => "Success"
   end
 end
@@ -16,17 +16,17 @@ end
 describe "A request for a protected resource" do
   before :all do
     OAuth2::Application.routes.draw do
-      match "/read", :to => "example#read"
+      match "/protected", :to => "example#protected"
     end
   end
 
   before :each do
-    @token = create_access_token(:authorization => create_authorization(:scope => "read write"))
+    @token = create_access_token(:authorization => create_authorization(:scope => "protected write"))
   end
 
   describe "with no token passed" do
     before :each do
-      get "/read"
+      get "/protected"
     end
 
     responds_with_status 401
@@ -35,7 +35,7 @@ describe "A request for a protected resource" do
 
   describe "with a token passed as an oauth_token parameter" do
     before :each do
-      get "/read", :oauth_token => @token.access_token
+      get "/protected", :oauth_token => @token.access_token
     end
 
     it "is successful" do
@@ -49,7 +49,7 @@ describe "A request for a protected resource" do
 
   describe "with a token passed in an Authorization header" do
     before :each do
-      get "/read", {}, {"HTTP_AUTHORIZATION" => "OAuth #{@token.access_token}"}
+      get "/protected", {}, {"HTTP_AUTHORIZATION" => "OAuth #{@token.access_token}"}
     end
 
     it "is successful" do
@@ -63,7 +63,7 @@ describe "A request for a protected resource" do
 
   describe "with tokens passed in both the Authorization header and oauth_token parameter" do
     before :each do
-      get "/read", {:oauth_token => @token.access_token}, {"HTTP_AUTHORIZATION" => "OAuth #{@token.access_token}"}
+      get "/protected", {:oauth_token => @token.access_token}, {"HTTP_AUTHORIZATION" => "OAuth #{@token.access_token}"}
     end
 
     responds_with_json_error 'invalid_request', :status => 400
@@ -71,7 +71,7 @@ describe "A request for a protected resource" do
 
   describe "with an invalid token" do
     before :each do
-      get "/read", :oauth_token => 'invalid-token'
+      get "/protected", :oauth_token => 'invalid-token'
     end
 
     responds_with_status 401
@@ -81,7 +81,7 @@ describe "A request for a protected resource" do
   describe "with an expired token that can be refreshed" do
     before :each do
       @token.update_attributes(:expires_at => 1.day.ago)
-      get "/read", :oauth_token => @token.access_token
+      get "/protected", :oauth_token => @token.access_token
     end
 
     responds_with_status 401
@@ -91,7 +91,7 @@ describe "A request for a protected resource" do
   describe "with an expired token that can't be refreshed" do
     before :each do
       @token.update_attributes(:expires_at => 1.day.ago, :refresh_token => nil)
-      get "/read", :oauth_token => @token.access_token
+      get "/protected", :oauth_token => @token.access_token
     end
 
     responds_with_status 401
@@ -102,18 +102,18 @@ end
 describe "A request for a protected resource requiring a specific scope" do
   before :all do
     OAuth2::Application.routes.draw do
-      match "/edit", :to => "example#edit"
+      match "/protected_by_scope", :to => "example#protected_by_scope"
     end
   end
 
   before :each do
-    @token = create_access_token(:authorization => create_authorization(:scope => "reader editor admin"))
-    @insufficient_token = create_access_token(:authorization => create_authorization(:scope => "reader admin"))
+    @token = create_access_token(:authorization => create_authorization(:scope => "omnipotent admin"))
+    @insufficient_token = create_access_token(:authorization => create_authorization(:scope => "impotent admin"))
   end
 
   describe "made with a token with sufficient scope" do
     before :each do
-      get '/edit', :oauth_token => @token.access_token
+      get '/protected_by_scope', :oauth_token => @token.access_token
     end
 
     it "is successful" do
@@ -123,7 +123,7 @@ describe "A request for a protected resource requiring a specific scope" do
 
   describe "made with a token with insufficient scope" do
     before :each do
-      get '/edit', :oauth_token => @insufficient_token.access_token
+      get '/protected_by_scope', :oauth_token => @insufficient_token.access_token
     end
 
     responds_with_json_error 'insufficient_scope', :status => 403
