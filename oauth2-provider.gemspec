@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{oauth2-provider}
-  s.version = "0.0.7"
+  s.version = "0.0.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Ward"]
-  s.date = %q{2010-12-06}
+  s.date = %q{2010-12-10}
   s.email = %q{tom@popdog.net}
   s.extra_rdoc_files = [
     "README"
@@ -20,22 +20,20 @@ Gem::Specification.new do |s|
      "lib/oauth2-provider.rb",
      "lib/oauth2/provider.rb",
      "lib/oauth2/provider/models.rb",
+     "lib/oauth2/provider/models/access_token.rb",
      "lib/oauth2/provider/models/active_record.rb",
-     "lib/oauth2/provider/models/active_record/authorization.rb",
      "lib/oauth2/provider/models/active_record/access_token.rb",
+     "lib/oauth2/provider/models/active_record/authorization.rb",
      "lib/oauth2/provider/models/active_record/authorization_code.rb",
      "lib/oauth2/provider/models/active_record/client.rb",
+     "lib/oauth2/provider/models/authorization.rb",
+     "lib/oauth2/provider/models/authorization_code.rb",
+     "lib/oauth2/provider/models/client.rb",
      "lib/oauth2/provider/models/mongoid.rb",
-     "lib/oauth2/provider/models/mongoid/authorization.rb",
      "lib/oauth2/provider/models/mongoid/access_token.rb",
+     "lib/oauth2/provider/models/mongoid/authorization.rb",
      "lib/oauth2/provider/models/mongoid/authorization_code.rb",
      "lib/oauth2/provider/models/mongoid/client.rb",
-     "lib/oauth2/provider/models/shared.rb",
-     "lib/oauth2/provider/models/shared/authorization.rb",
-     "lib/oauth2/provider/models/shared/access_token.rb",
-     "lib/oauth2/provider/models/shared/authorization_code.rb",
-     "lib/oauth2/provider/models/shared/client.rb",
-     "lib/oauth2/provider/models/shared/token_expiry.rb",
      "lib/oauth2/provider/rack.rb",
      "lib/oauth2/provider/rack/access_token_handler.rb",
      "lib/oauth2/provider/rack/authentication_handler.rb",
@@ -50,15 +48,15 @@ Gem::Specification.new do |s|
      "lib/oauth2/provider/random.rb",
      "oauth2-provider.gemspec",
      "spec/database.yml",
-     "spec/models/authorization_spec.rb",
+     "spec/models/access_grant_spec.rb",
      "spec/models/access_token_spec.rb",
      "spec/models/authorization_code_spec.rb",
      "spec/models/client_spec.rb",
      "spec/mongoid.yml",
      "spec/mongoid_backend.rb",
      "spec/requests/access_tokens_controller_spec.rb",
+     "spec/requests/authentication_spec.rb",
      "spec/requests/authorization_codes_support_spec.rb",
-     "spec/requests/controller_authentication_spec.rb",
      "spec/schema.rb",
      "spec/spec_helper.rb"
   ]
