@@ -11,7 +11,14 @@ module OAuth2::Provider::Rack
         handler(env).process
       end
 
-      env['oauth2.response'] || response
+      thrown_response(env) || response
+    end
+
+    def thrown_response(env)
+      if env['oauth2.response']
+        env['warden'] && env['warden'].custom_failure!
+        env['oauth2.response']
+      end
     end
 
     def handler(env)

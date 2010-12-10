@@ -21,14 +21,21 @@ module OAuth2::Provider::Rack
 
     def block_bad_request
       if request.token_from_param && request.token_from_header
-        Responses.json_error 'invalid_request'
+        throw_response Responses.json_error('invalid_request')
       end
     end
 
     def block_invalid_token
       access_token = OAuth2::Provider.access_token_class.find_by_access_token(request.token)
       mediator.authorization = access_token.authorization if access_token
-      Responses.unauthorized('invalid_token') if access_token.nil? || access_token.expired?
+      throw_response Responses.unauthorized('invalid_token') if access_token.nil? || access_token.expired?
+    end
+
+    private
+
+    def throw_response(response)
+      @env['oauth2.response'] = response
+      throw :oauth2
     end
   end
 end
