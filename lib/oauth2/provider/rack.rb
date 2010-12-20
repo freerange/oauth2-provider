@@ -6,4 +6,5 @@ module OAuth2::Provider::Rack
   autoload :Middleware, 'oauth2/provider/rack/middleware'
   autoload :Request, 'oauth2/provider/rack/request'
   autoload :Responses, 'oauth2/provider/rack/responses'
+  autoload :AuthorizationCodesSupport, 'oauth2/provider/rack/authorization_codes_support'
 end

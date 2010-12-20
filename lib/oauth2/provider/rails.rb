@@ -2,7 +2,6 @@ require 'oauth2/provider'
 
 module OAuth2::Provider::Rails
   autoload :ControllerAuthentication, 'oauth2/provider/rails/controller_authentication'
-  autoload :AuthorizationCodesSupport, 'oauth2/provider/rails/authorization_codes_support'
   
   class Railtie < Rails::Railtie
     config.oauth2_provider = ActiveSupport::OrderedOptions.new

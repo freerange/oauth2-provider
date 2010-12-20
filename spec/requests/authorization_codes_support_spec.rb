@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 class AuthorizationController < ActionController::Base
-  include OAuth2::Provider::Rails::AuthorizationCodesSupport
+  include OAuth2::Provider::Rack::AuthorizationCodesSupport
 
   before_filter :block_invalid_authorization_code_requests
 
@@ -20,7 +20,7 @@ class AuthorizationController < ActionController::Base
   end
 end
 
-describe OAuth2::Provider::Rails::AuthorizationCodesSupport do
+describe OAuth2::Provider::Rack::AuthorizationCodesSupport do
   before :all do
     OAuth2::Application.routes.draw do
       match "/oauth/authorize", :via => :get, :to => "authorization#new"

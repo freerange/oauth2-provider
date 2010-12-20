@@ -1,6 +1,6 @@
 require 'addressable/uri'
 
-module OAuth2::Provider::Rails::AuthorizationCodesSupport
+module OAuth2::Provider::Rack::AuthorizationCodesSupport
   protected
 
   def oauth2_authorization_request
