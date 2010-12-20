@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{oauth2-provider}
-  s.version = "0.0.8"
+  s.version = "0.0.9"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Ward"]
-  s.date = %q{2010-12-10}
+  s.date = %q{2010-12-20}
   s.email = %q{tom@popdog.net}
   s.extra_rdoc_files = [
     "README"
@@ -39,11 +39,11 @@ Gem::Specification.new do |s|
      "lib/oauth2/provider/rack/authentication_handler.rb",
      "lib/oauth2/provider/rack/authentication_mediator.rb",
      "lib/oauth2/provider/rack/authorization_code_request.rb",
+     "lib/oauth2/provider/rack/authorization_codes_support.rb",
      "lib/oauth2/provider/rack/middleware.rb",
      "lib/oauth2/provider/rack/request.rb",
      "lib/oauth2/provider/rack/responses.rb",
      "lib/oauth2/provider/rails.rb",
-     "lib/oauth2/provider/rails/authorization_codes_support.rb",
      "lib/oauth2/provider/rails/controller_authentication.rb",
      "lib/oauth2/provider/random.rb",
      "oauth2-provider.gemspec",
