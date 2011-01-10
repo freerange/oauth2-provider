@@ -20,7 +20,7 @@ module OAuth2::Provider::Rack
     end
 
     def block_bad_request
-      if request.token_from_param && request.token_from_header
+      if request.token_from_param && request.token_from_header && (request.token_from_param != request.token_from_header)
         throw_response Responses.json_error('invalid_request')
       end
     end

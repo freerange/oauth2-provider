@@ -61,9 +61,23 @@ describe "A request for a protected resource" do
     end
   end
 
-  describe "with tokens passed in both the Authorization header and oauth_token parameter" do
+  describe "with same token passed in both the Authorization header and oauth_token parameter" do
     before :each do
       get "/protected", {:oauth_token => @token.access_token}, {"HTTP_AUTHORIZATION" => "OAuth #{@token.access_token}"}
+    end
+
+    it "is successful" do
+      response.should be_successful
+    end
+
+    it "makes the access token available to the requested action" do
+      response.body.should == "Success"
+    end
+  end
+
+  describe "with different tokens passed in both the Authorization header and oauth_token parameter" do
+    before :each do
+      get "/protected", {:oauth_token => @token.access_token}, {"HTTP_AUTHORIZATION" => "OAuth DifferentToken"}
     end
 
     responds_with_json_error 'invalid_request', :status => 400
