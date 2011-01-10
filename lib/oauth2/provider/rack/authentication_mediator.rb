@@ -9,6 +9,19 @@ module OAuth2::Provider::Rack
       @env = env
     end
 
+    def authenticate_request!(options, &block)
+      if authenticated?
+        scope = options.delete(:scope)
+        if scope.nil? || has_scope?(scope)
+          yield
+        else
+          insufficient_scope!
+        end
+      else
+        authentication_required!
+      end
+    end
+
     def authenticated?
       authorization.present?
     end

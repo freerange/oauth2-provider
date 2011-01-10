@@ -14,17 +14,7 @@ module OAuth2::Provider::Rails::ControllerAuthentication
       end
 
       def filter(controller, &block)
-        oauth2 = controller.request.env['oauth2']
-
-        if oauth2.authenticated?
-          if @scope.nil? || oauth2.has_scope?(@scope)
-            yield
-          else
-            oauth2.insufficient_scope!
-          end
-        else
-          oauth2.authentication_required!
-        end
+        controller.request.env['oauth2'].authenticate_request! :scope => @scope, &block
       end
     end
   end
