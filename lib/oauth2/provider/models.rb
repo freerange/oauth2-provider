@@ -8,6 +8,19 @@ module OAuth2::Provider::Models
   autoload :Client, 'oauth2/provider/models/client'
 
   module TokenExpiry
+    extend ActiveSupport::Concern
+
+    included do
+      mattr_accessor :default_token_lifespan
+    end
+
+    def initialize(*args, &block)
+      super
+      if default_token_lifespan
+        self.expires_at ||= default_token_lifespan.from_now
+      end
+    end
+
     def fresh?
       !expired?
     end

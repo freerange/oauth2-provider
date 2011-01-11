@@ -3,6 +3,7 @@ module OAuth2::Provider::Models::AccessToken
 
   included do
     include OAuth2::Provider::Models::TokenExpiry
+    self.default_token_lifespan = 1.month
 
     validates_presence_of :authorization, :access_token, :expires_at
     validate :expires_at_isnt_greater_than_authorization
@@ -14,7 +15,6 @@ module OAuth2::Provider::Models::AccessToken
     super
     self.access_token ||= OAuth2::Provider::Random.base62(32)
     self.refresh_token ||= OAuth2::Provider::Random.base62(32)
-    self.expires_at ||= 1.month.from_now
   end
 
   def as_json(options = {})

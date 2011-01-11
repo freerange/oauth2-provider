@@ -2,16 +2,16 @@ module OAuth2::Provider::Models::AuthorizationCode
   extend ActiveSupport::Concern
 
   included do
-    delegate :client, :resource_owner, :to => :authorization
-
     include OAuth2::Provider::Models::TokenExpiry
+    self.default_token_lifespan = 1.minute
+
+    delegate :client, :resource_owner, :to => :authorization
     validates_presence_of :authorization, :code, :expires_at, :redirect_uri
   end
 
   def initialize(attributes = {})
     super
     self.code ||= OAuth2::Provider::Random.base62(32)
-    self.expires_at ||= 1.minute.from_now
   end
 
   module ClassMethods

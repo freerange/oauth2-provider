@@ -3,6 +3,8 @@ module OAuth2::Provider::Models::Authorization
 
   included do
     include OAuth2::Provider::Models::TokenExpiry
+    self.default_token_lifespan = nil
+
     validates_presence_of :client
   end
 
