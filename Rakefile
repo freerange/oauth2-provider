@@ -23,7 +23,7 @@ spec = Dir.chdir(path) do
 
     # Change these as appropriate
     s.name              = "oauth2-provider"
-    s.version           = "0.0.9"
+    s.version           = "0.0.10"
     s.summary           = "OAuth2 Provider, extracted from api.hashblue.com"
     s.author            = "Tom Ward"
     s.email             = "tom@popdog.net"
