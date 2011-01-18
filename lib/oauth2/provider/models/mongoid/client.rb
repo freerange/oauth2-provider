@@ -9,9 +9,20 @@ class OAuth2::Provider::Models::Mongoid::Client
       field :oauth_secret
       field :oauth_identifier
 
-      references_many :authorizations, :class_name => "OAuth2::Provider::Models::Mongoid::Authorization"
-      references_many :access_tokens, :class_name => "OAuth2::Provider::Models::Mongoid::AccessToken"
-      references_many :authorization_codes, :class_name => "OAuth2::Provider::Models::Mongoid::AuthorizationCode"
+      references_many(:authorizations,
+        :class_name => OAuth2::Provider.authorization_class_name,
+        :foreign_key => :oauth_client_id
+      )
+
+      references_many(:access_tokens,
+        :class_name => OAuth2::Provider.access_token_class_name,
+        :foreign_key => :oauth_client_id
+      )
+
+      references_many(:authorization_codes,
+        :class_name => OAuth2::Provider.authorization_code_class_name,
+        :foreign_key => :oauth_client_id
+      )
     end
 
     module ClassMethods

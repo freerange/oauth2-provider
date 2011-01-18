@@ -9,11 +9,18 @@ class OAuth2::Provider::Models::Mongoid::AuthorizationCode
       field :code
       field :expires_at, :type => Time
 
-      referenced_in :authorization, :class_name => "OAuth2::Provider::Models::Mongoid::Authorization", :inverse_of => :authorization_codes
-      referenced_in :client, :class_name => "OAuth2::Provider::Models::Mongoid::Client"
+      referenced_in(:authorization,
+        :class_name => OAuth2::Provider.authorization_class_name,
+        :foreign_key => :oauth_authorization_id
+      )
+
+      referenced_in(:client,
+        :class_name => OAuth2::Provider.client_class_name,
+        :foreign_key => :oauth_client_id
+      )
 
       before_save do
-        self.client = authorization.client
+        self.client ||= authorization.client
       end
     end
 
