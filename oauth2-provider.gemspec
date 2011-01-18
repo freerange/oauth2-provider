@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Ward"]
-  s.date = %q{2011-01-12}
+  s.date = %q{2011-01-18}
   s.email = %q{tom@popdog.net}
   s.extra_rdoc_files = [
     "README"
@@ -79,8 +79,9 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<sqlite3-ruby>, ["~> 1.3.1"])
       s.add_development_dependency(%q<timecop>, ["~> 0.3.4"])
       s.add_development_dependency(%q<yajl-ruby>, ["~> 0.7.5"])
-      s.add_development_dependency(%q<mongoid>, ["= 2.0.0.beta.20"])
-      s.add_development_dependency(%q<bson_ext>, [">= 0"])
+      s.add_development_dependency(%q<mongoid>, ["= 2.0.0.rc.5"])
+      s.add_development_dependency(%q<bson>, ["= 1.1.5"])
+      s.add_development_dependency(%q<bson_ext>, ["= 1.1.5"])
       s.add_development_dependency(%q<sdoc>, ["~> 0.2.20"])
     else
       s.add_dependency(%q<activesupport>, ["~> 3.0.1"])
@@ -91,8 +92,9 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<sqlite3-ruby>, ["~> 1.3.1"])
       s.add_dependency(%q<timecop>, ["~> 0.3.4"])
       s.add_dependency(%q<yajl-ruby>, ["~> 0.7.5"])
-      s.add_dependency(%q<mongoid>, ["= 2.0.0.beta.20"])
-      s.add_dependency(%q<bson_ext>, [">= 0"])
+      s.add_dependency(%q<mongoid>, ["= 2.0.0.rc.5"])
+      s.add_dependency(%q<bson>, ["= 1.1.5"])
+      s.add_dependency(%q<bson_ext>, ["= 1.1.5"])
       s.add_dependency(%q<sdoc>, ["~> 0.2.20"])
     end
   else
@@ -104,8 +106,9 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<sqlite3-ruby>, ["~> 1.3.1"])
     s.add_dependency(%q<timecop>, ["~> 0.3.4"])
     s.add_dependency(%q<yajl-ruby>, ["~> 0.7.5"])
-    s.add_dependency(%q<mongoid>, ["= 2.0.0.beta.20"])
-    s.add_dependency(%q<bson_ext>, [">= 0"])
+    s.add_dependency(%q<mongoid>, ["= 2.0.0.rc.5"])
+    s.add_dependency(%q<bson>, ["= 1.1.5"])
+    s.add_dependency(%q<bson_ext>, ["= 1.1.5"])
     s.add_dependency(%q<sdoc>, ["~> 0.2.20"])
   end
 end
