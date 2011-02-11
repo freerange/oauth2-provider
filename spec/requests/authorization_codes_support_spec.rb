@@ -13,7 +13,11 @@ class AuthorizationController < ActionController::Base
     # It's up to individual apps to decide how codes are granted (including which action
     # should be responsible for granting).  The solution here is deliberately naive.
     if params["submit"] == "Yes"
-      grant_authorization_code
+      if params["five_years"]
+        grant_authorization_code nil, 5.years.from_now
+      else
+        grant_authorization_code
+      end
     else
       deny_authorization_code
     end
@@ -85,6 +89,18 @@ describe OAuth2::Provider::Rack::AuthorizationCodesSupport do
       found.should_not be_nil
       found.authorization.client.should == @client
       found.should_not be_expired
+    end
+  end
+
+  describe "Granting a code with custom authorization length" do
+    before :each do
+      post '/oauth/authorize', @valid_params.merge(:submit => 'Yes', :five_years => 'true')
+    end
+
+    it "redirects with an authorization code linked to the extended authorization" do
+      code = Addressable::URI.parse(response.location).query_values["code"]
+      found = OAuth2::Provider.authorization_code_class.find_by_code(code)
+      found.authorization.expires_at.should eql(5.years.from_now)
     end
   end
 

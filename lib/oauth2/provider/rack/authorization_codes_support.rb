@@ -11,8 +11,8 @@ module OAuth2::Provider::Rack::AuthorizationCodesSupport
     oauth2_authorization_request.validate!
   end
 
-  def grant_authorization_code(resource_owner = nil)
-    oauth2_authorization_request.grant! resource_owner
+  def grant_authorization_code(resource_owner = nil, authorization_expires_at = nil)
+    oauth2_authorization_request.grant! resource_owner, authorization_expires_at
   end
 
   def deny_authorization_code
