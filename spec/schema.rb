@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(:version => 20110323171649) do
   create_table 'oauth_authorizations', :force => true do |t|
     t.integer  'client_id', :null => false
     t.integer  'resource_owner_id'
+    t.string   'resource_owner_type'
     t.string   'scope'
     t.datetime 'expires_at'
   end

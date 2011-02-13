@@ -8,10 +8,12 @@ class OAuth2::Provider::Models::Mongoid::Authorization
 
       field :scope
       field :expires_at, :type => Time
+      field :resource_owner_id
+      field :resource_owner_type
 
       referenced_in(:client,
         :class_name => OAuth2::Provider.client_class_name,
-        :foreign_key => :oauth_authorization_id
+        :foreign_key => :oauth_client_id
       )
 
       references_many(:access_tokens,

@@ -17,4 +17,17 @@ module OAuth2::Provider::Models::Authorization
     access_tokens.destroy_all
     destroy
   end
+
+  def resource_owner=(ro)
+    self.resource_owner_id = ro && ro.id
+    self.resource_owner_type = ro && ro.class.name
+  end
+
+  def resource_owner
+    resource_owner_id && resource_owner_class.find(resource_owner_id)
+  end
+
+  def resource_owner_class
+    resource_owner_type.constantize
+  end
 end

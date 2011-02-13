@@ -14,9 +14,9 @@ class AuthorizationController < ActionController::Base
     # should be responsible for granting).  The solution here is deliberately naive.
     if params["submit"] == "Yes"
       if params["five_years"]
-        grant_authorization_code nil, 5.years.from_now
+        grant_authorization_code ExampleResourceOwner.first, 5.years.from_now
       else
-        grant_authorization_code
+        grant_authorization_code ExampleResourceOwner.first
       end
     else
       deny_authorization_code
@@ -33,11 +33,13 @@ describe OAuth2::Provider::Rack::AuthorizationCodesSupport do
   end
 
   before :each do
+    ExampleResourceOwner.destroy_all
     @client = OAuth2::Provider.client_class.create! :name => 'client'
     @valid_params = {
       :client_id => @client.oauth_identifier,
       :redirect_uri => "https://redirect.example.com/callback"
     }
+    @owner = create_resource_owner
   end
 
   describe "Any request with a client_id and redirect_uri" do
@@ -88,6 +90,7 @@ describe OAuth2::Provider::Rack::AuthorizationCodesSupport do
       found = OAuth2::Provider.authorization_code_class.find_by_code(code)
       found.should_not be_nil
       found.authorization.client.should == @client
+      found.authorization.resource_owner.should == @owner
       found.should_not be_expired
     end
   end

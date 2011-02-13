@@ -44,10 +44,6 @@ else
       where(:username => username, :password => password).first
     end
   end
-
-  class OAuth2::Provider::Models::Mongoid::Authorization
-    referenced_in :resource_owner, :class_name => "OAuth2::Provider::Models::Mongoid::Client"
-  end
 end
 
 class ApplicationController < ActionController::Base
@@ -58,94 +54,8 @@ Mongoid.configure do |config|
   config.from_hash(@settings["test"])
 end
 
-module OAuth2::Provider::RSpecMacros
-  extend ActiveSupport::Concern
-
-  def json_from_response
-    @json_from_response ||= begin
-      response.content_type.should == Mime::JSON
-      Yajl::Parser.new.parse(response.body)
-    end
-  end
-
-  module ClassMethods
-    def responds_with_header(name, value)
-      it %{responds with header #{name}: #{value}} do
-        response.headers[name].should == value
-      end
-    end
-
-    def responds_with_status(status)
-      it %{responds with status #{status}} do
-        response.status.should == status
-      end
-    end
-
-    def responds_with_json_error(name, options = {})
-      it %{responds with json: {"error": "#{name}"}, status: #{options[:status]}} do
-        response.status.should == options[:status]
-        json_from_response.should == {"error" => name}
-      end
-    end
-
-    def redirects_back_with_error(name)
-      it %{redirects back with error '#{name}'} do
-        response.status.should == 302
-        error = Addressable::URI.parse(response.location).query_values["error"]
-        error.should == name
-      end
-    end
-  end
-end
-
-module OAuth2::Provider::ModelFactories
-  def build_client(attributes = {})
-    OAuth2::Provider.client_class.new({:name => 'client'}.merge(attributes))
-  end
-
-  def create_client(attributes = {})
-    build_client(attributes).tap do |c|
-      c.save!
-    end
-  end
-
-  def build_authorization(attributes = {})
-    OAuth2::Provider.authorization_class.new({
-      :client => build_client
-    }.merge(attributes))
-  end
-
-  def create_authorization(attributes = {})
-    build_authorization({:client => create_client}.merge(attributes)).tap do |ag|
-      ag.save!
-    end
-  end
-
-  def build_authorization_code(attributes = {})
-    OAuth2::Provider.authorization_code_class.new({
-      :redirect_uri => "https://client.example.com/callback",
-      :authorization => build_authorization
-    }.merge(attributes))
-  end
-
-  def create_authorization_code(attributes = {})
-    build_authorization_code({:authorization => create_authorization}.merge(attributes)).tap do |ac|
-      ac.save!
-    end
-  end
-
-  def build_access_token(attributes = {})
-    OAuth2::Provider.access_token_class.new({
-      :authorization => build_authorization
-    }.merge(attributes))
-  end
-
-  def create_access_token(attributes = {})
-    build_access_token({:authorization => create_authorization}.merge(attributes)).tap do |ac|
-      ac.save!
-    end
-  end
-end
+require 'support/macros'
+require 'support/factories'
 
 RSpec.configure do |config|
   config.before :each do
@@ -156,6 +66,6 @@ RSpec.configure do |config|
     Timecop.return
   end
 
-  config.include OAuth2::Provider::RSpecMacros
-  config.include OAuth2::Provider::ModelFactories
+  config.include OAuth2::Provider::RSpec::Macros
+  config.include OAuth2::Provider::RSpec::Factories
 end
