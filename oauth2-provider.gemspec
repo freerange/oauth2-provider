@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{oauth2-provider}
-  s.version = "0.0.11"
+  s.version = "0.0.12"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Ward"]
-  s.date = %q{2011-02-11}
+  s.date = %q{2011-02-13}
   s.email = %q{tom@popdog.net}
   s.extra_rdoc_files = [
     "README"
@@ -48,9 +48,9 @@ Gem::Specification.new do |s|
      "lib/oauth2/provider/random.rb",
      "oauth2-provider.gemspec",
      "spec/database.yml",
-     "spec/models/access_grant_spec.rb",
      "spec/models/access_token_spec.rb",
      "spec/models/authorization_code_spec.rb",
+     "spec/models/authorization_spec.rb",
      "spec/models/client_spec.rb",
      "spec/mongoid.yml",
      "spec/mongoid_backend.rb",
@@ -58,7 +58,9 @@ Gem::Specification.new do |s|
      "spec/requests/authentication_spec.rb",
      "spec/requests/authorization_codes_support_spec.rb",
      "spec/schema.rb",
-     "spec/spec_helper.rb"
+     "spec/spec_helper.rb",
+     "spec/support/factories.rb",
+     "spec/support/macros.rb"
   ]
   s.homepage = %q{http://tomafro.net}
   s.rdoc_options = ["--main", "README"]
