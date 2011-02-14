@@ -9,7 +9,7 @@ require "rake/rdoctask"
 require "rake/testtask"
 require "sdoc"
 
-task :default => 'spec:activerecord'
+task :default => 'spec:all'
 
 # This builds the actual gem. For details of what all these options
 # mean, and other ones you can add, check the documentation here:
@@ -120,9 +120,9 @@ namespace :spec do
     t.pattern = "spec/**/*_spec.rb"
     t.ruby_opts = "-Ispec -rmongoid_backend"
   end
-end
 
-task :spec => ['spec:activerecord', 'spec:mongoid']
+  task :all => ['spec:activerecord', 'spec:mongoid']
+end
 
 desc 'Tag the repository in git with gem version number'
 task :tag do
