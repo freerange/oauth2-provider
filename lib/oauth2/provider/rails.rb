@@ -24,13 +24,13 @@ module OAuth2::Provider::Rails
       OAuth2::Provider.activate
     end
 
-    initializer "oauth2_provider controller" do |app|
+    initializer "oauth2_provider.initialize_controller" do |app|
       ActionController::Base.module_eval do
         include OAuth2::Provider::Rails::ControllerAuthentication
       end
     end
 
-    initializer "middleware ho!" do |app|
+    initializer "oauth2_provider.initialize_middleware" do |app|
       app.middleware.use ::OAuth2::Provider::Rack::Middleware
     end
   end
