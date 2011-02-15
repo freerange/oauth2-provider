@@ -24,6 +24,8 @@ module OAuth2
     mattr_accessor :resource_owner_class_name
     self.resource_owner_class_name = 'ResourceOwner'
 
+    mattr_accessor :ignore_token_param_for_path
+    
     def self.configure
       yield self
       activate
