@@ -18,7 +18,7 @@ class OAuth2::Provider::Rack::Request < Rack::Request
   end
 
   def token_from_param
-    params["oauth_token"]
+    params["oauth_token"] unless path =~ OAuth2::Provider.ignore_token_param_for_path
   end
 
   def token_from_header

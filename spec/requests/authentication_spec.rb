@@ -11,6 +11,10 @@ class ExampleController < ActionController::Base
   def protected_by_scope
     render :text => "Success"
   end
+
+  def unprotected
+    render :text => "Success"
+  end
 end
 
 describe "A request for a protected resource" do
@@ -155,5 +159,33 @@ describe "A request for a protected resource requiring a specific scope" do
     end
 
     responds_with_json_error 'insufficient_scope', :status => 403
+  end
+end
+
+describe "A request to an application with a defined ignore token params path" do
+  before(:all) do
+    OAuth2::Application.routes.draw do
+      match '/ignored_resource', :to => 'example#unprotected'
+      match '/resource', :to => 'example#unprotected'
+    end
+    OAuth2::Provider.ignore_token_param_for_path = /^\/ignored_resource$/
+  end
+
+  describe "made to a path that is ignored" do
+    before :each do
+      get '/ignored_resource', :oauth_token => "token"
+    end
+
+    it "is successful" do
+      response.should be_successful
+    end
+  end
+  
+  describe "made to a path that is not ignored" do
+    before :each do
+      get '/resource', :oauth_token => "token"
+    end
+
+    responds_with_status 401
   end
 end
