@@ -5,7 +5,7 @@ module OAuth2::Provider
 
       def json_from_response
         @json_from_response ||= begin
-          response.content_type.should == Mime::JSON
+          response.content_type.should == "application/json"
           Yajl::Parser.new.parse(response.body)
         end
       end

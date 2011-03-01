@@ -1,31 +1,18 @@
 require 'spec_helper'
 
-class ExampleController < ActionController::Base
-  authenticate_with_oauth :only => :protected
-  authenticate_with_oauth :scope => 'omnipotent', :only => :protected_by_scope
-
-  def protected
-    render :text => "Success"
-  end
-
-  def protected_by_scope
-    render :text => "Success"
-  end
-
-  def unprotected
-    render :text => "Success"
-  end
-end
-
 describe "A request for a protected resource" do
-  before :all do
-    OAuth2::Application.routes.draw do
-      match "/protected", :to => "example#protected"
+  action do |env|
+    env['oauth2'].authenticate_request!(:scope => nil) do
+      successful_response
     end
   end
 
   before :each do
-    @token = create_access_token(:authorization => create_authorization(:scope => "protected write"))
+    @token = create_access_token(
+      :authorization => create_authorization(
+        :scope => "protected write"
+      )
+    )
   end
 
   describe "with no token passed" do
@@ -132,9 +119,9 @@ describe "A request for a protected resource" do
 end
 
 describe "A request for a protected resource requiring a specific scope" do
-  before :all do
-    OAuth2::Application.routes.draw do
-      match "/protected_by_scope", :to => "example#protected_by_scope"
+  action do |env|
+    env['oauth2'].authenticate_request!(:scope => 'omnipotent') do
+      successful_response
     end
   end
 
@@ -163,11 +150,11 @@ describe "A request for a protected resource requiring a specific scope" do
 end
 
 describe "A request to an application with a defined ignore token params path" do
+  action do |env|
+    successful_response
+  end
+
   before(:all) do
-    OAuth2::Application.routes.draw do
-      match '/ignored_resource', :to => 'example#unprotected'
-      match '/resource', :to => 'example#unprotected'
-    end
     OAuth2::Provider.ignore_token_param_for_path = /^\/ignored_resource$/
   end
 

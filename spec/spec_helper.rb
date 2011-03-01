@@ -1,29 +1,22 @@
 require 'bundler/setup'
-require 'rails/all'
-require 'rspec/rails'
-
+require 'rack'
+require 'rack/test'
 require 'oauth2-provider'
-require 'mongoid'
 
-Rails.env = "test"
-
-module OAuth2
-  class Application < Rails::Application
-    config.root = File.dirname(__FILE__)
-    paths.config.database = "database.yml"
-    paths.log = File.expand_path("../../log/test.log", __FILE__)
-    config.secret_token = "something secret and very very long are you happy now are you?"
-    config.oauth2_provider.backend = ENV["BACKEND"].to_sym if ENV["BACKEND"]
-    config.oauth2_provider.backend ||= :activerecord
-    config.oauth2_provider.resource_owner_class_name = 'ExampleResourceOwner'
-  end
-end
-
-OAuth2::Application.initialize!
 require 'timecop'
 require 'yajl'
 
-if OAuth2::Provider.backend == :activerecord
+backend = ENV["BACKEND"].to_sym if ENV["BACKEND"]
+backend ||= :activerecord
+
+if backend == :activerecord
+  require 'active_record'
+
+  ActiveRecord::Base.establish_connection(
+    :adapter => "sqlite3",
+    :database => "test.db"
+  )
+
   require File.expand_path("../schema.rb", __FILE__)
 
   class ExampleResourceOwner < ActiveRecord::Base
@@ -31,7 +24,13 @@ if OAuth2::Provider.backend == :activerecord
       find_by_username_and_password(*args)
     end
   end
+
+  OAuth2::Provider.configure do |config|
+    config.resource_owner_class_name = 'ExampleResourceOwner'
+  end
 else
+  require 'mongoid'
+
   class ExampleResourceOwner
     include Mongoid::Document
 
@@ -44,18 +43,21 @@ else
       where(:username => username, :password => password).first
     end
   end
-end
 
-class ApplicationController < ActionController::Base
-end
+  OAuth2::Provider.configure do |config|
+    config.backend = :mongoid
+    config.resource_owner_class_name = 'ExampleResourceOwner'
+  end
 
-@settings = YAML.load(ERB.new(File.new(File.expand_path("../mongoid.yml", __FILE__)).read).result)
-Mongoid.configure do |config|
-  config.from_hash(@settings["test"])
+  @settings = YAML.load(ERB.new(File.new(File.expand_path("../mongoid.yml", __FILE__)).read).result)
+  Mongoid.configure do |config|
+    config.from_hash(@settings["test"])
+  end
 end
 
 require 'support/macros'
 require 'support/factories'
+require 'support/rack'
 
 RSpec.configure do |config|
   config.before :each do
@@ -68,4 +70,5 @@ RSpec.configure do |config|
 
   config.include OAuth2::Provider::RSpec::Macros
   config.include OAuth2::Provider::RSpec::Factories
+  config.include OAuth2::Provider::RSpec::Rack
 end
