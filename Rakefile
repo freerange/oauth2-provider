@@ -118,7 +118,7 @@ namespace :spec do
   RSpec::Core::RakeTask.new(:mongoid) do |t|
     t.rspec_opts = "-f n -c"
     t.pattern = "spec/**/*_spec.rb"
-    t.ruby_opts = "-Ispec -rmongoid_backend"
+    t.ruby_opts = "-Ispec -rset_backend_env_to_mongoid"
   end
 
   task :all => ['spec:activerecord', 'spec:mongoid']

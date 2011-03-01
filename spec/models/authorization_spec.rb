@@ -1,4 +1,3 @@
-require 'mongoid_backend'
 require 'spec_helper'
 
 describe OAuth2::Provider.authorization_class do

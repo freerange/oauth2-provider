@@ -1,4 +1,3 @@
-require 'mongoid_backend'
 require 'spec_helper'
 
 class CustomClient < OAuth2::Provider.client_class
