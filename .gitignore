@@ -2,4 +2,5 @@
 /log
 /pkg
 /spec/*.db
+/*.db
 /doc
