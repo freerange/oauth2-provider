@@ -23,6 +23,7 @@ module OAuth2::Provider::Rack
       grant = client.authorizations.create!(
         :resource_owner => resource_owner,
         :client => client,
+        :scope => scope,
         :expires_at => authorization_expires_at
       )
       code = grant.authorization_codes.create! :redirect_uri => redirect_uri
@@ -43,6 +44,10 @@ module OAuth2::Provider::Rack
 
     def redirect_uri
       @params['redirect_uri']
+    end
+
+    def scope
+      @params['scope']
     end
 
     private

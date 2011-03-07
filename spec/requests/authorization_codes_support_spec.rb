@@ -79,6 +79,24 @@ describe OAuth2::Provider::Rack::AuthorizationCodesSupport do
     end
   end
 
+  describe "Granting a code with a scope" do
+    action do |env|
+      request = Rack::Request.new(env)
+      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(env, request.params)
+      env['oauth2.authorization_request'].grant! ExampleResourceOwner.first
+    end
+
+    before :each do
+      post '/oauth/authorize', @valid_params.merge(:submit => 'Yes', :scope => 'periscope')
+    end
+
+    it "includes the scope in the granted authorization" do
+      code = Addressable::URI.parse(response.location).query_values["code"]
+      found = OAuth2::Provider.authorization_code_class.find_by_code(code)
+      found.authorization.scope.should == 'periscope'
+    end
+  end
+
   describe "Granting a code with custom authorization length" do
     action do |env|
       request = Rack::Request.new(env)
