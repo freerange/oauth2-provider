@@ -34,6 +34,10 @@ module OAuth2::Provider::Rack
       throw_response Responses.redirect_with_error('access_denied', redirect_uri)
     end
 
+    def invalid_scope!
+      throw_response Responses.redirect_with_error('invalid_scope', redirect_uri)
+    end
+
     def client_id
       @params['client_id']
     end

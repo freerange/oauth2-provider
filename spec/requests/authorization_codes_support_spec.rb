@@ -54,6 +54,22 @@ describe OAuth2::Provider::Rack::AuthorizationCodesSupport do
 
       redirects_back_with_error 'invalid_client'
     end
+
+    describe "A request where the scope is declared invalid" do
+      action do |env|
+        request = Rack::Request.new(env)
+        env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(env, request.params)
+        env['oauth2.authorization_request'].validate!
+        env['oauth2.authorization_request'].invalid_scope!
+        successful_response
+      end
+
+      before :each do
+        get '/oauth/authorize', @valid_params
+      end
+
+      redirects_back_with_error 'invalid_scope'
+    end
   end
 
   describe "Granting a code" do

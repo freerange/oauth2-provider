@@ -18,4 +18,8 @@ module OAuth2::Provider::Rack::AuthorizationCodesSupport
   def deny_authorization_code
     oauth2_authorization_request.deny!
   end
+
+  def declare_oauth_scope_invalid
+    oauth2_authorization_request.invalid_scope!
+  end
 end
