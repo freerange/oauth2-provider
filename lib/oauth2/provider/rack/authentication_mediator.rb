@@ -1,6 +1,5 @@
 module OAuth2::Provider::Rack
   class AuthenticationMediator
-    attr_reader :response
     attr_accessor :authorization
 
     delegate :has_scope?, :to => :authorization
