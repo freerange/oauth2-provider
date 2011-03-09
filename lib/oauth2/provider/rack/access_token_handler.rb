@@ -5,7 +5,7 @@ module OAuth2::Provider::Rack
     def initialize(app, env)
       @app = app
       @env = env
-      @request = OAuth2::Provider::Rack::Request.new(env)
+      @request = env['oauth2']
     end
 
     def process
@@ -17,7 +17,7 @@ module OAuth2::Provider::Rack
     end
 
     def handle_grant_type
-      send "handle_#{request.grant_type}_grant_type"
+      send grant_type_handler_method(request.params["grant_type"])
     end
 
     def handle_password_grant_type
@@ -70,7 +70,7 @@ module OAuth2::Provider::Rack
 
     def block_unsupported_grant_types
       with_required_params 'grant_type' do |grant_type|
-        unless respond_to?("handle_#{grant_type}_grant_type", true)
+        unless respond_to?(grant_type_handler_method(grant_type), true)
           Responses.json_error 'unsupported_grant_type'
         end
       end
@@ -89,6 +89,10 @@ module OAuth2::Provider::Rack
 
     def oauth_client
       @oauth_client
+    end
+
+    def grant_type_handler_method(grant_type)
+      "handle_#{grant_type}_grant_type"
     end
   end
 end

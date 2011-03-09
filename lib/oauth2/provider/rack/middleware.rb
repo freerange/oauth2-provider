@@ -5,11 +5,10 @@ module OAuth2::Provider::Rack
     end
 
     def call(env)
-      env['oauth2'] = ResourceRequest.new(env)
+      request = env['oauth2'] = ResourceRequest.new(env)
 
       response = catch :oauth2 do
-        request = Request.new(env)
-        if request.access_token_path?
+        if request.path == "/oauth/access_token"
           AccessTokenHandler.new(@app, env).process
         else
           @app.call(env)
