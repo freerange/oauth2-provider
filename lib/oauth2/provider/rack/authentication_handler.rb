@@ -2,8 +2,6 @@ module OAuth2::Provider::Rack
   class AuthenticationHandler
     attr_reader :app, :env, :request, :mediator
 
-    delegate :insufficient_scope?, :authentication_required?, :to => :mediator
-
     def initialize(app, env)
       @app = app
       @env = env
