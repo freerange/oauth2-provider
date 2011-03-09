@@ -5,10 +5,15 @@ module OAuth2::Provider::Rack
     end
 
     def call(env)
-      env['oauth2'] = OAuth2::Provider::Rack::AuthenticationMediator.new(env)
+      env['oauth2'] = ResourceRequest.new(env)
 
       response = catch :oauth2 do
-        handler(env).process
+        request = Request.new(env)
+        if request.access_token_path?
+          AccessTokenHandler.new(@app, env).process
+        else
+          @app.call(env)
+        end
       end
 
       thrown_response(env) || response
@@ -19,12 +24,6 @@ module OAuth2::Provider::Rack
         env['warden'] && env['warden'].custom_failure!
         env['oauth2.response']
       end
-    end
-
-    def handler(env)
-      request = Request.new(env)
-      handler_class = request.access_token_path? ? AccessTokenHandler : AuthenticationHandler
-      handler_class.new(@app, env)
     end
   end
 end
