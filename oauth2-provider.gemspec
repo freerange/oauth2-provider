@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{oauth2-provider}
-  s.version = "0.0.12"
+  s.version = "0.0.13"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Ward"]
-  s.date = %q{2011-02-13}
+  s.date = %q{2011-03-14}
   s.email = %q{tom@popdog.net}
   s.extra_rdoc_files = [
     "README"
@@ -36,31 +36,30 @@ Gem::Specification.new do |s|
      "lib/oauth2/provider/models/mongoid/client.rb",
      "lib/oauth2/provider/rack.rb",
      "lib/oauth2/provider/rack/access_token_handler.rb",
-     "lib/oauth2/provider/rack/authentication_handler.rb",
-     "lib/oauth2/provider/rack/authentication_mediator.rb",
      "lib/oauth2/provider/rack/authorization_code_request.rb",
      "lib/oauth2/provider/rack/authorization_codes_support.rb",
      "lib/oauth2/provider/rack/middleware.rb",
-     "lib/oauth2/provider/rack/request.rb",
+     "lib/oauth2/provider/rack/resource_request.rb",
      "lib/oauth2/provider/rack/responses.rb",
      "lib/oauth2/provider/rails.rb",
      "lib/oauth2/provider/rails/controller_authentication.rb",
      "lib/oauth2/provider/random.rb",
      "oauth2-provider.gemspec",
-     "spec/database.yml",
      "spec/models/access_token_spec.rb",
      "spec/models/authorization_code_spec.rb",
      "spec/models/authorization_spec.rb",
      "spec/models/client_spec.rb",
-     "spec/mongoid.yml",
-     "spec/mongoid_backend.rb",
      "spec/requests/access_tokens_controller_spec.rb",
      "spec/requests/authentication_spec.rb",
      "spec/requests/authorization_codes_support_spec.rb",
      "spec/schema.rb",
+     "spec/set_backend_env_to_mongoid.rb",
      "spec/spec_helper.rb",
+     "spec/support/activerecord_backend.rb",
      "spec/support/factories.rb",
-     "spec/support/macros.rb"
+     "spec/support/macros.rb",
+     "spec/support/mongoid_backend.rb",
+     "spec/support/rack.rb"
   ]
   s.homepage = %q{http://tomafro.net}
   s.rdoc_options = ["--main", "README"]
