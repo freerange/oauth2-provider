@@ -30,4 +30,11 @@ module OAuth2::Provider::Models::Authorization
   def resource_owner_class
     resource_owner_type.constantize
   end
+
+  module ClassMethods
+    def all_for(ro)
+      return [] unless ro
+      self.where(:resource_owner_id => ro.id, :resource_owner_type => ro.class.name).all
+    end
+  end
 end

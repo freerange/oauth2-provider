@@ -65,6 +65,26 @@ describe OAuth2::Provider.authorization_class do
     end
   end
 
+  describe "obtain all authorizations for a resource owner" do
+    before :each do
+      @client = create_client
+      @owner = create_resource_owner
+      @authorization = OAuth2::Provider.authorization_class.create!(:client => @client, :resource_owner => @owner, :expires_at => 1.year.from_now)
+    end
+
+    subject do
+      OAuth2::Provider.authorization_class.all_for(@owner)
+    end
+
+    it "returns correct number of authorizations" do
+      subject.count.should eql(1)
+    end
+
+    it "should hold information on the authorized client" do
+      subject[0].client.should eql(@client)
+    end
+  end
+
   describe "being revoked" do
     subject do
       OAuth2::Provider.authorization_class.create! :client => create_client
