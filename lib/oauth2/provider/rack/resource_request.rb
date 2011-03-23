@@ -2,9 +2,7 @@ require 'rack/auth/abstract/request'
 
 module OAuth2::Provider::Rack
   class ResourceRequest < Rack::Request
-    attr_accessor :authorization
-
-    delegate :has_scope?, :to => :authorization
+   delegate :has_scope?, :to => :authorization
 
     def token
       token_from_param || token_from_header
@@ -42,8 +40,12 @@ module OAuth2::Provider::Rack
       end
     end
 
-    def authenticated?
+    def authorization
       validate_token!
+      @authorization
+    end
+
+    def authenticated?
       authorization.present?
     end
 
@@ -60,7 +62,8 @@ module OAuth2::Provider::Rack
     end
 
     def validate_token!
-      if has_token? && authorization.nil?
+      if has_token? && @token_validated.nil?
+        @token_validated = true
         block_bad_request
         block_invalid_token
       end
@@ -74,7 +77,7 @@ module OAuth2::Provider::Rack
 
     def block_invalid_token
       access_token = OAuth2::Provider.access_token_class.find_by_access_token(token)
-      self.authorization = access_token.authorization if access_token
+      @authorization = access_token.authorization if access_token
       throw_response Responses.unauthorized('invalid_token') if access_token.nil? || access_token.expired?
     end
 
