@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{oauth2-provider}
-  s.version = "0.0.13"
+  s.version = "0.0.14"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Ward"]
-  s.date = %q{2011-03-14}
+  s.date = %q{2011-03-23}
   s.email = %q{tom@popdog.net}
   s.extra_rdoc_files = [
     "README"
@@ -64,11 +64,10 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://tomafro.net}
   s.rdoc_options = ["--main", "README"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.7}
+  s.rubygems_version = %q{1.5.2}
   s.summary = %q{OAuth2 Provider, extracted from api.hashblue.com}
 
   if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
