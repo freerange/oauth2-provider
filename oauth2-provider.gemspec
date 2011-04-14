@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.date = %q{2011-04-14}
   s.email = %q{tom@popdog.net}
   s.extra_rdoc_files = [
-    "README"
+    "README.md"
   ]
   s.files = [
     ".gitignore",
@@ -59,8 +59,7 @@ Gem::Specification.new do |s|
      "spec/support/factories.rb",
      "spec/support/macros.rb",
      "spec/support/mongoid_backend.rb",
-     "spec/support/rack.rb",
-     "README"
+     "spec/support/rack.rb"
   ]
   s.homepage = %q{http://tomafro.net}
   s.rdoc_options = ["--main", "README.md"]
