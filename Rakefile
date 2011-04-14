@@ -23,15 +23,15 @@ spec = Dir.chdir(path) do
 
     # Change these as appropriate
     s.name              = "oauth2-provider"
-    s.version           = "0.0.14"
+    s.version           = "0.0.15"
     s.summary           = "OAuth2 Provider, extracted from api.hashblue.com"
     s.author            = "Tom Ward"
     s.email             = "tom@popdog.net"
     s.homepage          = "http://tomafro.net"
 
     s.has_rdoc          = true
-    s.extra_rdoc_files  = %w(README)
-    s.rdoc_options      = %w(--main README)
+    s.extra_rdoc_files  = %w(README.md)
+    s.rdoc_options      = %w(--main README.md)
 
     # Add any extra files to include in the gem
     s.files             = `cd #{path} && git ls-files`.split("\n").sort

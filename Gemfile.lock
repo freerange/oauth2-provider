@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    oauth2-provider (0.0.14)
+    oauth2-provider (0.0.15)
       activesupport (~> 3.0.1)
       addressable (~> 2.2)
 

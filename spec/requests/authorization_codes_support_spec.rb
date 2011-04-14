@@ -47,6 +47,16 @@ describe OAuth2::Provider::Rack::AuthorizationCodesSupport do
       end
     end
 
+    describe "Any request with an invalid redirect_uri" do
+      before :each do
+        get '/oauth/authorize', @valid_params.merge(:redirect_uri => "http://")
+      end
+
+      it "returns 400" do
+        response.status.should == 400
+      end
+    end
+
     describe "Any request with an unknown client id" do
       before :each do
         get '/oauth/authorize', @valid_params.merge(:client_id => 'unknown')

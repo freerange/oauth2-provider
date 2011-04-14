@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{oauth2-provider}
-  s.version = "0.0.14"
+  s.version = "0.0.15"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Ward"]
-  s.date = %q{2011-03-23}
+  s.date = %q{2011-04-14}
   s.email = %q{tom@popdog.net}
   s.extra_rdoc_files = [
     "README"
@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
     ".gitignore",
      "Gemfile",
      "Gemfile.lock",
-     "README",
+     "README.md",
      "Rakefile",
      "lib/oauth2-provider.rb",
      "lib/oauth2/provider.rb",
@@ -59,12 +59,13 @@ Gem::Specification.new do |s|
      "spec/support/factories.rb",
      "spec/support/macros.rb",
      "spec/support/mongoid_backend.rb",
-     "spec/support/rack.rb"
+     "spec/support/rack.rb",
+     "README"
   ]
   s.homepage = %q{http://tomafro.net}
-  s.rdoc_options = ["--main", "README"]
+  s.rdoc_options = ["--main", "README.md"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.5.2}
+  s.rubygems_version = %q{1.6.2}
   s.summary = %q{OAuth2 Provider, extracted from api.hashblue.com}
 
   if s.respond_to? :specification_version then
