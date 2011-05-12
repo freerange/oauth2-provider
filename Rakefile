@@ -34,7 +34,7 @@ spec = Dir.chdir(path) do
     s.rdoc_options      = %w(--main README.md)
 
     # Add any extra files to include in the gem
-    s.files             = `cd #{path} && git ls-files`.split("\n").sort
+    s.files             = `cd #{path} && git ls-files`.split("\n").sort - ["Gemfile.lock"]
 
     # You need to put your code in a directory which can then be added to
     # the $LOAD_PATH by rubygems. Typically this is lib, but you don't seem

@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Ward"]
-  s.date = %q{2011-04-14}
+  s.date = %q{2011-05-12}
   s.email = %q{tom@popdog.net}
   s.extra_rdoc_files = [
     "README.md"
@@ -14,7 +14,6 @@ Gem::Specification.new do |s|
   s.files = [
     ".gitignore",
      "Gemfile",
-     "Gemfile.lock",
      "README.md",
      "Rakefile",
      "lib/oauth2-provider.rb",
