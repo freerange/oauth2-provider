@@ -14,7 +14,6 @@ Gem::Specification.new do |s|
   s.files = [
     ".gitignore",
      "Gemfile",
-     "Gemfile.lock",
      "README.md",
      "Rakefile",
      "lib/oauth2-provider.rb",
