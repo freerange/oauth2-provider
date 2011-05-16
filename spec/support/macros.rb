@@ -24,9 +24,12 @@ module OAuth2::Provider
         end
 
         def responds_with_json_error(name, options = {})
-          it %{responds with json: {"error": "#{name}"}, status: #{options[:status]}} do
+          error_description = %{, "error_description": "#{options[:description]}"} if options[:description]
+          it %{responds with json: {"error": "#{name}"#{error_description}}, status: #{options[:status]}} do
             response.status.should == options[:status]
-            json_from_response.should == {"error" => name}
+            json = json_from_response
+            json["error"].should == name
+            json["error_description"].should == options[:description] if options[:description]
           end
         end
 

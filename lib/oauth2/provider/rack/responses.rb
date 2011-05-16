@@ -12,7 +12,8 @@ module OAuth2::Provider::Rack::Responses
   end
 
   def self.json_error(error, options = {})
-    [options[:status] || 400, {'Content-Type' => 'application/json'}, [%{{"error": "#{error}"}}]]
+    description = %{, "error_description": "#{options[:description]}"} if options[:description]
+    [options[:status] || 400, {'Content-Type' => 'application/json'}, [%{{"error": "#{error}"#{description}}}]]
   end
 
   def self.redirect_with_error(error, uri)

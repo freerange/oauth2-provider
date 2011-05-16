@@ -27,7 +27,7 @@ describe "POSTs to /oauth/access_token" do
       post "/oauth/access_token", @valid_params.except(:client_id)
     end
 
-    responds_with_json_error 'invalid_request', :status => 400
+    responds_with_json_error 'invalid_request', :description => "missing 'client_id' parameter", :status => 400
   end
 
   describe "Any request without a client_secret parameter" do
@@ -35,7 +35,7 @@ describe "POSTs to /oauth/access_token" do
       post "/oauth/access_token", @valid_params.except(:client_secret)
     end
 
-    responds_with_json_error 'invalid_request', :status => 400
+    responds_with_json_error 'invalid_request', :description => "missing 'client_secret' parameter", :status => 400
   end
 
   describe "Any request without a grant_type parameter" do
@@ -43,7 +43,15 @@ describe "POSTs to /oauth/access_token" do
       post "/oauth/access_token", @valid_params.except(:grant_type)
     end
 
-    responds_with_json_error 'invalid_request', :status => 400
+    responds_with_json_error 'invalid_request', :description => "missing 'grant_type' parameter", :status => 400
+  end
+
+  describe "Any request without several required parameters" do
+    before :each do
+      post "/oauth/access_token", @valid_params.except(:client_id, :client_secret)
+    end
+
+    responds_with_json_error 'invalid_request', :description => "missing 'client_id', 'client_secret' parameters", :status => 400
   end
 
   describe "Any request with an unsupported grant_type" do

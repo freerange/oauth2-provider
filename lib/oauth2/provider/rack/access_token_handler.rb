@@ -53,11 +53,16 @@ module OAuth2::Provider::Rack
     end
 
     def with_required_params(*names, &block)
-      values = request.params.values_at(*names)
-      if values.include?(nil)
-        Responses.json_error 'invalid_request'
+      missing_params = names - request.params.keys
+      if missing_params.empty?
+        yield *request.params.values_at(*names)
       else
-        yield *values
+        if missing_params.size == 1
+          Responses.json_error 'invalid_request', :description => "missing '#{missing_params.join}' parameter"
+        else
+          describe_parameters = missing_params.map{|x| "'#{x}'"}.join(", ")
+          Responses.json_error 'invalid_request', :description => "missing #{describe_parameters} parameters"
+        end
       end
     end
 
