@@ -21,9 +21,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'activesupport', '~>3.0.1'
   s.add_dependency 'addressable', '~>2.2'
 
-  # Development only dependencies
-  s.add_development_dependency 'rails', '~>3.0.1'
-  s.add_development_dependency 'rspec-rails', '~>2.1.0'
+  s.add_development_dependency 'rack-test', '~>0.5.7'
+  s.add_development_dependency 'activerecord', '~>3.0.1'
+  s.add_development_dependency 'rspec', '~>2.1.0'
   s.add_development_dependency 'rake', '~>0.8.7'
   s.add_development_dependency 'sqlite3-ruby', '~>1.3.1'
   s.add_development_dependency 'timecop', '~>0.3.4'
@@ -31,5 +31,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'mongoid', '2.0.0.rc.6'
   s.add_development_dependency 'bson', '1.2.0'
   s.add_development_dependency 'bson_ext', '1.2.0'
-  s.add_development_dependency 'sdoc', '~>0.2.20'
 end
