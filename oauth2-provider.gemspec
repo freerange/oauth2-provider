@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   # Main dependencies
-  s.add_dependency 'activesupport', '~>3.0.1'
+  s.add_dependency 'activesupport', '~>3.0'
   s.add_dependency 'addressable', '~>2.2'
 
   s.add_development_dependency 'rack-test', '~>0.5.7'
