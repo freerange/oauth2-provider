@@ -34,7 +34,9 @@ describe OAuth2::Provider::Rack::AuthorizationCodesSupport do
         get '/oauth/authorize', @valid_params.except(:client_id)
       end
 
-      redirects_back_with_error 'invalid_request'
+      it "returns 400" do
+        response.status.should == 400
+      end
     end
 
     describe "Any request without a redirect_uri" do
@@ -62,7 +64,9 @@ describe OAuth2::Provider::Rack::AuthorizationCodesSupport do
         get '/oauth/authorize', @valid_params.merge(:client_id => 'unknown')
       end
 
-      redirects_back_with_error 'invalid_client'
+      it "returns 400" do
+        response.status.should == 400
+      end
     end
 
     describe "A request where the scope is declared invalid" do

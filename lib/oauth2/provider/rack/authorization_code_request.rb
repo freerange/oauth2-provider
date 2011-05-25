@@ -6,20 +6,20 @@ module OAuth2::Provider::Rack
     end
 
     def validate!
+      unless client_id
+        throw_response [400, {}, ['No client_id provided']]
+      end
+
+      unless client
+        throw_response [400, {}, ['client_id is invalid']]
+      end
+
       unless redirect_uri
         throw_response [400, {}, ['No redirect_uri provided']]
       end
 
       unless redirect_uri_valid?
         throw_response [400, {}, ['Provided redirect_uri is invalid']]
-      end
-
-      unless client_id
-        throw_response Responses.redirect_with_error('invalid_request', redirect_uri)
-      end
-
-      unless client
-        throw_response Responses.redirect_with_error('invalid_client', redirect_uri)
       end
     end
 
