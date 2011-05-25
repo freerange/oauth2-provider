@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe OAuth2::Provider::Rack::AuthorizationCodesSupport do
+describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
   before :each do
     ExampleResourceOwner.destroy_all
     @client = OAuth2::Provider.client_class.create! :name => 'client'
