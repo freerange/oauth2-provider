@@ -6,6 +6,7 @@ ActiveRecord::Schema.define(:version => 20110323171649) do
 
   create_table 'oauth_clients', :force => true do |t|
     t.string   'name'
+    t.string   'oauth_redirect_uri'
     t.string   'oauth_identifier', :null => false
     t.string   'oauth_secret', :null => false
   end

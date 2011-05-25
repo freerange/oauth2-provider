@@ -55,7 +55,13 @@ module OAuth2::Provider::Rack
     end
 
     def redirect_uri_valid?
-      Addressable::URI.parse(redirect_uri)
+      provided_host = Addressable::URI.parse(redirect_uri).host
+      unless client.oauth_redirect_uri.nil?
+        client_host = Addressable::URI.parse(client.oauth_redirect_uri).host
+        client_host == provided_host
+      else
+        true
+      end
     rescue
       nil
     end

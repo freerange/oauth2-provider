@@ -107,6 +107,33 @@ describe OAuth2::Provider::Rack::AuthorizationCodesSupport do
     end
   end
 
+  describe "When the client has a redirect_uri attribute" do
+    before :each do
+      @client = OAuth2::Provider.client_class.create! :name => 'client', :oauth_redirect_uri => "https://redirect.example.com/callback"
+      @valid_params = {
+        :client_id => @client.oauth_identifier,
+        :redirect_uri => "https://redirect.example.com/callback"
+      }
+    end
+
+    action do |env|
+      request = Rack::Request.new(env)
+      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(env, request.params)
+      env['oauth2.authorization_request'].validate!
+      successful_response
+    end
+
+    it "returns a 400 if the redirect_uri parameter doesn't match hostnames" do
+      get '/oauth/authorize', @valid_params.merge(:redirect_uri => "https://evil.example.com/callback")
+      response.status.should == 400
+    end
+
+    it "returns a 200 if the redirect_uti parameter matches hostname but the path is different" do
+      get '/oauth/authorize', @valid_params.merge(:redirect_uri => "https://redirect.example.com/other_callback")
+      response.status.should == 200
+    end
+  end
+
   describe "Granting a code" do
     action do |env|
       request = Rack::Request.new(env)
