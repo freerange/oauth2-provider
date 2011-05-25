@@ -86,6 +86,27 @@ describe OAuth2::Provider::Rack::AuthorizationCodesSupport do
     end
   end
 
+  describe "Intercepting invalid requests" do
+    action do |env|
+      request = Rack::Request.new(env)
+      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(env, request.params)
+      begin
+        env['oauth2.authorization_request'].validate!
+        successful_response
+      rescue OAuth2::Provider::Rack::InvalidRequest => e
+        [418, {'Content-Type' => 'text/plain'}, e.to_s]
+      end
+    end
+
+    before :each do
+      get '/oauth/authorize', @valid_params.except(:client_id)
+    end
+
+    it "should return the specific response" do
+      response.status.should == 418
+    end
+  end
+
   describe "Granting a code" do
     action do |env|
       request = Rack::Request.new(env)

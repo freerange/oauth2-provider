@@ -16,6 +16,8 @@ module OAuth2::Provider::Rack
       end
 
       thrown_response(env) || response
+    rescue InvalidRequest => e
+      [400, {}, e.message]
     end
 
     def thrown_response(env)

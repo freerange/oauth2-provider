@@ -8,4 +8,7 @@ module OAuth2::Provider::Rack
   autoload :ResourceRequest, 'oauth2/provider/rack/resource_request'
   autoload :Responses, 'oauth2/provider/rack/responses'
   autoload :AuthorizationCodesSupport, 'oauth2/provider/rack/authorization_codes_support'
+
+  class InvalidRequest < StandardError
+  end
 end
