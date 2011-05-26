@@ -32,6 +32,15 @@ module OAuth2::Provider::Models::Authorization
   end
 
   module ClassMethods
+    def allowing(client, owner, scope)
+      where(
+        :client_id => client.id,
+        :resource_owner_id => owner && owner.id,
+        :resource_owner_type => owner && owner.class.name,
+        :scope => scope
+      ).select(&:fresh?)
+    end
+
     def all_for(ro)
       return [] unless ro
       self.where(:resource_owner_id => ro.id, :resource_owner_type => ro.class.name).all
