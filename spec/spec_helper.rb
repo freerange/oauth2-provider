@@ -14,7 +14,7 @@ require 'support/rack'
 
 RSpec.configure do |config|
   config.before :each do
-    Timecop.freeze
+    Timecop.freeze 2001, 1, 1, 12
   end
 
   config.after :each do
