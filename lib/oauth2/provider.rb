@@ -1,3 +1,5 @@
+require 'active_support/all'
+
 module OAuth2
   module Provider
     autoload :Rails, 'oauth2/provider/rails'
