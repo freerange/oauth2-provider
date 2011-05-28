@@ -1,5 +1,3 @@
-require 'addressable/uri'
-
 module OAuth2::Provider::Rack::AuthorizationCodesSupport
   protected
 

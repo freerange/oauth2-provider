@@ -128,7 +128,7 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
       response.status.should == 400
     end
 
-    it "returns a 200 if the redirect_uti parameter matches hostname but the path is different" do
+    it "returns a 200 if the redirect_uri parameter matches hostname but the path is different" do
       get '/oauth/authorize', @valid_params.merge(:redirect_uri => "https://redirect.example.com/other_callback")
       response.status.should == 200
     end

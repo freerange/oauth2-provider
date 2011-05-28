@@ -1,3 +1,5 @@
+require 'addressable/uri'
+
 module OAuth2::Provider::Models::Client
   extend ActiveSupport::Concern
 
@@ -18,6 +20,17 @@ module OAuth2::Provider::Models::Client
 
   def allow_grant_type?(grant_type)
     true
+  end
+
+  def valid_redirection?(uri)
+    uri_host = Addressable::URI.parse(uri).host
+    if oauth_redirect_uri
+      Addressable::URI.parse(oauth_redirect_uri).host == uri_host
+    else
+      !uri_host.nil? && true
+    end
+  rescue Addressable::URI::InvalidURIError
+    false
   end
 
   module ClassMethods
