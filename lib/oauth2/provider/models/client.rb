@@ -22,7 +22,7 @@ module OAuth2::Provider::Models::Client
     true
   end
 
-  def valid_redirection?(uri)
+  def allow_redirection?(uri)
     uri_host = Addressable::URI.parse(uri).host
     if oauth_redirect_uri
       Addressable::URI.parse(oauth_redirect_uri).host == uri_host

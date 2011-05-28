@@ -54,7 +54,7 @@ module OAuth2::Provider::Rack
     end
 
     def redirect_uri_valid?
-      client && client.valid_redirection?(redirect_uri)
+      client && client.allow_redirection?(redirect_uri)
     end
 
     def scope

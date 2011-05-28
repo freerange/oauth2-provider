@@ -73,22 +73,22 @@ describe OAuth2::Provider.client_class do
     end
   end
 
-  describe "#valid_redirection?(uri)" do
+  describe "#allow_redirection?(uri)" do
     describe "on a client with an oauth_redirect_uri" do
       subject do
         OAuth2::Provider.client_class.new :name => 'client', :oauth_redirect_uri => "http://valid.example.com/any/path"
       end
 
       it "returns true if hosts match" do
-        subject.valid_redirection?("http://valid.example.com/another/path").should be_true
+        subject.allow_redirection?("http://valid.example.com/another/path").should be_true
       end
 
       it "returns false if hosts are different match" do
-        subject.valid_redirection?("http://invalid.example.com/another/path").should be_false
+        subject.allow_redirection?("http://invalid.example.com/another/path").should be_false
       end
 
       it "returns false if the provided uri isn't a valid uri" do
-        subject.valid_redirection?("a-load-of-rubbish").should be_false
+        subject.allow_redirection?("a-load-of-rubbish").should be_false
       end
     end
 
@@ -98,11 +98,11 @@ describe OAuth2::Provider.client_class do
       end
 
       it "always returns true" do
-        subject.valid_redirection?("http://anything.example.com/any/path").should be_true
+        subject.allow_redirection?("http://anything.example.com/any/path").should be_true
       end
 
       it "returns false if the provided uri isn't a valid uri" do
-        subject.valid_redirection?("a-load-of-rubbish").should be_false
+        subject.allow_redirection?("a-load-of-rubbish").should be_false
       end
     end
   end
