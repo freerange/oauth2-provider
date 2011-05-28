@@ -1,7 +1,6 @@
 module OAuth2::Provider::Rack
   class AuthorizationCodeRequest
-    def initialize(env, params)
-      @env = env
+    def initialize(params)
       @params = params
     end
 

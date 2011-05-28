@@ -4,7 +4,7 @@ module OAuth2::Provider::Rack::AuthorizationCodesSupport
   protected
 
   def oauth2_authorization_request
-    request.env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(request.env, request.params)
+    request.env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(request.params)
   end
 
   def block_invalid_authorization_code_requests

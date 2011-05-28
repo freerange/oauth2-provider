@@ -14,7 +14,7 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
   describe "Validating requests" do
     action do |env|
       request = Rack::Request.new(env)
-      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(env, request.params)
+      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(request.params)
       env['oauth2.authorization_request'].validate!
       successful_response
     end
@@ -72,7 +72,7 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
     describe "A request where the scope is declared invalid" do
       action do |env|
         request = Rack::Request.new(env)
-        env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(env, request.params)
+        env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(request.params)
         env['oauth2.authorization_request'].validate!
         env['oauth2.authorization_request'].invalid_scope!
         successful_response
@@ -89,7 +89,7 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
   describe "Intercepting invalid requests" do
     action do |env|
       request = Rack::Request.new(env)
-      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(env, request.params)
+      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(request.params)
       begin
         env['oauth2.authorization_request'].validate!
         successful_response
@@ -118,7 +118,7 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
 
     action do |env|
       request = Rack::Request.new(env)
-      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(env, request.params)
+      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(request.params)
       env['oauth2.authorization_request'].validate!
       successful_response
     end
@@ -137,7 +137,7 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
   describe "Granting a code" do
     action do |env|
       request = Rack::Request.new(env)
-      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(env, request.params)
+      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(request.params)
       env['oauth2.authorization_request'].grant! ExampleResourceOwner.first
     end
 
@@ -160,7 +160,7 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
   describe "Granting a code with a scope" do
     action do |env|
       request = Rack::Request.new(env)
-      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(env, request.params)
+      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(request.params)
       env['oauth2.authorization_request'].grant! ExampleResourceOwner.first
     end
 
@@ -178,7 +178,7 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
   describe "Granting a code with custom authorization length" do
     action do |env|
       request = Rack::Request.new(env)
-      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(env, request.params)
+      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(request.params)
       env['oauth2.authorization_request'].grant! ExampleResourceOwner.first, 5.years.from_now
     end
 
@@ -196,7 +196,7 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
   describe "Denying a code" do
     action do |env|
       request = Rack::Request.new(env)
-      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(env, request.params)
+      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(request.params)
       env['oauth2.authorization_request'].deny!
     end
 
