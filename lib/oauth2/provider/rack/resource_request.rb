@@ -84,8 +84,7 @@ module OAuth2::Provider::Rack
     private
 
     def throw_response(response)
-      @env['oauth2.response'] = response
-      throw :oauth2
+      throw :oauth2, response
     end
   end
 end
