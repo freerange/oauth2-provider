@@ -21,6 +21,8 @@ RSpec.configure do |config|
     Timecop.return
   end
 
+  config.mock_with :mocha
+
   config.include OAuth2::Provider::RSpec::Macros
   config.include OAuth2::Provider::RSpec::Factories
   config.include OAuth2::Provider::RSpec::Rack

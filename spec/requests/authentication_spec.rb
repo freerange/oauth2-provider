@@ -106,13 +106,13 @@ describe "A request for a protected resource" do
   describe "when warden is part of the stack" do
     it "bypasses warden when no token is passed" do
       warden = "warden"
-      warden.should_receive(:custom_failure!)
+      warden.expects(:custom_failure!)
       get "/protected", {}, {'warden' => warden}
     end
 
     it "bypasses warden when token invalid" do
       warden = "warden"
-      warden.should_receive(:custom_failure!)
+      warden.expects(:custom_failure!)
       get "/protected", {:oauth_token => 'invalid_token'}, {'warden' => warden}
     end
   end
