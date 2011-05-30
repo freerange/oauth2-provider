@@ -1,6 +1,65 @@
 require 'spec_helper'
 
 describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
+  describe "#initialize" do
+    before :each do
+      @client = OAuth2::Provider.client_class.create! :name => 'client'
+      @valid_params = {
+        'client_id' => @client.oauth_identifier,
+        'redirect_uri' => "https://redirect.example.com/callback"
+      }
+    end
+
+    describe "with a valid client_id and redirect_uri" do
+      it "doesn't raise any exception" do
+        lambda {
+          OAuth2::Provider::Rack::AuthorizationCodeRequest.new(@valid_params)
+        }.should_not raise_error
+      end
+    end
+
+    describe "without a client_id" do
+      it "raises OAuth2::Provider::Rack::InvalidRequest" do
+        lambda {
+          OAuth2::Provider::Rack::AuthorizationCodeRequest.new(@valid_params.except('client_id'))
+        }.should raise_error(OAuth2::Provider::Rack::InvalidRequest)
+      end
+    end
+
+    describe "with an unknown client" do
+      it "raises OAuth2::Provider::Rack::InvalidRequest" do
+        lambda {
+          OAuth2::Provider::Rack::AuthorizationCodeRequest.new(@valid_params.merge(
+            'client_id' => 'unknown'
+          ))
+        }.should raise_error(OAuth2::Provider::Rack::InvalidRequest)
+      end
+    end
+
+    describe "without a redirect_uri" do
+      it "raises OAuth2::Provider::Rack::InvalidRequest" do
+        lambda {
+          OAuth2::Provider::Rack::AuthorizationCodeRequest.new(@valid_params.except('redirect_uri'))
+        }.should raise_error(OAuth2::Provider::Rack::InvalidRequest)
+      end
+    end
+
+    describe "with a redirect_uri the client regards as invalid" do
+      before :each do
+        OAuth2::Provider.client_class.stubs(:from_param).returns(@client)
+        @client.expects(:allow_redirection?).with(@valid_params['redirect_uri']).returns(false)
+      end
+
+      it "raises OAuth2::Provider::Rack::InvalidRequest" do
+        lambda {
+          OAuth2::Provider::Rack::AuthorizationCodeRequest.new(@valid_params)
+        }.should raise_error(OAuth2::Provider::Rack::InvalidRequest)
+      end
+    end
+  end
+end
+
+describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
   before :each do
     ExampleResourceOwner.destroy_all
     @client = OAuth2::Provider.client_class.create! :name => 'client'
@@ -15,7 +74,6 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
     action do |env|
       request = Rack::Request.new(env)
       env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(request.params)
-      env['oauth2.authorization_request'].validate!
       successful_response
     end
 
@@ -73,7 +131,6 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
       action do |env|
         request = Rack::Request.new(env)
         env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(request.params)
-        env['oauth2.authorization_request'].validate!
         env['oauth2.authorization_request'].invalid_scope!
         successful_response
       end
@@ -89,9 +146,8 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
   describe "Intercepting invalid requests" do
     action do |env|
       request = Rack::Request.new(env)
-      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(request.params)
       begin
-        env['oauth2.authorization_request'].validate!
+        env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(request.params)
         successful_response
       rescue OAuth2::Provider::Rack::InvalidRequest => e
         [418, {'Content-Type' => 'text/plain'}, e.to_s]
@@ -119,7 +175,6 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
     action do |env|
       request = Rack::Request.new(env)
       env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(request.params)
-      env['oauth2.authorization_request'].validate!
       successful_response
     end
 

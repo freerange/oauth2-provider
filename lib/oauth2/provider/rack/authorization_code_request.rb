@@ -2,24 +2,7 @@ module OAuth2::Provider::Rack
   class AuthorizationCodeRequest
     def initialize(params)
       @params = params
-    end
-
-    def validate!
-      unless client_id
-        raise OAuth2::Provider::Rack::InvalidRequest, 'No client_id provided'
-      end
-
-      unless client
-        raise OAuth2::Provider::Rack::InvalidRequest, 'client_id is invalid'
-      end
-
-      unless redirect_uri
-        raise OAuth2::Provider::Rack::InvalidRequest, 'No redirect_uri provided'
-      end
-
-      unless redirect_uri_valid?
-        raise OAuth2::Provider::Rack::InvalidRequest, 'Provided redirect_uri is invalid'
-      end
+      validate!
     end
 
     def grant!(resource_owner = nil, authorization_expires_at = nil)
@@ -62,6 +45,24 @@ module OAuth2::Provider::Rack
     end
 
     private
+
+    def validate!
+      unless client_id
+        raise OAuth2::Provider::Rack::InvalidRequest, 'No client_id provided'
+      end
+
+      unless client
+        raise OAuth2::Provider::Rack::InvalidRequest, 'client_id is invalid'
+      end
+
+      unless redirect_uri
+        raise OAuth2::Provider::Rack::InvalidRequest, 'No redirect_uri provided'
+      end
+
+      unless redirect_uri_valid?
+        raise OAuth2::Provider::Rack::InvalidRequest, 'Provided redirect_uri is invalid'
+      end
+    end
 
     def throw_response(response)
       throw :oauth2, response

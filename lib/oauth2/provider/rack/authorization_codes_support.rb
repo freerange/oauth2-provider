@@ -6,7 +6,7 @@ module OAuth2::Provider::Rack::AuthorizationCodesSupport
   end
 
   def block_invalid_authorization_code_requests
-    oauth2_authorization_request.validate!
+    oauth2_authorization_request
   end
 
   def grant_authorization_code(resource_owner = nil, authorization_expires_at = nil)
