@@ -53,8 +53,9 @@ module OAuth2::Provider::Rack
       authorization && authorization.resource_owner
     end
 
-    def authentication_required!
-      throw_response Responses.unauthorized
+    def authentication_required!(reason = nil)
+      env['warden'] && env['warden'].custom_failure!
+      throw_response Responses.unauthorized(reason)
     end
 
     def insufficient_scope!
@@ -78,7 +79,7 @@ module OAuth2::Provider::Rack
     def block_invalid_token
       access_token = OAuth2::Provider.access_token_class.find_by_access_token(token)
       @authorization = access_token.authorization if access_token
-      throw_response Responses.unauthorized('invalid_token') if access_token.nil? || access_token.expired?
+      authentication_required! 'invalid_token' if access_token.nil? || access_token.expired?
     end
 
     private

@@ -7,17 +7,19 @@ module OAuth2::Provider::Rack
     def call(env)
       request = env['oauth2'] = ResourceRequest.new(env)
 
-      env['warden'] && env['warden'].custom_failure!
-
       response = catch :oauth2 do
         if request.path == "/oauth/access_token"
-          AccessTokenHandler.new(@app, env).process
+          handle_access_token_request(env)
         else
           @app.call(env)
         end
       end
     rescue InvalidRequest => e
       [400, {}, e.message]
+    end
+
+    def handle_access_token_request(env)
+      AccessTokenHandler.new(@app, env).process
     end
   end
 end
