@@ -57,6 +57,57 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
       end
     end
   end
+
+  describe "#grant_existing!(resource_owner)" do
+    before :each do
+      @client = OAuth2::Provider.client_class.create! :name => 'client'
+      @owner = create_resource_owner
+      @scope = 'a-scope'
+      @request = OAuth2::Provider::Rack::AuthorizationCodeRequest.new(
+        'client_id' => @client.oauth_identifier,
+        'redirect_uri' => "https://redirect.example.com/callback",
+        'scope' => @scope
+      )
+    end
+
+    describe "when matching authorization exists" do
+      before :each do
+        @authorization = create_authorization(:client => @client, :resource_owner => @owner, :scope => @scope)
+      end
+
+      it "throws an oauth2 response" do
+        lambda {
+          @request.grant_existing!(@owner)
+        }.should throw_symbol(:oauth2)
+      end
+
+      it "creates an authorization code for the matching authorization" do
+        catch :oauth2 do
+          @request.grant_existing!(@owner)
+        end
+        code = @authorization.reload.authorization_codes.first
+        code.should_not be_nil
+        code.redirect_uri.should eql("https://redirect.example.com/callback")
+      end
+
+      it "includes authorization code in the response" do
+        response = catch :oauth2 do
+          @request.grant_existing!(@owner)
+        end
+        code = @authorization.reload.authorization_codes.first
+        uri = response[1]["Location"]
+        Addressable::URI.parse(uri).query_values['code'].should == code.code
+      end
+    end
+
+    describe "when no matching authorization exists" do
+      it "returns normally" do
+        lambda {
+          @request.grant_existing!(@owner)
+        }.should_not throw_symbol(:oauth2)
+      end
+    end
+  end
 end
 
 describe OAuth2::Provider::Rack::AuthorizationCodeRequest do

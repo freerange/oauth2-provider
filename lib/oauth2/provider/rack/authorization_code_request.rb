@@ -16,6 +16,13 @@ module OAuth2::Provider::Rack
       throw_response Responses.redirect_with_code(code.code, redirect_uri)
     end
 
+    def grant_existing!(resource_owner = nil)
+      if existing = OAuth2::Provider.authorization_class.allowing(client, resource_owner, scope).first
+        code = existing.authorization_codes.create! :redirect_uri => redirect_uri
+        throw_response Responses.redirect_with_code(code.code, redirect_uri)
+      end
+    end
+
     def deny!
       throw_response Responses.redirect_with_error('access_denied', redirect_uri)
     end
