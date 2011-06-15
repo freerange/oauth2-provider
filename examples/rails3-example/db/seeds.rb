@@ -6,6 +6,6 @@
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
 #   Mayor.create(:name => 'Daley', :city => cities.first)
 
-OAuth2::Provider.client_class.create! :name => 'Example Client', :oauth_identifier => 'abcdefgh12345678', :oauth_secret => 'secret'
+OAuth2::Provider.client_class.create! :name => 'Example Client', :oauth_identifier => 'abcdefgh12345678', :oauth_secret => 'secret', :oauth_redirect_uri => 'http://localhost:9292/'
 
 Account.create! :login => 'tomafro', :password => 'secret'
