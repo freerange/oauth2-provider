@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
 
   def authenticate_account
     unless current_account
-      session[:return_url] = request.request_uri
+      session[:return_url] = request.fullpath
       redirect_to new_session_url
     end
   end

@@ -1,1 +1,1 @@
-Hello <%= current_account.login %>
+Hello <%= current_account ? current_account.login : "stranger" %>!
