@@ -4,7 +4,7 @@ module OAuth2::Provider::Models::Client
   extend ActiveSupport::Concern
 
   included do
-    validates_presence_of :oauth_identifier, :oauth_secret, :name
+    validates_presence_of :oauth_identifier, :oauth_secret, :name, :oauth_redirect_uri
     validates_uniqueness_of :oauth_identifier
   end
 
