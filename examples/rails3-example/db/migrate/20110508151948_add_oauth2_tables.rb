@@ -4,6 +4,7 @@ class AddOauth2Tables < ActiveRecord::Migration
       t.string   'name'
       t.string   'oauth_identifier', :null => false
       t.string   'oauth_secret', :null => false
+      t.string   'oauth_redirect_uri'
     end
 
     create_table 'oauth_authorization_codes', :force => true do |t|

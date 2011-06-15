@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110508151948) do
+ActiveRecord::Schema.define(:version => 20110614224516) do
 
   create_table "accounts", :force => true do |t|
     t.string "login",    :null => false
@@ -45,8 +45,9 @@ ActiveRecord::Schema.define(:version => 20110508151948) do
 
   create_table "oauth_clients", :force => true do |t|
     t.string "name"
-    t.string "oauth_identifier", :null => false
-    t.string "oauth_secret",     :null => false
+    t.string "oauth_identifier",   :null => false
+    t.string "oauth_secret",       :null => false
+    t.string "oauth_redirect_uri"
   end
 
 end

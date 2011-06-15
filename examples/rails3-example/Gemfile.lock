@@ -1,8 +1,8 @@
 PATH
   remote: ../..
   specs:
-    oauth2-provider (0.0.15)
-      activesupport (~> 3.0.1)
+    oauth2-provider (0.0.18)
+      activesupport (~> 3.0)
       addressable (~> 2.2)
 
 GEM
@@ -35,7 +35,7 @@ GEM
       activemodel (= 3.0.7)
       activesupport (= 3.0.7)
     activesupport (3.0.7)
-    addressable (2.2.5)
+    addressable (2.2.6)
     arel (2.0.9)
     builder (2.1.2)
     erubis (2.6.6)
