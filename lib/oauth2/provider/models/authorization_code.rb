@@ -2,7 +2,7 @@ module OAuth2::Provider::Models::AuthorizationCode
   extend ActiveSupport::Concern
 
   included do
-    include OAuth2::Provider::Models::TokenExpiry
+    include OAuth2::Provider::Models::TokenExpiry, OAuth2::Provider::Models::RandomToken
     self.default_token_lifespan = 1.minute
 
     delegate :client, :resource_owner, :to => :authorization
@@ -11,7 +11,7 @@ module OAuth2::Provider::Models::AuthorizationCode
 
   def initialize(attributes = {})
     super
-    self.code ||= OAuth2::Provider::Random.base62(32)
+    self.code ||= self.class.unique_random_token(:code)
   end
 
   module ClassMethods

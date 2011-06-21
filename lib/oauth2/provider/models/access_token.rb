@@ -2,7 +2,7 @@ module OAuth2::Provider::Models::AccessToken
   extend ActiveSupport::Concern
 
   included do
-    include OAuth2::Provider::Models::TokenExpiry
+    include OAuth2::Provider::Models::TokenExpiry, OAuth2::Provider::Models::RandomToken
     self.default_token_lifespan = 1.month
 
     validates_presence_of :authorization, :access_token, :expires_at
@@ -13,8 +13,8 @@ module OAuth2::Provider::Models::AccessToken
 
   def initialize(*args, &block)
     super
-    self.access_token ||= OAuth2::Provider::Random.base62(32)
-    self.refresh_token ||= OAuth2::Provider::Random.base62(32)
+    self.access_token ||= self.class.unique_random_token(:access_token)
+    self.refresh_token ||= self.class.unique_random_token(:refresh_token)
   end
 
   def as_json(options = {})

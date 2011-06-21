@@ -4,14 +4,15 @@ module OAuth2::Provider::Models::Client
   extend ActiveSupport::Concern
 
   included do
+    include OAuth2::Provider::Models::RandomToken
     validates_presence_of :oauth_identifier, :oauth_secret, :name
     validates_uniqueness_of :oauth_identifier
   end
 
   def initialize(*args, &block)
     super
-    self.oauth_identifier ||= OAuth2::Provider::Random.base62(16)
-    self.oauth_secret ||= OAuth2::Provider::Random.base62(32)
+    self.oauth_identifier ||= self.class.unique_random_token(:oauth_identifier)
+    self.oauth_secret ||= self.class.unique_random_token(:oauth_secret)
   end
 
   def to_param

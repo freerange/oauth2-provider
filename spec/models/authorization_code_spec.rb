@@ -49,10 +49,9 @@ describe OAuth2::Provider.authorization_code_class do
       OAuth2::Provider.authorization_code_class.new
     end
 
-    it "is assigned a randomly generated code" do
-      subject.code.should_not be_nil
-      OAuth2::Provider.authorization_code_class.new.code.should_not be_nil
-      subject.code.should_not == OAuth2::Provider.authorization_code_class.new.code
+    it "uses .unique_random_token to assign a code" do
+      OAuth2::Provider.authorization_code_class.stubs(:unique_random_token).with(:code).returns('random-token')
+      OAuth2::Provider.authorization_code_class.new.code.should eql('random-token')
     end
 
     it "expires in 1 minute by default" do

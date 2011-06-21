@@ -37,4 +37,19 @@ module OAuth2::Provider::Models
       end
     end
   end
+
+  module RandomToken
+    extend ActiveSupport::Concern
+
+    module ClassMethods
+      def random_token
+        OAuth2::Provider::Random.base62(48)
+      end
+
+      def unique_random_token(attribute)
+        key = random_token while (key.nil? || where(attribute => key).exists?)
+        key
+      end
+    end
+  end
 end

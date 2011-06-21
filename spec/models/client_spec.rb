@@ -42,16 +42,11 @@ describe OAuth2::Provider.client_class do
       OAuth2::Provider.client_class.new :name => 'client'
     end
 
-    it "is assigned a randomly generated oauth identifier" do
-      subject.oauth_identifier.should_not be_nil
-      OAuth2::Provider.client_class.new.oauth_identifier.should_not be_nil
-      subject.oauth_identifier.should_not == OAuth2::Provider.client_class.new.oauth_identifier
-    end
-
-    it "is assigned a randomly generated oauth secret" do
-      subject.oauth_secret.should_not be_nil
-      OAuth2::Provider.client_class.new.oauth_secret.should_not be_nil
-      subject.oauth_secret.should_not == OAuth2::Provider.client_class.new.oauth_secret
+    it "uses .unique_random_token to assign random oauth identifier and secret" do
+      OAuth2::Provider.client_class.stubs(:unique_random_token).with(:oauth_identifier).returns('random-identifier')
+      OAuth2::Provider.client_class.stubs(:unique_random_token).with(:oauth_secret).returns('random-secret')
+      subject.oauth_identifier.should eql('random-identifier')
+      subject.oauth_secret.should eql('random-secret')
     end
 
     it "returns nil when to_param called" do

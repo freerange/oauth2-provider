@@ -76,16 +76,11 @@ describe OAuth2::Provider.access_token_class do
       OAuth2::Provider.access_token_class.new
     end
 
-    it "is assigned a randomly generated access token" do
-      subject.access_token.should_not be_nil
-      OAuth2::Provider.access_token_class.new.access_token.should_not be_nil
-      subject.access_token.should_not == OAuth2::Provider.access_token_class.new.access_token
-    end
-
-    it "is assigned a randomly generated refresh token" do
-      subject.refresh_token.should_not be_nil
-      OAuth2::Provider.access_token_class.new.refresh_token.should_not be_nil
-      subject.access_token.should_not == OAuth2::Provider.access_token_class.new.refresh_token
+    it "uses .unique_random_token to assign random access and refresh tokens" do
+      OAuth2::Provider.access_token_class.stubs(:unique_random_token).with(:access_token).returns('random-access-token')
+      OAuth2::Provider.access_token_class.stubs(:unique_random_token).with(:refresh_token).returns('random-refresh-token')
+      subject.access_token.should eql('random-access-token')
+      subject.refresh_token.should eql('random-refresh-token')
     end
 
     it "expires in 1 month by default" do
