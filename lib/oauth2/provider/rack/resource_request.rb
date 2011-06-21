@@ -65,14 +65,14 @@ module OAuth2::Provider::Rack
     def validate_token!
       if has_token? && @token_validated.nil?
         @token_validated = true
-        block_bad_request
+        block_invalid_request
         block_invalid_token
       end
     end
 
-    def block_bad_request
+    def block_invalid_request
       if token_from_param && token_from_header && (token_from_param != token_from_header)
-        throw_response Responses.json_error('invalid_request', :description => 'both authorization header and oauth_token provided, with conflicting tokens')
+        throw_response Responses.json_error('invalid_request', :description => 'both authorization header and oauth_token provided, with conflicting tokens', :status => 401)
       end
     end
 

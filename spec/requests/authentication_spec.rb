@@ -71,7 +71,7 @@ describe "A request for a protected resource" do
       get "/protected", {:oauth_token => @token.access_token}, {"HTTP_AUTHORIZATION" => "OAuth DifferentToken"}
     end
 
-    responds_with_json_error 'invalid_request', :description => 'both authorization header and oauth_token provided, with conflicting tokens', :status => 400
+    responds_with_json_error 'invalid_request', :description => 'both authorization header and oauth_token provided, with conflicting tokens', :status => 401
   end
 
   describe "with an invalid token" do
