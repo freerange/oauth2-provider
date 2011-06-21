@@ -35,7 +35,6 @@ class AddOauth2Tables < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table 'example_resource_owners'
     drop_table 'oauth_access_tokens'
     drop_table 'oauth_authorizations'
     drop_table 'oauth_authorization_codes'
