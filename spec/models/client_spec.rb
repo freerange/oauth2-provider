@@ -86,6 +86,20 @@ describe OAuth2::Provider.client_class do
         subject.allow_redirection?("a-load-of-rubbish").should be_false
       end
     end
+    
+    describe "on a client with an empty oauth_redirect_uri" do
+      subject do
+        OAuth2::Provider.client_class.new :name => 'client', :oauth_redirect_uri => ""
+      end
+
+      it "always returns true" do
+        subject.allow_redirection?("http://anything.example.com/any/path").should be_true
+      end
+
+      it "returns false if the provided uri isn't a valid uri" do
+        subject.allow_redirection?("a-load-of-rubbish").should be_false
+      end
+    end
 
     describe "on a client without an oauth_redirect_uri" do
       subject do
