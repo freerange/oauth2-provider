@@ -9,7 +9,7 @@ module OAuth2::Provider::Models::AuthorizationCode
     validates_presence_of :authorization, :code, :expires_at, :redirect_uri
   end
 
-  def initialize(attributes = {})
+  def initialize(*args)
     super
     self.code ||= self.class.unique_random_token(:code)
   end
