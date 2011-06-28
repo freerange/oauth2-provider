@@ -1,4 +1,5 @@
 require 'oauth2/provider'
+require 'securerandom'
 
 module OAuth2::Provider::Random
   module Base62
@@ -18,12 +19,12 @@ module OAuth2::Provider::Random
   end
 
   def base62(length = 8)
-    number = ActiveSupport::SecureRandom.random_number(62 ** length)
+    number = SecureRandom.random_number(62 ** length)
     Base62.encode(number).rjust(length, '0')
   end
 
   def base36(length = 8)
-    ActiveSupport::SecureRandom.random_number(36 ** length).to_s(36).rjust(length, '0')
+    SecureRandom.random_number(36 ** length).to_s(36).rjust(length, '0')
   end
 
   module_function :base62, :base36
