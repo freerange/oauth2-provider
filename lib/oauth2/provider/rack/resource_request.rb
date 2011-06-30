@@ -2,7 +2,7 @@ require 'rack/auth/abstract/request'
 
 module OAuth2::Provider::Rack
   class ResourceRequest < Rack::Request
-   delegate :has_scope?, :to => :authorization
+    delegate :has_scope?, :to => :authorization
 
     def token
       token_from_param || token_from_header
