@@ -25,7 +25,7 @@ module OAuth2::Provider::Models::Client
 
   def allow_redirection?(uri)
     uri_host = Addressable::URI.parse(uri).host
-    if oauth_redirect_uri
+    unless oauth_redirect_uri.nil? or oauth_redirect_uri.empty?
       Addressable::URI.parse(oauth_redirect_uri).host == uri_host
     else
       !uri_host.nil? && true
