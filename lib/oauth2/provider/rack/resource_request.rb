@@ -17,15 +17,13 @@ module OAuth2::Provider::Rack
     end
 
     def token_from_header
-      if @env[authorization_key] =~ /OAuth (.*)/
-        $1
+      if authorization_header.provided?
+        authorization_header.params
       end
     end
 
-    def authorization_key
-      @authorization_key ||= Rack::Auth::AbstractRequest::AUTHORIZATION_KEYS.detect do |key|
-        @env.has_key?(key)
-      end
+    def authorization_header
+      @authorization_header ||= Rack::Auth::AbstractRequest.new(@env)
     end
 
     def authenticate_request!(options, &block)
