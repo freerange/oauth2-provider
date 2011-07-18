@@ -51,15 +51,6 @@ module OAuth2::Provider::Rack
       authorization && authorization.resource_owner
     end
 
-    def authentication_required!(reason = nil)
-      env['warden'] && env['warden'].custom_failure!
-      throw_response Responses.unauthorized(reason)
-    end
-
-    def insufficient_scope!
-      throw_response Responses.json_error('insufficient_scope', :status => 403)
-    end
-
     def validate_token!
       if has_token? && @token_validated.nil?
         @token_validated = true
@@ -70,7 +61,7 @@ module OAuth2::Provider::Rack
 
     def block_invalid_request
       if token_from_param && token_from_header && (token_from_param != token_from_header)
-        throw_response Responses.json_error('invalid_request', :description => 'both authorization header and oauth_token provided, with conflicting tokens', :status => 401)
+        invalid_request! 'both authorization header and oauth_token provided, with conflicting tokens'
       end
     end
 
@@ -78,6 +69,19 @@ module OAuth2::Provider::Rack
       access_token = OAuth2::Provider.access_token_class.find_by_access_token(token)
       @authorization = access_token.authorization if access_token
       authentication_required! 'invalid_token' if access_token.nil? || access_token.expired?
+    end
+
+    def insufficient_scope!
+      throw_response Responses.json_error('insufficient_scope', :status => 403)
+    end
+
+    def invalid_request!(description)
+      throw_response Responses.json_error('invalid_request', :description => description, :status => 401)
+    end
+
+    def authentication_required!(reason = nil)
+      env['warden'] && env['warden'].custom_failure!
+      throw_response Responses.unauthorized(reason)
     end
 
     private
