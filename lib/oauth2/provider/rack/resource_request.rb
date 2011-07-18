@@ -25,7 +25,7 @@ module OAuth2::Provider::Rack
     end
 
     def authorization_header
-      @authorization_header ||= Rack::Auth::AbstractRequest.new(@env)
+      @authorization_header ||= Rack::Auth::AbstractRequest.new(env)
     end
 
     def authenticate_request!(options, &block)
