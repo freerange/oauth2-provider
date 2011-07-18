@@ -24,11 +24,28 @@ module OAuth2::Provider::Rack::Responses
     [302, {'Location' => append_to_uri(uri, :code => code)}, []]
   end
 
+  def insufficient_scope!
+    throw_response OAuth2::Provider::Rack::Responses.json_error('insufficient_scope', :status => 403)
+  end
+
+  def invalid_request!(description)
+    throw_response OAuth2::Provider::Rack::Responses.json_error('invalid_request', :description => description, :status => 401)
+  end
+
+  def authentication_required!(reason = nil)
+    env['warden'] && env['warden'].custom_failure!
+    throw_response OAuth2::Provider::Rack::Responses.unauthorized(reason)
+  end
+
   private
 
   def self.append_to_uri(uri, parameters = {})
     u = Addressable::URI.parse(uri)
     u.query_values = (u.query_values || {}).merge(parameters)
     u.to_s
+  end
+
+  def throw_response(response)
+    throw :oauth2, response
   end
 end

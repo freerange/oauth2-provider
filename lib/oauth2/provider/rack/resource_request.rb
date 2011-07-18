@@ -2,6 +2,8 @@ require 'rack/auth/abstract/request'
 
 module OAuth2::Provider::Rack
   class ResourceRequest < Rack::Request
+    include Responses
+
     delegate :has_scope?, :to => :authorization
 
     def token
@@ -69,25 +71,6 @@ module OAuth2::Provider::Rack
       access_token = OAuth2::Provider.access_token_class.find_by_access_token(token)
       @authorization = access_token.authorization if access_token
       authentication_required! 'invalid_token' if access_token.nil? || access_token.expired?
-    end
-
-    def insufficient_scope!
-      throw_response Responses.json_error('insufficient_scope', :status => 403)
-    end
-
-    def invalid_request!(description)
-      throw_response Responses.json_error('invalid_request', :description => description, :status => 401)
-    end
-
-    def authentication_required!(reason = nil)
-      env['warden'] && env['warden'].custom_failure!
-      throw_response Responses.unauthorized(reason)
-    end
-
-    private
-
-    def throw_response(response)
-      throw :oauth2, response
     end
   end
 end
