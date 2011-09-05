@@ -4,6 +4,10 @@ Bundler::GemHelper.install_tasks
 require 'bundler/setup'
 require 'rspec/core/rake_task'
 
+require 'cucumber/rake/task'
+
+Cucumber::Rake::Task.new
+
 namespace :spec do
   desc "Run specs using the active_record backend"
   RSpec::Core::RakeTask.new(:activerecord) do |t|

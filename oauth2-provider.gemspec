@@ -32,4 +32,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'mongoid', '2.0.0.rc.6'
   s.add_development_dependency 'bson', '1.2.0'
   s.add_development_dependency 'bson_ext', '1.2.0'
+  s.add_development_dependency 'cucumber', '~>1.0.0'
 end
