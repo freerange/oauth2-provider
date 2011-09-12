@@ -16,13 +16,24 @@ describe OAuth2::Provider::Rack::Middleware do
       end
     end
 
-    it "passes requests to /oauth/access_token to #handle_access_token_request" do
-      subject.expects(:handle_access_token_request).returns(
-        [418, {'Content-Type' => 'text/plain'}, 'Short and stout']
-      )
-      get "/oauth/access_token"
-      response.status.should eql(418)
-      response.body.should eql('Short and stout')
+    describe "requests to %r{/oauth/access_token}" do
+      it "passes requests to /oauth/access_token to #handle_access_token_request" do
+        subject.expects(:handle_access_token_request).returns(
+          [418, {'Content-Type' => 'text/plain'}, 'Short and stout']
+        )
+        get "/oauth/access_token"
+        response.status.should eql(418)
+        response.body.should eql('Short and stout')
+      end
+
+      it "passes requests to /api/oauth/access_token to #handle_access_token_request" do
+        subject.expects(:handle_access_token_request).returns(
+          [418, {'Content-Type' => 'text/plain'}, 'Short and stout']
+        )
+        get "/api/oauth/access_token"
+        response.status.should eql(418)
+        response.body.should eql('Short and stout')
+      end
     end
 
     it "passes other requests to the main app" do
