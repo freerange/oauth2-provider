@@ -8,7 +8,7 @@ module OAuth2::Provider::Rack
       request = env['oauth2'] = ResourceRequest.new(env)
 
       response = catch :oauth2 do
-        if request.path == "/oauth/access_token"
+        if request.path == OAuth2::Provider.access_token_path
           handle_access_token_request(env)
         else
           @app.call(env)
