@@ -25,6 +25,8 @@ module OAuth2
 
     mattr_accessor :resource_owner_class_name
     self.resource_owner_class_name = 'ResourceOwner'
+    mattr_accessor :access_token_path
+    self.access_token_path = '/oauth/access_token'
 
     def self.configure
       yield self
