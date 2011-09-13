@@ -30,6 +30,23 @@ describe OAuth2::Provider::Rack::Middleware do
       response.status.should eql(200)
       response.body.should eql('Apptastic')
     end
+
+    describe "with access_token_path configured to /api/oauth/access_token" do
+      before(:each) do
+        OAuth2::Provider.configure do |config|
+          config.access_token_path = '/api/oauth/access_token'
+        end
+      end
+
+      it "passes requests to /api/oauth/access_token to #handle_access_token_request" do
+        subject.expects(:handle_access_token_request).returns(
+          [418, {'Content-Type' => 'text/plain'}, 'Short and stout']
+        )
+        get "/api/oauth/access_token"
+        response.status.should eql(418)
+        response.body.should eql('Short and stout')
+      end
+    end
   end
 
   describe "when main app throws :oauth2 response" do
