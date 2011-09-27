@@ -45,6 +45,7 @@ describe OAuth2::Provider.authorization_code_class do
   end
 
   describe "a new instance" do
+    let(:now) { Time.now.utc.change(:usec => 0) }
     subject do
       OAuth2::Provider.authorization_code_class.new
     end
@@ -55,7 +56,9 @@ describe OAuth2::Provider.authorization_code_class do
     end
 
     it "expires in 1 minute by default" do
-      subject.expires_at.should == 1.minute.from_now
+      Timecop.freeze(now) do
+        subject.expires_at.should == 1.minute.from_now
+      end
     end
   end
 

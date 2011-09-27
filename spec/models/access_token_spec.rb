@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe OAuth2::Provider.access_token_class do
   describe "any instance" do
+    let(:now) { Time.now.utc.change(:usec => 0) }
     subject do
       OAuth2::Provider.access_token_class.new :authorization => build_authorization
     end
@@ -36,8 +37,10 @@ describe OAuth2::Provider.access_token_class do
     end
 
     it "returns time in seconds until expiry when expires_in called" do
-      subject.expires_at = 60.minutes.from_now
-      subject.expires_in.should == (60 * 60)
+      Timecop.freeze(now) do
+        subject.expires_at = 60.minutes.from_now
+        subject.expires_in.should == (60 * 60)
+      end
     end
 
     it "returns 0 for expired_in when already expired" do
@@ -72,6 +75,7 @@ describe OAuth2::Provider.access_token_class do
   end
 
   describe "a new instance" do
+    let(:now) { Time.now.utc.change(:usec => 0) }
     subject do
       OAuth2::Provider.access_token_class.new
     end
@@ -84,26 +88,33 @@ describe OAuth2::Provider.access_token_class do
     end
 
     it "expires in 1 month by default" do
-      subject.expires_at.should == 1.month.from_now
+      Timecop.freeze(now) do
+        subject.expires_at.should == 1.month.from_now
+      end
     end
   end
 
   describe "refreshing an existing token" do
+    let(:now) { Time.now.utc.change(:usec => 0) }
     subject do
       OAuth2::Provider.access_token_class.create! :authorization => create_authorization, :expires_at => 23.days.ago
     end
 
     it "returns a new access token with the same client, resource_owner and scope, but a new expiry time" do
-      result = OAuth2::Provider.access_token_class.refresh_with(subject.refresh_token)
-      result.should_not be_nil
-      result.expires_at.should == 1.month.from_now
-      result.authorization.should == subject.authorization
+      Timecop.freeze(now) do
+        result = OAuth2::Provider.access_token_class.refresh_with(subject.refresh_token)
+        result.should_not be_nil
+        result.expires_at.should == 1.month.from_now
+        result.authorization.should == subject.authorization
+      end
     end
 
     it "returns token with expires_at set to authorization.expires_at if validation would fail otherwise" do
-      subject.authorization.update_attributes(:expires_at => 5.minutes.from_now)
-      result = OAuth2::Provider.access_token_class.refresh_with(subject.refresh_token)
-      result.expires_at.should == 5.minutes.from_now
+      Timecop.freeze(now) do
+        subject.authorization.update_attributes(:expires_at => 5.minutes.from_now)
+        result = OAuth2::Provider.access_token_class.refresh_with(subject.refresh_token)
+        result.expires_at.should == 5.minutes.from_now
+      end
     end
 
     it "returns nil if the provided token doesn't match" do
