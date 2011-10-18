@@ -6,6 +6,7 @@ class OAuth2::Provider::Models::Mongoid::Client
       include ::Mongoid::Document
       include OAuth2::Provider::Models::Client
 
+      field :name
       field :oauth_redirect_uri
       field :oauth_secret
       field :oauth_identifier
