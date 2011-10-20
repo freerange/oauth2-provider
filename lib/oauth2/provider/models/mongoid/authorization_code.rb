@@ -8,6 +8,7 @@ class OAuth2::Provider::Models::Mongoid::AuthorizationCode
 
       field :code
       field :expires_at, :type => Time
+      field :redirect_uri
 
       referenced_in(:authorization,
         :class_name => OAuth2::Provider.authorization_class_name,

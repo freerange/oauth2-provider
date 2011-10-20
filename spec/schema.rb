@@ -17,7 +17,7 @@ ActiveRecord::Schema.define(:version => 20110323171649) do
     t.datetime 'expires_at'
     t.datetime 'created_at'
     t.datetime 'updated_at'
-    t.string   'redirect_uri'
+    t.string   'redirect_uri', :null => false
   end
 
   create_table 'oauth_authorizations', :force => true do |t|
