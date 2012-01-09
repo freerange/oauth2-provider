@@ -310,6 +310,40 @@ describe "POSTs to /oauth/access_token" do
     end
   end
 
+  describe "A request using the client_credentials grant type" do
+    before :each do
+      @valid_params = {
+        :grant_type => 'client_credentials',
+        :client_id => @client.to_param,
+        :client_secret => @client.oauth_secret
+      }
+    end
+
+    describe "with valid client_id and client_secret" do
+      before :each do
+        post "/oauth/access_token", @valid_params
+      end
+
+      it "responds with access token, and expiry time in JSON" do
+        token = OAuth2::Provider.access_token_class.find_by_access_token(json_from_response["access_token"])
+        token.should_not be_nil
+        json_from_response["expires_in"].should == token.expires_in
+      end
+
+      it "sets cache-control header to no-store, as response is sensitive" do
+        response.headers["Cache-Control"].should =~ /no-store/
+      end
+
+      it "doesn't include a refresh_token in the JSON response" do
+        json_from_response.keys.include?("refresh_token").should be_false
+      end
+
+      it "doesn't include a state in the JSON response" do
+        json_from_response.keys.include?("state").should be_false
+      end
+    end
+  end
+
   describe "When using a custom client class" do
     before :each do
       @original_client_class_name = OAuth2::Provider.client_class_name
