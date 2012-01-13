@@ -7,7 +7,7 @@ Details
 --
 
 * Implements [draft 11](http://tools.ietf.org/html/draft-ietf-oauth-v2-11) of the oauth2 spec
-* Handles the authorization_code and password grant types
+* Handles the authorization_code, password, and client_credential grant types
 * Supports ActiveRecord and Mongoid
 
 Usage Instructions

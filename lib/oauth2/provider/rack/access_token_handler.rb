@@ -52,6 +52,13 @@ module OAuth2::Provider::Rack
       end
     end
 
+    def handle_client_credentials_grant_type
+      token_response OAuth2::Provider.access_token_class.create!(
+        :authorization => OAuth2::Provider.authorization_class.create!(:resource_owner => oauth_client, :client => oauth_client),
+        :refresh_token => nil
+      )
+    end
+
     def with_required_params(*names, &block)
       missing_params = names - request.params.keys
       if missing_params.empty?
