@@ -8,7 +8,8 @@ module OAuth2::Provider::Rack
       request = env['oauth2'] = ResourceRequest.new(env)
 
       response = catch :oauth2 do
-        if request.path == OAuth2::Provider.access_token_path
+        # The token path must be at the end of the URL, allowing sites to run in folders
+        if request.path.end_with?(OAuth2::Provider.access_token_path)
           handle_access_token_request(env)
         else
           @app.call(env)
