@@ -1,8 +1,15 @@
 module OAuth2::Provider::Models::AccessToken
   extend ActiveSupport::Concern
 
+  # How long an access token is good for. Defaults to 1 month, set this
+  # if you want something different.  Example (for a Rails app place this
+  # line of code in a file in config/initializers):
+  # OAuth2::Provider::Models::AccessToken.token_lifespan = 1.day
+  mattr_accessor :token_lifespan
+
   included do
     include OAuth2::Provider::Models::TokenExpiry, OAuth2::Provider::Models::RandomToken
+
     self.default_token_lifespan = 1.month
 
     validates_presence_of :authorization, :access_token, :expires_at
@@ -12,6 +19,7 @@ module OAuth2::Provider::Models::AccessToken
   end
 
   def initialize(*args, &block)
+    self.default_token_lifespan = self.token_lifespan if self.token_lifespan
     super
     self.access_token ||= self.class.unique_random_token(:access_token)
     self.refresh_token ||= self.class.unique_random_token(:refresh_token)
