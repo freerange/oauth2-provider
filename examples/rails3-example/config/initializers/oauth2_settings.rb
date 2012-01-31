@@ -74,7 +74,7 @@
 # Overrides for the model class names.  It is NOT recommended that you modify
 # these unless you need to write custom functionality. If you need custom
 # functionality it's recommended that your class inherit from the default
-# class.
+# class rather than modifying the class in the library code.
 ###############################################################################
 #OAuth2::Provider.client_class_name = "OAuth2::Provider::Models::ActiveRecord::Client"
 #OAuth2::Provider.access_token_class_name = "OAuth2::Provider::Models::ActiveRecord::AccessToken"
