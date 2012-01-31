@@ -6,6 +6,28 @@ module OAuth2::Provider::Rack
 
     delegate :has_scope?, :to => :authorization
 
+    # Checks to see if the request has a valid OAuth token, and returns true
+    # or false.
+    def authenticated?
+      authorization.present?
+    end
+
+    # Returns an instance of the authorization class
+    # (OAuth2::Provider::Models::ActiveRecord::Authorization by default) for
+    # the current request, if a valid OAuth token was supplied, nil otherwise
+    def authorization
+      validate_token!
+      @authorization
+    end
+
+    # Returns an instance of the resource owner class
+    # (the class that was assigned as the owner when authorization was granted)
+    # if a valid OAuth token was supplied, false otherwise
+    def resource_owner
+      authorization && authorization.resource_owner
+    end
+
+
     def token
       token_from_param || token_from_header
     end
@@ -38,19 +60,6 @@ module OAuth2::Provider::Rack
       else
         authentication_required!
       end
-    end
-
-    def authorization
-      validate_token!
-      @authorization
-    end
-
-    def authenticated?
-      authorization.present?
-    end
-
-    def resource_owner
-      authorization && authorization.resource_owner
     end
 
     def validate_token!

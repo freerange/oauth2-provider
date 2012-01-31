@@ -8,7 +8,7 @@ class SessionController < ApplicationController
   end
 
   def create
-    if account = Account.authenticate(params[:session][:login], params[:session][:password])
+    if account = Account.authenticate_with_username_and_password(params[:session][:login], params[:session][:password])
       session[:account_id] = account.id
       redirect_to return_url
     else
