@@ -30,6 +30,14 @@ helpers do
   def access_token_url
     RESOURCE_HOST + "/oauth/access_token"
   end
+
+  def get_access_token(grant_type, additional_params={})
+    params = {:client_id => CLIENT_ID,
+              :client_secret => CLIENT_SECRET,
+              :grant_type => grant_type}.merge(additional_params)
+    response = HTTParty.post(access_token_url, :body => params)
+    session[:access_token] = response["access_token"]
+  end
 end
 
 get '/' do
@@ -37,15 +45,9 @@ get '/' do
 end
 
 get '/callback' do
-  response = HTTParty.post(access_token_url, :body => {
-    :client_id => CLIENT_ID, 
-    :client_secret => CLIENT_SECRET, 
-    :redirect_uri => redirect_uri, 
-    :code => params["code"],
-    :grant_type => 'authorization_code'}
-  )
-
-  session[:access_token] = response["access_token"]
+  get_access_token("authorization_code",
+                   {:code => params["code"],
+                    :redirect_uri => redirect_uri})
   redirect '/account'
 end
 
@@ -56,4 +58,15 @@ get '/account' do
   else
     redirect authorize_url
   end
+end
+
+get '/login' do
+  haml :login
+end
+
+post '/login' do
+  get_access_token("password",
+                   {:username => params["login"],
+                    :password => params["password"]})
+  redirect '/account'
 end

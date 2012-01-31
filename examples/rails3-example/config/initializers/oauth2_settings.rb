@@ -12,7 +12,7 @@
 # a class must be provided that responds to a class method
 # authenticate_with_username_and_password and returns an object that represents
 # the user, or nil if the username and password are not authenticated
-#OAuth2::Provider.resource_owner_class_name = "ResourceOwner"
+OAuth2::Provider.resource_owner_class_name = "Account"
 
 # The API endpoint that this library will intercept for handling access token
 # requests.  Any HTTP requests that end in this will be intercepted by the
