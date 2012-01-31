@@ -71,15 +71,15 @@ There are two ways to grant access tokens to clients.
 
 The most common way to grant access tokens is by first granting an authorization code that the client uses to request
 the access token.  The easiest way to do this is to use the functions in
-OAuth2::Provider::Rack::AuthorizationCodesSupport.  Simply include this module in your controller that will handle the
-code requests.  See the code in lib/oauth2/provider/rack/authorization_codes_support.rb for more details on what methods
-are available.  Determining how and when to grant the authorization code is up to you.  The most common way is shown
-in the Rails 3 example.
+[OAuth2::Provider::Rack::AuthorizationCodesSupport](https://github.com/freerange/oauth2-provider/blob/master/lib/oauth2/provider/rack/authorization_codes_support.rb).
+Simply include this module in your controller that will handle the code requests.  See the code in
+lib/oauth2/provider/rack/authorization_codes_support.rb for more details on what methods are available.  Determining how
+and when to grant the authorization code is up to you.  The most common way is shown in the Rails 3 example.
 
 oauth2-provider handles giving the access token. The client should simply make a request to "/oauth/access_token" (this
 path can be changed by setting OAuth2::Provider.access_token_path) with the parameters grant_type (set to
-authorization_code), client_id, client_secret, redirect_uri, and optionally scope.  If the code is valid the response
-will be a JSON object that contains access_token, optionally refresh_token, and optionally scope.
+authorization_code), code, client_id, client_secret, redirect_uri, and optionally scope.  If the code is valid the
+response will be a JSON object that contains access_token, optionally refresh_token, and optionally scope.
 
 ### Granting tokens through a user name and password
 
@@ -119,8 +119,9 @@ In your controller, you can access the full OAuth2 authorization with:
 
     request.env['oauth2']
 
-This will return an OAuth2::Provider::Rack::ResourceRequest.  You can call authenticated?, authorization, and
-resource_owner on this.  See lib/oauth2-provider/rack/resource_request.rb for details on these methods.
+This will return an [OAuth2::Provider::Rack::ResourceRequest](https://github.com/freerange/oauth2-provider/blob/master/lib/oauth2/provider/rack/resource_request.rb).
+You can call authenticated?, authorization, and resource_owner on this.  See
+lib/oauth2-provider/rack/resource_request.rb for details on these methods.
 
 
 OAuth2 Concepts
