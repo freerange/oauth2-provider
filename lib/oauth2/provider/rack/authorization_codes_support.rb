@@ -9,8 +9,8 @@ module OAuth2::Provider::Rack::AuthorizationCodesSupport
     oauth2_authorization_request
   end
 
-  def regrant_existing_authorizations
-    oauth2_authorization_request.grant_existing!
+  def regrant_existing_authorizations(resource_owner=nil)
+    oauth2_authorization_request.grant_existing! resource_owner
   end
 
   def grant_authorization_code(resource_owner = nil, authorization_expires_at = nil)
