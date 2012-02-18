@@ -34,6 +34,7 @@ describe OAuth2::Provider.client_class do
     it "allows any grant type (custom subclasses can override this)" do
       subject.allow_grant_type?('password').should be_true
       subject.allow_grant_type?('authorization_code').should be_true
+      subject.allow_grant_type?('client_credentials').should be_true
     end
   end
 
