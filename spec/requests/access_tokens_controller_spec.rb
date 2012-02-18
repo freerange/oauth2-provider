@@ -310,18 +310,10 @@ describe "POSTs to /oauth/access_token" do
     end
   end
 
-  describe "A request using the client_credentials grant type" do
-    before :each do
-      @valid_params = {
-        :grant_type => 'client_credentials',
-        :client_id => @client.to_param,
-        :client_secret => @client.oauth_secret
-      }
-    end
-
+  shared_examples_for 'client_credentials grant type' do
     describe "with valid client_id and client_secret" do
       before :each do
-        post "/oauth/access_token", @valid_params
+        post "/oauth/access_token", @valid_params, @valid_headers
       end
 
       it "responds with access token, and expiry time in JSON" do
@@ -342,6 +334,30 @@ describe "POSTs to /oauth/access_token" do
         json_from_response.keys.include?("state").should be_false
       end
     end
+  end
+
+  describe "A request using the client_credentials grant type with client_credentials encoded in 'Authorization' header" do
+    before :each do
+      @valid_params = {
+        :grant_type => 'client_credentials'
+      }
+      @valid_headers = {
+        'HTTP_AUTHORIZATION' => HTTPAuth::Basic.pack_authorization(@client.to_param, @client.oauth_secret)
+      }
+    end
+    it_behaves_like 'client_credentials grant type'
+  end
+
+  describe "A request using the client_credentials grant type with client_credentials encoded in response body" do
+    before :each do
+      @valid_params = {
+        :grant_type => 'client_credentials',
+        :client_id => @client.to_param,
+        :client_secret => @client.oauth_secret
+      }
+      @valid_headers = {}
+    end
+    it_behaves_like 'client_credentials grant type'
   end
 
   describe "When using a custom client class" do

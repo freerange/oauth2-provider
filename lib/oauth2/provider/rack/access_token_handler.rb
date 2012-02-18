@@ -1,3 +1,5 @@
+require 'httpauth'
+
 module OAuth2::Provider::Rack
   class AccessTokenHandler
     attr_reader :app, :env, :request
@@ -10,9 +12,18 @@ module OAuth2::Provider::Rack
 
     def process
       if request.post?
-        block_unsupported_grant_types || block_invalid_clients || handle_grant_type
+        block_unsupported_grant_types || handle_basic_auth_header || block_invalid_clients || handle_grant_type
       else
         Responses.only_supported 'POST'
+      end
+    end
+
+    def handle_basic_auth_header
+      with_required_params 'grant_type' do |grant_type|
+        if grant_type == 'client_credentials' && request.env['HTTP_AUTHORIZATION'] =~ /^Basic/
+          @env['oauth2'].params['client_id'], @env['oauth2'].params['client_secret'] = HTTPAuth::Basic.unpack_authorization(request.env['HTTP_AUTHORIZATION'])
+          next
+        end
       end
     end
 

@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   # Main dependencies
   s.add_dependency 'activesupport', '~>3.0'
   s.add_dependency 'addressable', '~>2.2'
+  s.add_dependency 'httpauth', '~> 0.1'
 
   s.add_development_dependency 'rack-test', '~>0.5.7'
   s.add_development_dependency 'activerecord', '~>3.0'
