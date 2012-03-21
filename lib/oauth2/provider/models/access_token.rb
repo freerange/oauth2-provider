@@ -11,8 +11,12 @@ module OAuth2::Provider::Models::AccessToken
     delegate :scope, :has_scope?, :client, :resource_owner, :to => :authorization
   end
 
-  def initialize(attributes = {}, options = {}, &block)
-    super attributes.reverse_merge(:access_token => self.class.unique_random_token(:access_token), :refresh_token => self.class.unique_random_token(:refresh_token)), options
+  def initialize(attributes = {}, *args, &block)
+    attributes ||= {} # Mongoid passes in nil
+    super attributes.reverse_merge(
+      :access_token => self.class.unique_random_token(:access_token),
+      :refresh_token => self.class.unique_random_token(:refresh_token)
+    )
   end
 
   def as_json(options = {})
