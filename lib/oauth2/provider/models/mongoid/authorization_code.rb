@@ -10,12 +10,12 @@ class OAuth2::Provider::Models::Mongoid::AuthorizationCode
       field :expires_at, :type => Time
       field :redirect_uri
 
-      referenced_in(:authorization,
+      belongs_to(:authorization,
         :class_name => OAuth2::Provider.authorization_class_name,
         :foreign_key => :oauth_authorization_id
       )
 
-      referenced_in(:client,
+      belongs_to(:client,
         :class_name => OAuth2::Provider.client_class_name,
         :foreign_key => :oauth_client_id
       )
