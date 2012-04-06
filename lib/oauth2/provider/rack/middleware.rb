@@ -15,7 +15,7 @@ module OAuth2::Provider::Rack
         end
       end
     rescue InvalidRequest => e
-      [400, {}, e.message]
+      [400, {}, [e.message]]
     end
 
     def handle_access_token_request(env)
