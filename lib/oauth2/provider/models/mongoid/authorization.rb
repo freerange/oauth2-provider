@@ -13,7 +13,7 @@ class OAuth2::Provider::Models::Mongoid::Authorization
 
       belongs_to(:client,
         :class_name => OAuth2::Provider.client_class_name,
-        :foreign_key => :client_id
+        :foreign_key => :oauth_client_id
       )
 
       has_many(:access_tokens,
