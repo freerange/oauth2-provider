@@ -6,7 +6,8 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
       @client = OAuth2::Provider.client_class.create! :name => 'client'
       @valid_params = {
         'client_id' => @client.oauth_identifier,
-        'redirect_uri' => "https://redirect.example.com/callback"
+        'redirect_uri' => "https://redirect.example.com/callback",
+        'response_type' => 'code'
       }
     end
 
@@ -66,6 +67,7 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
       @request = OAuth2::Provider::Rack::AuthorizationCodeRequest.new(
         'client_id' => @client.oauth_identifier,
         'redirect_uri' => "https://redirect.example.com/callback",
+        'response_type' => 'code',
         'scope' => @scope
       )
     end
@@ -116,7 +118,8 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
     @client = OAuth2::Provider.client_class.create! :name => 'client'
     @valid_params = {
       :client_id => @client.oauth_identifier,
-      :redirect_uri => "https://redirect.example.com/callback"
+      :redirect_uri => "https://redirect.example.com/callback",
+      :response_type => 'code'
     }
     @owner = create_resource_owner
   end
@@ -219,7 +222,8 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
       @client = OAuth2::Provider.client_class.create! :name => 'client', :oauth_redirect_uri => "https://redirect.example.com/callback"
       @valid_params = {
         :client_id => @client.oauth_identifier,
-        :redirect_uri => "https://redirect.example.com/callback"
+        :redirect_uri => "https://redirect.example.com/callback",
+        :response_type => 'code'
       }
     end
 
