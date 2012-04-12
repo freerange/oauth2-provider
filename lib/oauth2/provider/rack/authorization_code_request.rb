@@ -6,6 +6,30 @@ module OAuth2::Provider::Rack
     end
 
     def grant!(resource_owner = nil, authorization_expires_at = nil)
+      grant_code!(resource_owner, authorization_expires_at) if response_type == 'code'
+      grant_token!(resource_owner, authorization_expires_at) if response_type == 'token'
+    end
+
+    def grant_token!(resource_owner = nil, authorization_expires_at = nil, token_expires_at = nil)
+      authorization = OAuth2::Provider.authorization_class.create!(
+          :resource_owner => resource_owner,
+          :client => client,
+          :scope => scope,
+          :expires_at => authorization_expires_at
+      )
+      token = OAuth2::Provider.access_token_class.create!(
+          :authorization => authorization,
+          :expires_at => token_expires_at,
+      )
+      # TODO: Refacotring? Just because tokens have default timeout, we have to override this, but cannot do this on create!
+      if token_expires_at.nil?
+        token.expires_at = nil
+        token.refresh_token = nil
+      end
+      throw_response Responses.redirect_with_hash_params(redirect_uri, token.as_json)
+    end
+
+    def grant_code!(resource_owner = nil, authorization_expires_at = nil)
       grant = client.authorizations.create!(
         :resource_owner => resource_owner,
         :client => client,
@@ -35,12 +59,20 @@ module OAuth2::Provider::Rack
       @params['client_id']
     end
 
+    def response_type
+      @params['response_type']
+    end
+
     def client
       @client ||= OAuth2::Provider.client_class.from_param(client_id)
     end
 
     def redirect_uri
       @params['redirect_uri']
+    end
+
+    def response_type_valid?
+      ['code', 'token'].include? response_type
     end
 
     def redirect_uri_valid?
@@ -54,6 +86,14 @@ module OAuth2::Provider::Rack
     private
 
     def validate!
+      unless response_type
+        raise OAuth2::Provider::Rack::InvalidRequest, 'No response_type provided'
+      end
+
+      unless response_type_valid?
+        raise OAuth2::Provider::Rack::InvalidRequest, 'response_type should be code/token'
+      end
+
       unless client_id
         raise OAuth2::Provider::Rack::InvalidRequest, 'No client_id provided'
       end

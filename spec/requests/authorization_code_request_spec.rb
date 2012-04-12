@@ -6,7 +6,8 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
       @client = OAuth2::Provider.client_class.create! :name => 'client'
       @valid_params = {
         'client_id' => @client.oauth_identifier,
-        'redirect_uri' => "https://redirect.example.com/callback"
+        'redirect_uri' => "https://redirect.example.com/callback",
+        'response_type' => 'code'
       }
     end
 
@@ -66,6 +67,7 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
       @request = OAuth2::Provider::Rack::AuthorizationCodeRequest.new(
         'client_id' => @client.oauth_identifier,
         'redirect_uri' => "https://redirect.example.com/callback",
+        'response_type' => 'code',
         'scope' => @scope
       )
     end
@@ -116,7 +118,8 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
     @client = OAuth2::Provider.client_class.create! :name => 'client'
     @valid_params = {
       :client_id => @client.oauth_identifier,
-      :redirect_uri => "https://redirect.example.com/callback"
+      :redirect_uri => "https://redirect.example.com/callback",
+      :response_type => 'code'
     }
     @owner = create_resource_owner
   end
@@ -219,7 +222,8 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
       @client = OAuth2::Provider.client_class.create! :name => 'client', :oauth_redirect_uri => "https://redirect.example.com/callback"
       @valid_params = {
         :client_id => @client.oauth_identifier,
-        :redirect_uri => "https://redirect.example.com/callback"
+        :redirect_uri => "https://redirect.example.com/callback",
+        :response_type => 'code'
       }
     end
 
@@ -237,6 +241,31 @@ describe OAuth2::Provider::Rack::AuthorizationCodeRequest do
     it "returns a 200 if the redirect_uri parameter matches hostname but the path is different" do
       get '/oauth/authorize', @valid_params.merge(:redirect_uri => "https://redirect.example.com/other_callback")
       response.status.should == 200
+    end
+  end
+
+  describe "Granting a token" do
+    action do |env|
+      request = Rack::Request.new(env)
+      env['oauth2.authorization_request'] ||= OAuth2::Provider::Rack::AuthorizationCodeRequest.new(request.params)
+      env['oauth2.authorization_request'].grant! ExampleResourceOwner.first
+    end
+
+    before :each do
+      post '/oauth/authorize', @valid_params.merge(:submit => 'Yes', :response_type => 'token')
+    end
+
+    it "redirects back to the redirect_uri with a valid authorization code for the client" do
+      response.status.should == 302
+      query_values = Addressable::URI.parse(response.location.gsub(/\??#/, '?')).query_values
+      query_values.keys.should == ["access_token"]
+      token = query_values["access_token"]
+      token.should_not be_nil
+      found = OAuth2::Provider.access_token_class.find_by_access_token(token)
+      found.should_not be_nil
+      found.authorization.client.should == @client
+      found.authorization.resource_owner.should == @owner
+      found.should_not be_expired
     end
   end
 

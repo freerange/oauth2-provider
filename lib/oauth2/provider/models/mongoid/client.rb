@@ -11,17 +11,17 @@ class OAuth2::Provider::Models::Mongoid::Client
       field :oauth_secret
       field :oauth_identifier
 
-      references_many(:authorizations,
+      has_many(:authorizations,
         :class_name => OAuth2::Provider.authorization_class_name,
         :foreign_key => :oauth_client_id
       )
 
-      references_many(:access_tokens,
+      has_many(:access_tokens,
         :class_name => OAuth2::Provider.access_token_class_name,
         :foreign_key => :oauth_client_id
       )
 
-      references_many(:authorization_codes,
+      has_many(:authorization_codes,
         :class_name => OAuth2::Provider.authorization_code_class_name,
         :foreign_key => :oauth_client_id
       )

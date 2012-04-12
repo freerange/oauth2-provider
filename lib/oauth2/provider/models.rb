@@ -26,10 +26,11 @@ module OAuth2::Provider::Models
     end
 
     def expired?
-      self.expires_at && self.expires_at < Time.now
+      !!self.expires_at && self.expires_at < Time.now
     end
 
     def expires_in
+      return nil if self.expires_at.nil?
       if expired?
         0
       else

@@ -11,17 +11,17 @@ class OAuth2::Provider::Models::Mongoid::Authorization
       field :resource_owner_id
       field :resource_owner_type
 
-      referenced_in(:client,
+      belongs_to(:client,
         :class_name => OAuth2::Provider.client_class_name,
-        :foreign_key => :client_id
+        :foreign_key => :oauth_client_id
       )
 
-      references_many(:access_tokens,
+      has_many(:access_tokens,
         :class_name => OAuth2::Provider.access_token_class_name,
         :foreign_key => :oauth_authorization_id
       )
 
-      references_many(:authorization_codes,
+      has_many(:authorization_codes,
         :class_name => OAuth2::Provider.authorization_code_class_name,
         :foreign_key => :oauth_authorization_id
       )
