@@ -10,16 +10,22 @@ module OAuth2::Provider::Rack
       grant_token!(resource_owner, authorization_expires_at) if response_type == 'token'
     end
 
-    def grant_token!(resource_owner = nil, authorization_expires_at = nil)
+    def grant_token!(resource_owner = nil, authorization_expires_at = nil, token_expires_at = nil)
       authorization = OAuth2::Provider.authorization_class.create!(
           :resource_owner => resource_owner,
           :client => client,
-          :scope => scope
+          :scope => scope,
+          :expires_at => authorization_expires_at
       )
       token = OAuth2::Provider.access_token_class.create!(
           :authorization => authorization,
-          :expires_at => authorization_expires_at
+          :expires_at => token_expires_at,
       )
+      # TODO: Refacotring? Just because tokens have default timeout, we have to override this, but cannot do this on create!
+      if token_expires_at.nil?
+        token.expires_at = nil
+        token.refresh_token = nil
+      end
       throw_response Responses.redirect_with_hash_params(redirect_uri, token.as_json)
     end
 
