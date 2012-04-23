@@ -20,6 +20,7 @@ describe "POSTs to /oauth/access_token" do
       :code => @code.code,
       :redirect_uri => @code.redirect_uri
     }
+    @valid_headers = {}
   end
 
   describe "Any request without a client_id parameter" do
@@ -113,7 +114,7 @@ describe "POSTs to /oauth/access_token" do
   end
 
 
-  context "flows" do
+  context "using supported grant type" do
 
     shared_examples_for :token_response do
       it "sets cache-control header to no-store, as response is sensitive" do
@@ -146,33 +147,51 @@ describe "POSTs to /oauth/access_token" do
       end
     end
 
-    describe "A request using the authorization_code grant type" do
-      describe "with valid client, code and redirect_uri" do
-        before :each do
-          post "/oauth/access_token", @valid_params
-        end
-        
-        it_behaves_like :refreshable_token_response
+    describe "authorization_code" do
+      shared_examples :authorization_code_grant do
+        describe "with valid client, code and redirect_uri" do
+          before :each do
+            post "/oauth/access_token", @valid_params, @valid_headers
+          end
+          
+          it_behaves_like :refreshable_token_response
 
-        it "destroys the claimed code, so it can't be used a second time" do
-          OAuth2::Provider.authorization_code_class.find_by_id(@code.id).should be_nil
+          it "destroys the claimed code, so it can't be used a second time" do
+            OAuth2::Provider.authorization_code_class.find_by_id(@code.id).should be_nil
+          end
+
+          it "doesn't include a state in the JSON response" do
+            json_from_response.keys.include?("state").should be_false
+          end
         end
 
-        it "doesn't include a state in the JSON response" do
-          json_from_response.keys.include?("state").should be_false
+        describe "with valid client, code and redirect_uri and an additional state parameter" do
+          before :each do
+            post "/oauth/access_token", @valid_params.merge(:state => 'some-state-goes-here'), @valid_headers
+          end
+
+          it_behaves_like :refreshable_token_response
+
+          it "includes the state in the JSON response" do
+            json_from_response["state"].should == 'some-state-goes-here'
+          end
         end
       end
 
-      describe "with valid client, code and redirect_uri and an additional state parameter" do
+      describe "supplying client credentials using an Authorization header" do
         before :each do
-          post "/oauth/access_token", @valid_params.merge(:state => 'some-state-goes-here')
+          @valid_params.delete(:client_id)
+          @valid_params.delete(:client_secret)
+          @valid_headers['HTTP_AUTHORIZATION'] = HTTPAuth::Basic.pack_authorization(@client.to_param, @client.oauth_secret)
         end
+        it_behaves_like :authorization_code_grant
+      end
 
-        it_behaves_like :refreshable_token_response
-
-        it "includes the state in the JSON response" do
-          json_from_response["state"].should == 'some-state-goes-here'
+      describe "supplying client credentials using the request body" do
+        before :each do
+          @valid_params.merge!(:client_id => @client.to_param,:client_secret => @client.oauth_secret)
         end
+        it_behaves_like :authorization_code_grant
       end
 
       describe "with an unknown code" do
@@ -208,40 +227,56 @@ describe "POSTs to /oauth/access_token" do
       end
     end
 
-    describe "A request using the password grant type" do
+    describe "password" do
       before :each do
         @resource_owner = ExampleResourceOwner.create!(:username => 'name', :password => 'password')
         @valid_params = {
           :grant_type => 'password',
-          :client_id => @client.to_param,
-          :client_secret => @client.oauth_secret,
           :username => @resource_owner.username,
-          :password => @resource_owner.password
+          :password => @resource_owner.password,
+          :client_id => @client.oauth_identifier,
+          :client_secret => @client.oauth_secret
         }
+        @valid_headers = {}
       end
 
-      describe "with valid username and password" do
-        before :each do
-          post "/oauth/access_token", @valid_params
+      shared_examples_for :password_grant do
+        describe "with valid username and password" do
+          before :each do
+            post "/oauth/access_token", @valid_params, @valid_headers
+          end
+
+          it_behaves_like :refreshable_token_response
+
+          it "doesn't include a state in the JSON response" do
+            json_from_response.keys.include?("state").should be_false
+          end
         end
 
-        it_behaves_like :refreshable_token_response
+        describe "with valid username and password and an additional state parameter" do
+          before :each do
+            post "/oauth/access_token", @valid_params.merge(:state => 'some-state-goes-here'), @valid_headers
+          end
 
-        it "doesn't include a state in the JSON response" do
-          json_from_response.keys.include?("state").should be_false
+          it_behaves_like :refreshable_token_response
+
+          it "includes the state in the JSON response" do
+            json_from_response["state"].should == 'some-state-goes-here'
+          end
         end
       end
 
-      describe "with valid username and password and an additional state parameter" do
+      describe "supplying client credentials using an Authorization header" do
         before :each do
-          post "/oauth/access_token", @valid_params.merge(:state => 'some-state-goes-here')
+          @valid_params.delete(:client_id)
+          @valid_params.delete(:client_secret)
+          @valid_headers['HTTP_AUTHORIZATION'] = HTTPAuth::Basic.pack_authorization(@client.to_param, @client.oauth_secret)
         end
+        it_behaves_like :password_grant
+      end
 
-        it_behaves_like :refreshable_token_response
-
-        it "includes the state in the JSON response" do
-          json_from_response["state"].should == 'some-state-goes-here'
-        end
+      describe "supplying client credentials using the request body" do
+        it_behaves_like :password_grant
       end
 
       describe "with an incorrect username" do
@@ -277,7 +312,7 @@ describe "POSTs to /oauth/access_token" do
       end
     end
 
-    describe "A request using the refresh token grant type" do
+    describe "refresh_token" do
       before :each do
         @token = create_access_token
 
@@ -288,17 +323,33 @@ describe "POSTs to /oauth/access_token" do
           :client_id => @client.oauth_identifier,
           :client_secret => @client.oauth_secret
         }
+        @valid_headers = {}
       end
 
-      describe "with a valid refresh token" do
-        before :each do
-          post "/oauth/access_token", @valid_params
+      describe "valid requests" do
+        shared_examples_for :refresh_token_grant do
+          describe "with a valid refresh token" do
+            before :each do
+              post "/oauth/access_token", @valid_params, @valid_headers
+            end
+
+            it_behaves_like :refreshable_token_response
+
+            it "responds with a new access token" do
+              OAuth2::Provider.access_token_class.find_by_access_token(json_from_response["access_token"]).should_not == @token
+            end
+          end
         end
 
-        it_behaves_like :refreshable_token_response
+        describe "supplying client credentials using an Authorization header" do
+          before :each do
+            @valid_headers['HTTP_AUTHORIZATION'] = HTTPAuth::Basic.pack_authorization(@client.to_param, @client.oauth_secret)
+          end
+          it_behaves_like :refresh_token_grant
+        end
 
-        it "responds with a new access token" do
-          OAuth2::Provider.access_token_class.find_by_access_token(json_from_response["access_token"]).should_not == @token
+        describe "supplying client credentials using the request body" do
+          it_behaves_like :refresh_token_grant
         end
       end
 
@@ -328,47 +379,43 @@ describe "POSTs to /oauth/access_token" do
       end
     end
 
-    shared_examples_for 'client_credentials grant type' do
-      describe "with valid client_id and client_secret" do
+    describe "client_credentials" do
+      before :each do
+        @valid_params["grant_type"] = "client_credentials"
+      end
+
+      shared_examples_for 'client_credentials grant type' do
+        describe "with valid client_id and client_secret" do
+          before :each do
+            post "/oauth/access_token", @valid_params, @valid_headers
+          end
+
+          it_behaves_like :token_response
+
+          it "doesn't include a refresh_token in the JSON response" do
+            json_from_response.keys.include?("refresh_token").should be_false
+          end
+
+          it "doesn't include a state in the JSON response" do
+            json_from_response.keys.include?("state").should be_false
+          end
+        end
+      end
+
+      describe "supplying client credentials using the 'Authorization' header" do
         before :each do
-          post "/oauth/access_token", @valid_params, @valid_headers
+          @valid_params.delete(:client_id)
+          @valid_params.delete(:client_secret)
+          @valid_headers["HTTP_AUTHORIZATION"] = HTTPAuth::Basic.pack_authorization(@client.to_param, @client.oauth_secret)
         end
+        it_behaves_like 'client_credentials grant type'
+      end
 
-        it_behaves_like :token_response
-
-        it "doesn't include a refresh_token in the JSON response" do
-          json_from_response.keys.include?("refresh_token").should be_false
-        end
-
-        it "doesn't include a state in the JSON response" do
-          json_from_response.keys.include?("state").should be_false
-        end
+      describe "supplying client_credentials using the response body" do
+        it_behaves_like 'client_credentials grant type'
       end
     end
 
-    describe "A request using the client_credentials grant type with client_credentials encoded in 'Authorization' header" do
-      before :each do
-        @valid_params = {
-          :grant_type => 'client_credentials'
-        }
-        @valid_headers = {
-          'HTTP_AUTHORIZATION' => HTTPAuth::Basic.pack_authorization(@client.to_param, @client.oauth_secret)
-        }
-      end
-      it_behaves_like 'client_credentials grant type'
-    end
-
-    describe "A request using the client_credentials grant type with client_credentials encoded in response body" do
-      before :each do
-        @valid_params = {
-          :grant_type => 'client_credentials',
-          :client_id => @client.to_param,
-          :client_secret => @client.oauth_secret
-        }
-        @valid_headers = {}
-      end
-      it_behaves_like 'client_credentials grant type'
-    end
   end
 
   describe "When using a custom client class" do
