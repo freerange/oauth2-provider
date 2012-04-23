@@ -112,252 +112,263 @@ describe "POSTs to /oauth/access_token" do
     responds_with_json_error 'unauthorized_client', :status => 400
   end
 
-  describe "A request using the authorization_code grant type" do
-    describe "with valid client, code and redirect_uri" do
-      before :each do
-        post "/oauth/access_token", @valid_params
-      end
 
-      it "responds with claimed access token, refresh token and expiry time in JSON" do
-        token = OAuth2::Provider.access_token_class.find_by_access_token(json_from_response["access_token"])
-        token.should_not be_nil
-        json_from_response["expires_in"].should == token.expires_in
-        json_from_response["refresh_token"].should == token.refresh_token
-      end
+  context "flows" do
 
+    shared_examples_for :token_response do
       it "sets cache-control header to no-store, as response is sensitive" do
         response.headers["Cache-Control"].should =~ /no-store/
       end
 
-      it "destroys the claimed code, so it can't be used a second time" do
-        OAuth2::Provider.authorization_code_class.find_by_id(@code.id).should be_nil
+      it "responds with OK" do
+        response.status.should == 200 
       end
 
-      it "doesn't include a state in the JSON response" do
-        json_from_response.keys.include?("state").should be_false
-      end
-    end
-
-    describe "with valid client, code and redirect_uri and an additional state parameter" do
-      before :each do
-        post "/oauth/access_token", @valid_params.merge(:state => 'some-state-goes-here')
-      end
-
-      it "includes the state in the JSON response" do
-        json_from_response["state"].should == 'some-state-goes-here'
-      end
-    end
-
-    describe "with an unknown code" do
-      before :each do
-        post "/oauth/access_token", @valid_params.merge(:code => 'unknown')
-      end
-
-      responds_with_json_error 'invalid_grant', :status => 400
-    end
-
-    describe "with an incorrect redirect uri" do
-      before :each do
-        post "/oauth/access_token", @valid_params.merge(:redirect_uri => 'https://wrong.example.com')
-      end
-
-      responds_with_json_error 'invalid_grant', :status => 400
-    end
-
-    describe "without a code parameter" do
-      before :each do
-        post "/oauth/access_token", @valid_params.except(:code)
-      end
-
-      responds_with_json_error 'invalid_request', :status => 400
-    end
-
-    describe "without a redirect_uri parameter" do
-      before :each do
-        post "/oauth/access_token", @valid_params.except(:redirect_uri)
-      end
-
-      responds_with_json_error 'invalid_request', :status => 400
-    end
-  end
-
-  describe "A request using the password grant type" do
-    before :each do
-      @resource_owner = ExampleResourceOwner.create!(:username => 'name', :password => 'password')
-      @valid_params = {
-        :grant_type => 'password',
-        :client_id => @client.to_param,
-        :client_secret => @client.oauth_secret,
-        :username => @resource_owner.username,
-        :password => @resource_owner.password
-      }
-    end
-
-    describe "with valid username and password" do
-      before :each do
-        post "/oauth/access_token", @valid_params
-      end
-
-      it "responds with access token, refresh token and expiry time in JSON" do
+      it "responds with claimed access token" do
         token = OAuth2::Provider.access_token_class.find_by_access_token(json_from_response["access_token"])
         token.should_not be_nil
+      end
+
+      it "responds with an expiry time" do
+        token = OAuth2::Provider.access_token_class.find_by_access_token(json_from_response["access_token"])
         json_from_response["expires_in"].should == token.expires_in
+      end
+    end
+
+
+    shared_examples_for :refreshable_token_response do
+      it_behaves_like :token_response
+
+      it "responds with refresh" do
+        token = OAuth2::Provider.access_token_class.find_by_refresh_token(json_from_response["refresh_token"])
         json_from_response["refresh_token"].should == token.refresh_token
-      end
-
-      it "sets cache-control header to no-store, as response is sensitive" do
-        response.headers["Cache-Control"].should =~ /no-store/
-      end
-
-      it "doesn't include a state in the JSON response" do
-        json_from_response.keys.include?("state").should be_false
-      end
-    end
-
-    describe "with valid username and password and an additional state parameter" do
-      before :each do
-        post "/oauth/access_token", @valid_params.merge(:state => 'some-state-goes-here')
-      end
-
-      it "includes the state in the JSON response" do
-        json_from_response["state"].should == 'some-state-goes-here'
-      end
-    end
-
-    describe "with an incorrect username" do
-      before :each do
-        post "/oauth/access_token", @valid_params.merge(:username => 'wrong')
-      end
-
-      responds_with_json_error 'invalid_grant', :status => 400
-    end
-
-    describe "with an incorrect password" do
-      before :each do
-        post "/oauth/access_token", @valid_params.merge(:password => 'wrong')
-      end
-
-      responds_with_json_error 'invalid_grant', :status => 400
-    end
-
-    describe "without a username parameter" do
-      before :each do
-        post "/oauth/access_token", @valid_params.except(:username)
-      end
-
-      responds_with_json_error 'invalid_request', :status => 400
-    end
-
-    describe "without a password parameter" do
-      before :each do
-        post "/oauth/access_token", @valid_params.except(:password)
-      end
-
-      responds_with_json_error 'invalid_request', :status => 400
-    end
-  end
-
-  describe "A request using the refresh token grant type" do
-    before :each do
-      @token = create_access_token
-
-      @client = @token.authorization.client
-      @valid_params = {
-        :grant_type => 'refresh_token',
-        :refresh_token => @token.refresh_token,
-        :client_id => @client.oauth_identifier,
-        :client_secret => @client.oauth_secret
-      }
-    end
-
-    describe "with a valid refresh token" do
-      before :each do
-        post "/oauth/access_token", @valid_params
-      end
-
-      it "responds with refreshed access token, refresh token and expiry time in JSON" do
-        token = OAuth2::Provider.access_token_class.find_by_access_token(json_from_response["access_token"])
         token.should_not be_nil
-        token.should_not == @token
-        json_from_response["expires_in"].should == token.expires_in
-        json_from_response["refresh_token"].should == token.refresh_token
       end
     end
 
-    describe "when the token belongs to a different client" do
+    describe "A request using the authorization_code grant type" do
+      describe "with valid client, code and redirect_uri" do
+        before :each do
+          post "/oauth/access_token", @valid_params
+        end
+        
+        it_behaves_like :refreshable_token_response
+
+        it "destroys the claimed code, so it can't be used a second time" do
+          OAuth2::Provider.authorization_code_class.find_by_id(@code.id).should be_nil
+        end
+
+        it "doesn't include a state in the JSON response" do
+          json_from_response.keys.include?("state").should be_false
+        end
+      end
+
+      describe "with valid client, code and redirect_uri and an additional state parameter" do
+        before :each do
+          post "/oauth/access_token", @valid_params.merge(:state => 'some-state-goes-here')
+        end
+
+        it_behaves_like :refreshable_token_response
+
+        it "includes the state in the JSON response" do
+          json_from_response["state"].should == 'some-state-goes-here'
+        end
+      end
+
+      describe "with an unknown code" do
+        before :each do
+          post "/oauth/access_token", @valid_params.merge(:code => 'unknown')
+        end
+
+        responds_with_json_error 'invalid_grant', :status => 400
+      end
+
+      describe "with an incorrect redirect uri" do
+        before :each do
+          post "/oauth/access_token", @valid_params.merge(:redirect_uri => 'https://wrong.example.com')
+        end
+
+        responds_with_json_error 'invalid_grant', :status => 400
+      end
+
+      describe "without a code parameter" do
+        before :each do
+          post "/oauth/access_token", @valid_params.except(:code)
+        end
+
+        responds_with_json_error 'invalid_request', :status => 400
+      end
+
+      describe "without a redirect_uri parameter" do
+        before :each do
+          post "/oauth/access_token", @valid_params.except(:redirect_uri)
+        end
+
+        responds_with_json_error 'invalid_request', :status => 400
+      end
+    end
+
+    describe "A request using the password grant type" do
       before :each do
-        @other_client = OAuth2::Provider.client_class.create! :name => 'client'
-        post "/oauth/access_token", @valid_params.merge(:client_id => @other_client.oauth_identifier, :client_secret => @other_client.oauth_secret)
+        @resource_owner = ExampleResourceOwner.create!(:username => 'name', :password => 'password')
+        @valid_params = {
+          :grant_type => 'password',
+          :client_id => @client.to_param,
+          :client_secret => @client.oauth_secret,
+          :username => @resource_owner.username,
+          :password => @resource_owner.password
+        }
       end
 
-      responds_with_json_error 'invalid_grant', :status => 400
+      describe "with valid username and password" do
+        before :each do
+          post "/oauth/access_token", @valid_params
+        end
+
+        it_behaves_like :refreshable_token_response
+
+        it "doesn't include a state in the JSON response" do
+          json_from_response.keys.include?("state").should be_false
+        end
+      end
+
+      describe "with valid username and password and an additional state parameter" do
+        before :each do
+          post "/oauth/access_token", @valid_params.merge(:state => 'some-state-goes-here')
+        end
+
+        it_behaves_like :refreshable_token_response
+
+        it "includes the state in the JSON response" do
+          json_from_response["state"].should == 'some-state-goes-here'
+        end
+      end
+
+      describe "with an incorrect username" do
+        before :each do
+          post "/oauth/access_token", @valid_params.merge(:username => 'wrong')
+        end
+
+        responds_with_json_error 'invalid_grant', :status => 400
+      end
+
+      describe "with an incorrect password" do
+        before :each do
+          post "/oauth/access_token", @valid_params.merge(:password => 'wrong')
+        end
+
+        responds_with_json_error 'invalid_grant', :status => 400
+      end
+
+      describe "without a username parameter" do
+        before :each do
+          post "/oauth/access_token", @valid_params.except(:username)
+        end
+
+        responds_with_json_error 'invalid_request', :status => 400
+      end
+
+      describe "without a password parameter" do
+        before :each do
+          post "/oauth/access_token", @valid_params.except(:password)
+        end
+
+        responds_with_json_error 'invalid_request', :status => 400
+      end
     end
 
-    describe "when the token is incorrect" do
+    describe "A request using the refresh token grant type" do
       before :each do
-        post "/oauth/access_token", @valid_params.merge(:refresh_token => 'incorrect')
+        @token = create_access_token
+
+        @client = @token.authorization.client
+        @valid_params = {
+          :grant_type => 'refresh_token',
+          :refresh_token => @token.refresh_token,
+          :client_id => @client.oauth_identifier,
+          :client_secret => @client.oauth_secret
+        }
       end
 
-      responds_with_json_error 'invalid_grant', :status => 400
+      describe "with a valid refresh token" do
+        before :each do
+          post "/oauth/access_token", @valid_params
+        end
+
+        it_behaves_like :refreshable_token_response
+
+        it "responds with a new access token" do
+          OAuth2::Provider.access_token_class.find_by_access_token(json_from_response["access_token"]).should_not == @token
+        end
+      end
+
+      describe "when the token belongs to a different client" do
+        before :each do
+          @other_client = OAuth2::Provider.client_class.create! :name => 'client'
+          post "/oauth/access_token", @valid_params.merge(:client_id => @other_client.oauth_identifier, :client_secret => @other_client.oauth_secret)
+        end
+
+        responds_with_json_error 'invalid_grant', :status => 400
+      end
+
+      describe "when the token is incorrect" do
+        before :each do
+          post "/oauth/access_token", @valid_params.merge(:refresh_token => 'incorrect')
+        end
+
+        responds_with_json_error 'invalid_grant', :status => 400
+      end
+
+      describe "without a refresh_token parameter" do
+        before :each do
+          post "/oauth/access_token", @valid_params.except(:refresh_token)
+        end
+
+        responds_with_json_error 'invalid_request', :status => 400
+      end
     end
 
-    describe "without a refresh_token parameter" do
+    shared_examples_for 'client_credentials grant type' do
+      describe "with valid client_id and client_secret" do
+        before :each do
+          post "/oauth/access_token", @valid_params, @valid_headers
+        end
+
+        it_behaves_like :token_response
+
+        it "doesn't include a refresh_token in the JSON response" do
+          json_from_response.keys.include?("refresh_token").should be_false
+        end
+
+        it "doesn't include a state in the JSON response" do
+          json_from_response.keys.include?("state").should be_false
+        end
+      end
+    end
+
+    describe "A request using the client_credentials grant type with client_credentials encoded in 'Authorization' header" do
       before :each do
-        post "/oauth/access_token", @valid_params.except(:refresh_token)
+        @valid_params = {
+          :grant_type => 'client_credentials'
+        }
+        @valid_headers = {
+          'HTTP_AUTHORIZATION' => HTTPAuth::Basic.pack_authorization(@client.to_param, @client.oauth_secret)
+        }
       end
-
-      responds_with_json_error 'invalid_request', :status => 400
+      it_behaves_like 'client_credentials grant type'
     end
-  end
 
-  shared_examples_for 'client_credentials grant type' do
-    describe "with valid client_id and client_secret" do
+    describe "A request using the client_credentials grant type with client_credentials encoded in response body" do
       before :each do
-        post "/oauth/access_token", @valid_params, @valid_headers
+        @valid_params = {
+          :grant_type => 'client_credentials',
+          :client_id => @client.to_param,
+          :client_secret => @client.oauth_secret
+        }
+        @valid_headers = {}
       end
-
-      it "responds with access token, and expiry time in JSON" do
-        token = OAuth2::Provider.access_token_class.find_by_access_token(json_from_response["access_token"])
-        token.should_not be_nil
-        json_from_response["expires_in"].should == token.expires_in
-      end
-
-      it "sets cache-control header to no-store, as response is sensitive" do
-        response.headers["Cache-Control"].should =~ /no-store/
-      end
-
-      it "doesn't include a refresh_token in the JSON response" do
-        json_from_response.keys.include?("refresh_token").should be_false
-      end
-
-      it "doesn't include a state in the JSON response" do
-        json_from_response.keys.include?("state").should be_false
-      end
+      it_behaves_like 'client_credentials grant type'
     end
-  end
-
-  describe "A request using the client_credentials grant type with client_credentials encoded in 'Authorization' header" do
-    before :each do
-      @valid_params = {
-        :grant_type => 'client_credentials'
-      }
-      @valid_headers = {
-        'HTTP_AUTHORIZATION' => HTTPAuth::Basic.pack_authorization(@client.to_param, @client.oauth_secret)
-      }
-    end
-    it_behaves_like 'client_credentials grant type'
-  end
-
-  describe "A request using the client_credentials grant type with client_credentials encoded in response body" do
-    before :each do
-      @valid_params = {
-        :grant_type => 'client_credentials',
-        :client_id => @client.to_param,
-        :client_secret => @client.oauth_secret
-      }
-      @valid_headers = {}
-    end
-    it_behaves_like 'client_credentials grant type'
   end
 
   describe "When using a custom client class" do
