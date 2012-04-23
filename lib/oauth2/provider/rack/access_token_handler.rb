@@ -19,8 +19,9 @@ module OAuth2::Provider::Rack
     end
 
     def handle_basic_auth_header
-      return unless request.env['HTTP_AUTHORIZATION'] =~ /^Basic/
-      @env['oauth2'].params['client_id'], @env['oauth2'].params['client_secret'] = HTTPAuth::Basic.unpack_authorization(request.env['HTTP_AUTHORIZATION'])
+      if request.env['HTTP_AUTHORIZATION'] =~ /^Basic/
+        @env['oauth2'].params['client_id'], @env['oauth2'].params['client_secret'] = HTTPAuth::Basic.unpack_authorization(request.env['HTTP_AUTHORIZATION'])
+      end
       nil
     end
 
