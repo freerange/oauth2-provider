@@ -114,7 +114,7 @@ describe "POSTs to /oauth/access_token" do
   end
 
 
-  context "using supported grant type" do
+  context "Requests for the supported grant type" do
 
     shared_examples_for :token_response do
       it "sets cache-control header to no-store, as response is sensitive" do
@@ -147,7 +147,7 @@ describe "POSTs to /oauth/access_token" do
       end
     end
 
-    describe "authorization_code" do
+    describe "'authorization_code'" do
       shared_examples :authorization_code_grant do
         describe "with valid client, code and redirect_uri" do
           before :each do
@@ -227,7 +227,7 @@ describe "POSTs to /oauth/access_token" do
       end
     end
 
-    describe "password" do
+    describe "'password'" do
       before :each do
         @resource_owner = ExampleResourceOwner.create!(:username => 'name', :password => 'password')
         @valid_params = {
@@ -312,7 +312,7 @@ describe "POSTs to /oauth/access_token" do
       end
     end
 
-    describe "refresh_token" do
+    describe "'refresh_token'" do
       before :each do
         @token = create_access_token
 
