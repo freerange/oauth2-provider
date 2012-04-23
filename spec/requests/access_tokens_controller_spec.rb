@@ -114,7 +114,7 @@ describe "POSTs to /oauth/access_token" do
   end
 
 
-  context "Requests for the supported grant type" do
+  context "Requests using grant_type" do
 
     shared_examples_for :token_response do
       it "sets cache-control header to no-store, as response is sensitive" do
