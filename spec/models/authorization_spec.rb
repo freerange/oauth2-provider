@@ -159,6 +159,5 @@ describe OAuth2::Provider.authorization_class do
     it "should destroy associated authorization codes" do
       OAuth2::Provider.authorization_code_class.find(:first, :conditions => { :id => authorization_code.id }).should be_nil
     end
-
   end
 end
