@@ -148,7 +148,7 @@ describe OAuth2::Provider.authorization_class do
     end
 
     let!(:access_token) { OAuth2::Provider.access_token_class.create! :authorization => subject }
-    let!(:authorization_code) { OAuth2::Provider.access_token_class.create! :authorization => subject }
+    let!(:authorization_code) { OAuth2::Provider.authorization_code_class.create! :authorization => subject, :redirect_uri => "https://foo.example.com" }
 
     before(:each) { subject.destroy }
 
