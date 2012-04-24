@@ -46,6 +46,12 @@ describe OAuth2::Provider::Rack::Middleware do
         response.status.should eql(418)
         response.body.should eql('Short and stout')
       end
+
+      after(:each) do
+        OAuth2::Provider.configure do |config|
+          config.access_token_path = '/oauth/access_token'
+        end
+      end
     end
   end
 
