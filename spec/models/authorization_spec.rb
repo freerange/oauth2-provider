@@ -150,14 +150,14 @@ describe OAuth2::Provider.authorization_class do
     let!(:access_token) { OAuth2::Provider.access_token_class.create! :authorization => subject }
     let!(:authorization_code) { OAuth2::Provider.access_token_class.create! :authorization => subject }
 
-    before(:each) { subject.destroy } 
+    before(:each) { subject.destroy }
 
     it "shuold destroy associated access tokens" do
-      access_token.should be_destroyed
+      OAuth2::Provider.access_token_class.find(:first, :conditions => { :id => access_token.id }).should be_nil
     end
 
     it "should destroy associated authorization codes" do
-      authorization_code.should be_destroyed
+      OAuth2::Provider.authorization_code_class.find(:first, :conditions => { :id => authorization_code.id }).should be_nil
     end
 
   end
