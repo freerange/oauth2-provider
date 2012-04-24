@@ -141,4 +141,24 @@ describe OAuth2::Provider.authorization_class do
       subject.access_tokens.should be_empty
     end
   end
+
+  describe "after destruction" do
+    subject do
+      OAuth2::Provider.authorization_class.create! :client => create_client
+    end
+
+    let!(:access_token) { OAuth2::Provider.access_token_class.create! :authorization => subject }
+    let!(:authorization_code) { OAuth2::Provider.access_token_class.create! :authorization => subject }
+
+    before(:each) { subject.destroy } 
+
+    it "shuold destroy associated access tokens" do
+      access_token.should be_destroyed
+    end
+
+    it "should destroy associated authorization codes" do
+      authorization_code.should be_destroyed
+    end
+
+  end
 end
