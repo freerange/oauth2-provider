@@ -93,7 +93,7 @@ describe OAuth2::Provider.access_token_class do
     end
 
     it "allows default expiry time to be overidden" do
-      overidden = OAuth2::Provider.access_token_class.new(expires_at: nil)
+      overidden = OAuth2::Provider.access_token_class.new(:expires_at => nil)
       overidden.expires_at.should be_nil
     end
   end
