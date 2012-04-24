@@ -24,11 +24,6 @@ describe OAuth2::Provider.access_token_class do
       subject.should_not be_valid
     end
 
-    it "is invalid when expires_at isn't set" do
-      subject.expires_at = nil
-      subject.should_not be_valid
-    end
-
     it "is invalid if expires_at is later than the authorization's value" do
       subject.authorization.expires_at = 1.minute.from_now
       subject.expires_at = 10.minutes.from_now
@@ -40,18 +35,28 @@ describe OAuth2::Provider.access_token_class do
       subject.expires_in.should == (60 * 60)
     end
 
-    it "returns 0 for expired_in when already expired" do
+    it "returns 0 for expires_in when already expired" do
       subject.expires_at = 60.minutes.ago
       subject.expires_in.should == 0
     end
 
-    it "include expires_in, refresh_token and access token as JSON format" do
+    it "returns nil for expires_in when no expiry time is set" do
+      subject.expires_at = nil
+      subject.expires_in.should be_nil
+    end
+
+    it "includes expires_in, refresh_token and access_token as JSON format" do
       subject.as_json.should == {"expires_in" => subject.expires_in, "access_token" => subject.access_token, "refresh_token" => subject.refresh_token}
     end
 
-    it "include only expires_in and access token as JSON format if no refresh token set" do
+    it "excludes refresh_token from JSON format if no refresh token set" do
       subject.refresh_token = nil
       subject.as_json.should == {"expires_in" => subject.expires_in, "access_token" => subject.access_token}
+    end
+
+    it "excludes expires_in from JSON format if expiry time set" do
+      subject.expires_at = nil
+      subject.as_json.should == {"refresh_token" => subject.refresh_token, "access_token" => subject.access_token}
     end
 
     it "is refreshable, if it has a refresh token" do
@@ -85,6 +90,11 @@ describe OAuth2::Provider.access_token_class do
 
     it "expires in 1 month by default" do
       subject.expires_at.should == 1.month.from_now
+    end
+
+    it "allows default expiry time to be overidden" do
+      overidden = OAuth2::Provider.access_token_class.new(expires_at: nil)
+      overidden.expires_at.should be_nil
     end
   end
 

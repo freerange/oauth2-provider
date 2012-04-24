@@ -14,11 +14,12 @@ module OAuth2::Provider::Models
       mattr_accessor :default_token_lifespan
     end
 
-    def initialize(*args, &block)
-      super
+    def initialize(attributes = {}, *args, &block)
+      attributes ||= {}
       if default_token_lifespan
-        self.expires_at ||= default_token_lifespan.from_now
+        attributes = attributes.reverse_merge(:expires_at => default_token_lifespan.from_now)
       end
+      super
     end
 
     def fresh?
@@ -33,7 +34,7 @@ module OAuth2::Provider::Models
       if expired?
         0
       else
-        self.expires_at.to_i - Time.now.to_i
+        self.expires_at && self.expires_at.to_i - Time.now.to_i
       end
     end
   end
