@@ -142,7 +142,7 @@ describe OAuth2::Provider.authorization_class do
     end
   end
 
-  describe "after destruction" do
+  describe "being destroyed" do
     subject do
       OAuth2::Provider.authorization_class.create! :client => create_client
     end
