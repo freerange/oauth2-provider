@@ -12,18 +12,9 @@ module OAuth2::Provider::Rack
 
     def process
       if request.post?
-        block_unsupported_grant_types || handle_basic_auth_header || block_invalid_clients || handle_grant_type
+        block_unsupported_grant_types || block_invalid_clients || handle_grant_type
       else
         Responses.only_supported 'POST'
-      end
-    end
-
-    def handle_basic_auth_header
-      with_required_params 'grant_type' do |grant_type|
-        if grant_type == 'client_credentials' && request.env['HTTP_AUTHORIZATION'] =~ /^Basic/
-          @env['oauth2'].params['client_id'], @env['oauth2'].params['client_secret'] = HTTPAuth::Basic.unpack_authorization(request.env['HTTP_AUTHORIZATION'])
-          next
-        end
       end
     end
 
@@ -100,12 +91,30 @@ module OAuth2::Provider::Rack
     end
 
     def block_invalid_clients
-      with_required_params 'grant_type', 'client_id', 'client_secret' do |grant_type, client_id, client_secret|
+      load_client || block_missing_or_unauthorized_clients
+    end
+
+    def block_missing_or_unauthorized_clients
+      if @oauth_client.nil?
+        Responses.json_error 'invalid_client'
+      else
+        with_required_params 'grant_type' do |grant_type|
+          if !@oauth_client.allow_grant_type?(grant_type)
+            Responses.json_error 'unauthorized_client'
+          end
+        end
+      end
+    end
+
+    def load_client
+      if request.env['HTTP_AUTHORIZATION'] =~ /^Basic/
+        client_id, client_secret = HTTPAuth::Basic.unpack_authorization(request.env['HTTP_AUTHORIZATION'])
         @oauth_client = OAuth2::Provider.client_class.find_by_oauth_identifier_and_oauth_secret(client_id, client_secret)
-        if @oauth_client.nil?
-          Responses.json_error 'invalid_client'
-        elsif !@oauth_client.allow_grant_type?(grant_type)
-          Responses.json_error 'unauthorized_client'
+        nil
+      else
+        with_required_params 'client_id', 'client_secret' do |client_id, client_secret|
+          @oauth_client = OAuth2::Provider.client_class.find_by_oauth_identifier_and_oauth_secret(client_id,  client_secret)
+          nil
         end
       end
     end

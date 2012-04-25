@@ -78,6 +78,25 @@ describe "POSTs to /oauth/access_token" do
     responds_with_json_error 'invalid_client', :status => 400
   end
 
+  describe "Any request using Basic authorization where the client is unknown" do
+    before :each do
+      basic_authorization = {'HTTP_AUTHORIZATION' => HTTPAuth::Basic.pack_authorization('unkown', @client.oauth_secret)}
+      post "/oauth/access_token", @valid_params.except(:client_id, :client_secret), basic_authorization
+    end
+
+    responds_with_json_error 'invalid_client', :status => 400
+  end
+
+  describe "Any request using Basic authorization where the client_secret is wrong" do
+    before :each do
+      basic_authorization = {'HTTP_AUTHORIZATION' => HTTPAuth::Basic.pack_authorization(@client.oauth_identifier, 'wrong')}
+
+      post "/oauth/access_token", @valid_params.except(:client_id, :client_secret), basic_authorization
+    end
+
+    responds_with_json_error 'invalid_client', :status => 400
+  end
+
   describe "Any request which doesn't use POST" do
     before :each do
       get "/oauth/access_token", @valid_params
