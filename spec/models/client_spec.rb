@@ -116,4 +116,20 @@ describe OAuth2::Provider.client_class do
       end
     end
   end
+
+  describe "being destroyed" do
+    subject do
+      OAuth2::Provider.client_class.create! :name => 'client', :oauth_redirect_uri => "http://valid.example.com/any/path"
+    end
+
+    let!(:authorization) { OAuth2::Provider.authorization_class.create! :client => subject }
+
+    before :each do
+      subject.destroy
+    end
+
+    it "should destroy associated authorizations" do
+      OAuth2::Provider.authorization_class.find(:first, :conditions => {:id => authorization.id}).should be_nil
+    end
+  end
 end
