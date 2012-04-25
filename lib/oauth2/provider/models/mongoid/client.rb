@@ -10,6 +10,7 @@ class OAuth2::Provider::Models::Mongoid::Client
       field :oauth_redirect_uri
       field :oauth_secret
       field :oauth_identifier
+      field :confidential, 'type' => Boolean, 'default' => false
 
       has_many(:authorizations,
         :class_name => OAuth2::Provider.authorization_class_name,

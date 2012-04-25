@@ -20,7 +20,7 @@ module OAuth2::Provider::Models::Client
   end
 
   def allow_grant_type?(grant_type)
-    true
+    confidential? || grant_type != "client_credentials"
   end
 
   def allow_redirection?(uri)
