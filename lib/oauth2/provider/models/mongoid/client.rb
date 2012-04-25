@@ -13,7 +13,8 @@ class OAuth2::Provider::Models::Mongoid::Client
 
       references_many(:authorizations,
         :class_name => OAuth2::Provider.authorization_class_name,
-        :foreign_key => :oauth_client_id
+        :foreign_key => :oauth_client_id,
+        :dependent => :destroy
       )
 
       references_many(:access_tokens,
