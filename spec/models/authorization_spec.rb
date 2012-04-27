@@ -140,7 +140,7 @@ describe OAuth2::Provider.authorization_class do
       pending "mongoid 2.4.x caches associations in a way that makes it difficult to prove these have now been cleared"
       subject.access_tokens.create!
       subject.revoke
-      subject.reload.access_tokens.should be_empty
+      subject.access_tokens.should be_empty
     end
   end
 end
