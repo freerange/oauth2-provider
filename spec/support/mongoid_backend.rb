@@ -18,6 +18,7 @@ OAuth2::Provider.configure do |config|
   config.resource_owner_class_name = 'ExampleResourceOwner'
 end
 
+Mongoid.logger.level = Logger::INFO
 Mongoid.configure do |config|
   config.from_hash(
     "host" => "127.0.0.1",
@@ -32,3 +33,4 @@ Mongoid.configure do |config|
     "database" => "oauth2_test"
   )
 end
+
