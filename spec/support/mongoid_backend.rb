@@ -30,7 +30,7 @@ Mongoid.configure do |config|
     "raise_not_found_error" => true,
     "reconnect_time" => 3,
     "use_activesupport_time_zone" => true,
-    "database" => "oauth2_test",
+    "database" => "oauth2_test"
   )
 end
 
