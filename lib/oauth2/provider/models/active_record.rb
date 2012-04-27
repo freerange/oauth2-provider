@@ -22,9 +22,9 @@ module OAuth2::Provider::Models::ActiveRecord
     OAuth2::Provider.authorization_code_class_name ||= "OAuth2::Provider::Models::ActiveRecord::AuthorizationCode"
     OAuth2::Provider.authorization_class_name ||= "OAuth2::Provider::Models::ActiveRecord::Authorization"
 
-    OAuth2::Provider.client_class.set_table_name client_table_name
-    OAuth2::Provider.access_token_class.set_table_name access_token_table_name
-    OAuth2::Provider.authorization_code_class.set_table_name authorization_code_table_name
-    OAuth2::Provider.authorization_class.set_table_name authorization_table_name
+    OAuth2::Provider.client_class.table_name = client_table_name
+    OAuth2::Provider.access_token_class.table_name = access_token_table_name
+    OAuth2::Provider.authorization_code_class.table_name = authorization_code_table_name
+    OAuth2::Provider.authorization_class.table_name = authorization_table_name
   end
 end
