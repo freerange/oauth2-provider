@@ -1,4 +1,4 @@
-**DEPRECATION NOTICE**: This project is no longer supported. [Doorkeeper](https://github.com/doorkeeper-gem/doorkeeper) or [`Songkick::Oauth2::Provider`](https://github.com/songkick/oauth2-provider) might offer the functionality you're looking for. We're keeping this repository around in case anyone is still relying on it, but note that there are a number of security vulnerabilities in the code as it stands, so use it at your own risk.
+**DEPRECATION NOTICE**: This project is no longer supported. [Doorkeeper](https://github.com/doorkeeper-gem/doorkeeper) or [`Songkick::Oauth2::Provider`](https://github.com/songkick/oauth2-provider) might offer the functionality you're looking for. We're keeping this repository around in case anyone is still relying on it, but note that there are a number of security vulnerabilities in the code as it stands, so use it at your own risk. If anyone wants to take over ownership of the repo, please [get in touch](http://gofreerange.com/).
 
 oauth2-provider
 ==
