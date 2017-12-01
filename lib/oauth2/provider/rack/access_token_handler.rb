@@ -19,12 +19,10 @@ module OAuth2::Provider::Rack
     end
 
     def handle_basic_auth_header
-      with_required_params 'grant_type' do |grant_type|
-        if grant_type == 'client_credentials' && request.env['HTTP_AUTHORIZATION'] =~ /^Basic/
-          @env['oauth2'].params['client_id'], @env['oauth2'].params['client_secret'] = HTTPAuth::Basic.unpack_authorization(request.env['HTTP_AUTHORIZATION'])
-          next
-        end
+      if request.env['HTTP_AUTHORIZATION'] =~ /^Basic/
+        @env['oauth2'].params['client_id'], @env['oauth2'].params['client_secret'] = HTTPAuth::Basic.unpack_authorization(request.env['HTTP_AUTHORIZATION'])
       end
+      nil
     end
 
     def handle_grant_type
