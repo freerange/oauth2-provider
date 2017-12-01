@@ -13,7 +13,8 @@ class OAuth2::Provider::Models::Mongoid::Client
 
       has_many(:authorizations,
         :class_name => OAuth2::Provider.authorization_class_name,
-        :foreign_key => :oauth_client_id
+        :foreign_key => :oauth_client_id,
+        :dependent => :destroy
       )
 
       has_many(:access_tokens,
