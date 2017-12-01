@@ -30,12 +30,6 @@ describe OAuth2::Provider.client_class do
       subject.oauth_identifier = duplicate.oauth_identifier
       subject.should_not be_valid
     end
-
-    it "allows any grant type (custom subclasses can override this)" do
-      subject.allow_grant_type?('password').should be_true
-      subject.allow_grant_type?('authorization_code').should be_true
-      subject.allow_grant_type?('client_credentials').should be_true
-    end
   end
 
   describe "a new instance" do
@@ -52,6 +46,10 @@ describe OAuth2::Provider.client_class do
 
     it "returns nil when to_param called" do
       subject.to_param.should be_nil
+    end
+
+    it "is not trusted as confidential by default" do
+      subject.confidential?.should be_false
     end
   end
 
@@ -113,6 +111,44 @@ describe OAuth2::Provider.client_class do
 
       it "returns false if the provided uri isn't a valid uri" do
         subject.allow_redirection?("a-load-of-rubbish").should be_false
+      end
+    end
+  end
+
+  describe "#allow_grant_type?(grant_type)" do
+    context "for public clients" do
+      before :each do
+        subject.stubs(:confidential?).returns(false)
+      end
+
+      %w(authorization_code token password refresh_token).each do |grant_type|
+        it "should allow the standard #{grant_type} grant type" do
+          subject.allow_grant_type?(grant_type).should be_true
+        end
+      end
+
+      it "should disallow the client_credentials grant type" do
+        subject.allow_grant_type?('client_credentials').should be_false
+      end
+
+      it "should allow arbitrary grant types" do
+        subject.allow_grant_type?("http://security.example.com/example_grant")
+      end
+    end
+
+    context "for confdiential clients" do
+      before :each do
+        subject.stubs(:confidential?).returns(true)
+      end
+
+      %w(authorization_code token password refresh_token client_credentials).each do |grant_type|
+        it "should allow the standard #{grant_type} grant type" do
+          subject.allow_grant_type?(grant_type).should be_true
+        end
+      end
+
+      it "should allow arbitrary grant types" do
+        subject.allow_grant_type?("http://security.example.com/example_grant")
       end
     end
   end

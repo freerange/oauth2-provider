@@ -9,6 +9,7 @@ ActiveRecord::Schema.define(:version => 20110323171649) do
     t.string   'oauth_redirect_uri'
     t.string   'oauth_identifier', :null => false
     t.string   'oauth_secret', :null => false
+    t.boolean  'confidential', :default => false
   end
 
   create_table 'oauth_authorization_codes', :force => true do |t|
